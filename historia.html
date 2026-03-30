@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia | Valprimos</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="escudo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Squada+One&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --verde-principal: #0A4325;
+            --verde-oscuro: #04140a;
+            --marron-principal: #3B2421;
+            --dorado: #E8C15A;
+            --blanco-roto: #F0F4F1;
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-moderna: 'Montserrat', sans-serif;
+            --fuente-deportiva: 'Squada One', cursive;
+            --transicion-fluida: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            --sombra-texto: 2px 4px 10px rgba(0,0,0,0.8);
+        }
+
+        body {
+            font-family: var(--fuente-moderna); margin: 0; padding: 0;
+            background-color: var(--verde-oscuro); color: var(--blanco-roto);
+            background-image: linear-gradient(180deg, var(--verde-oscuro) 0%, #082b17 100%);
+            overflow-x: hidden; 
+        }
+
+        /* --- ENCABEZADO FIJO --- */
+        .header-container { 
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
+            background-color: var(--verde-principal); border-bottom: 2px solid rgba(232, 193, 90, 0.2); 
+            transition: var(--transicion-fluida);
+        }
+        
+        .header-content { display: flex; flex-direction: column; align-items: center; padding-top: 20px; padding-bottom: 30px; transition: var(--transicion-fluida); }
+        .escudo { height: 280px; width: auto; margin-bottom: 30px; transition: var(--transicion-fluida); filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        h1 { 
+            font-family: var(--fuente-titulos); color: var(--dorado); 
+            font-size: 4rem; letter-spacing: 4px; margin: 0; text-transform: uppercase; 
+            transition: var(--transicion-fluida);
+            text-shadow: var(--sombra-texto);
+        }
+        .subtitulo { font-family: var(--fuente-titulos); font-style: italic; color: var(--dorado); font-size: 1.4rem; transition: var(--transicion-fluida); letter-spacing: 4px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+        
+        /* --- NAVEGACIÓN --- */
+        nav { 
+            background-color: var(--marron-principal); padding: 15px 0; text-align: center; 
+            border-top: 1px solid rgba(232, 193, 90, 0.4); border-bottom: 3px solid var(--dorado); 
+            transition: var(--transicion-fluida); position: relative;
+        }
+
+        .menu-toggle { display: none; } /* Oculto en PC */
+        .nav-links { display: flex; justify-content: center; align-items: center; width: 100%; }
+
+        .nav-links a { color: var(--dorado); text-decoration: none; font-weight: 600; margin: 0 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: 0.3s;}
+        .nav-links a:hover, .nav-links a.activo { color: #FFF; border-bottom: 2px solid #FFF; padding-bottom: 5px; }
+
+        /* SCROLL */
+        .header-container.scrolled .header-content { padding-top: 10px; padding-bottom: 5px; }
+        .header-container.scrolled .escudo { height: 70px; margin-bottom: 0; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .header-container.scrolled h1 { font-size: 1.8rem; letter-spacing: 2px; }
+        .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
+        .header-container.scrolled nav { padding: 10px 0; }
+
+        /* --- HERO --- */
+        .hero-historia {
+            height: 25vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; margin-top: 550px; transition: var(--transicion-fluida);
+        }
+        .hero-historia.scrolled { margin-top: 220px; }
+        .hero-historia p { 
+            font-family: var(--fuente-titulos); font-size: 2.2rem; color: #FFF; 
+            font-style: italic; letter-spacing: 1px;
+            border-bottom: 2px solid var(--dorado); padding-bottom: 10px;
+        }
+
+        main { max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+
+        /* --- TIMELINE --- */
+        .timeline { position: relative; padding: 40px 0; }
+        .timeline::before {
+            content: ''; position: absolute; left: 50%; width: 2px; height: 100%;
+            background: var(--dorado); opacity: 0.2; transform: translateX(-50%);
+        }
+
+        .timeline-item { margin-bottom: 80px; position: relative; width: 50%; padding: 10px 40px; box-sizing: border-box; }
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-item:nth-child(even) { left: 50%; text-align: left; }
+
+        .timeline-item::after {
+            content: ''; position: absolute; width: 18px; height: 18px;
+            background: var(--dorado); border: 4px solid var(--verde-oscuro);
+            border-radius: 50%; top: 20px; z-index: 1;
+        }
+        .timeline-item:nth-child(odd)::after { right: -12px; }
+        .timeline-item:nth-child(even)::after { left: -12px; }
+
+        .fecha { font-family: var(--fuente-deportiva); font-size: 3rem; color: var(--dorado); display: block; margin-bottom: 5px; line-height: 1; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+        .timeline-content { background: rgba(10, 67, 37, 0.25); padding: 35px; border-radius: 8px; border: 1px solid rgba(232, 193, 90, 0.15); transition: 0.3s; }
+        .timeline-content:hover { border-color: var(--dorado); background: rgba(10, 67, 37, 0.4); transform: translateY(-5px); }
+        
+        .timeline-content h3 { 
+            font-family: var(--fuente-titulos); color: #FFF; margin: 0 0 15px 0; 
+            font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .timeline-content p { line-height: 1.7; color: #ddd; font-size: 1.05rem; margin: 0; font-weight: 400; }
+        .highlight { color: var(--dorado); font-weight: 700; }
+
+        /* =========================================================
+           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+           ========================================================= */
+        @media (max-width: 850px) { 
+            /* 1. Encabezado más proporcionado */
+            .escudo { height: 150px; margin-bottom: 15px; }
+            h1 { font-size: 2.2rem; letter-spacing: 2px; }
+            .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
+            
+            /* 2. Menú Hamburguesa */
+            nav { padding: 12px 0; }
+            .menu-toggle { 
+                display: block; color: var(--dorado); font-weight: 800; 
+                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
+            }
+            .nav-links { 
+                display: none; position: absolute; top: 100%; left: 0; width: 100%; 
+                background-color: var(--marron-principal); flex-direction: column; 
+                padding: 10px 0; border-bottom: 3px solid var(--dorado); 
+                box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001;
+            }
+            .nav-links.activo { display: flex; }
+            .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
+
+            /* 3. Comportamiento Scrolled en Móvil */
+            .header-container.scrolled .escudo { height: 50px; }
+            .header-container.scrolled h1 { font-size: 1.3rem; }
+
+            /* 4. Ajustes del Timeline y Hero para Móvil */
+            .hero-historia { margin-top: 350px; }
+            .hero-historia.scrolled { margin-top: 150px; }
+            .hero-historia p { font-size: 1.6rem; }
+
+            .timeline::before { left: 20px; }
+            .timeline-item { width: 100%; text-align: left !important; padding-left: 60px; padding-right: 0; }
+            .timeline-item:nth-child(even) { left: 0; }
+            .timeline-item::after { left: 11px !important; }
+
+            .timeline-content { padding: 25px; }
+            .fecha { font-size: 2.2rem; }
+            .timeline-content h3 { font-size: 1.4rem; margin-bottom: 10px; }
+            .timeline-content p { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container" id="main-header">
+        <div class="header-content">
+            <img src="escudo.png" alt="Escudo Valprimos" class="escudo">
+            <h1>VALPRIMOS</h1>
+            <div class="subtitulo">RAÍCES DE LEYENDA</div>
+        </div>
+        <nav>
+            <!-- Botón del menú hamburguesa -->
+            <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
+            <!-- Contenedor de enlaces -->
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="tienda.html">Tienda</a>
+                <a href="jugadores.html">Jugadores</a> 
+                <a href="historia.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Historia</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+        </nav>
+    </div>
+
+    <section class="hero-historia" id="hero-section">
+        <p>Cronología del Club</p>
+    </section>
+
+    <main>
+        <div class="timeline">
+            
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <span class="fecha">2000</span>
+                    <h3>EL ORIGEN</h3>
+                    <p>Todo comienza con el nacimiento de los dos primeros primos. Este vínculo de sangre se convirtió, años después, en el motor principal para reunir al resto del grupo y saltar al campo por primera vez.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <span class="fecha">2022</span>
+                    <h3>COPA DE LAS COLONIAS</h3>
+                    <p>Bajo el nombre de <span class="highlight">Valpinos</span>, disputamos nuestro primer torneo oficial. La trayectoria fue impecable, culminando con una victoria en la final contra La Estación y logrando nuestro primer título histórico.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <span class="fecha">2024 - 2025</span>
+                    <h3>TORNEO DE PEÑAS</h3>
+                    <p>Durante estas dos temporadas competimos como <span class="highlight">Los Primos</span>. Fueron años de máxima exigencia que sirvieron para asentar el bloque de jugadores y definir nuestra identidad competitiva actual.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <span class="fecha" style="text-shadow: var(--sombra-texto);">2026</span>
+                    <h3 style="text-shadow: var(--sombra-texto);">FUNDACIÓN VALPRIMOS</h3>
+                    <p>Llegamos a la unificación definitiva. Dejamos atrás las antiguas denominaciones para fundar oficialmente el club como <span class="highlight">Valprimos</span>, con una plantilla de 16 jugadores comprometidos. <strong>De las raíces a la copa.</strong></p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px; font-family: var(--fuente-moderna);">
+        <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+            VALPRIMOS 2026
+        </div>
+        &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
+    </footer>
+
+    <script>
+        const header = document.getElementById('main-header');
+        const hero = document.getElementById('hero-section');
+        let headerShrunkMobile = false;
+        let startY = 0;
+
+        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth > 850) {
+                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                    hero.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                    hero.classList.remove('scrolled');
+                }
+            } else {
+                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                    hero.classList.add('scrolled');
+                    headerShrunkMobile = true;
+                }
+            }
+        });
+
+        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
+        window.addEventListener('touchstart', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10) {
+                startY = ev.touches[0].clientY;
+            }
+        }, {passive: true});
+
+        window.addEventListener('touchmove', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+                let currentY = ev.touches[0].clientY;
+                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
+                if (currentY - startY > 40) {
+                    header.classList.remove('scrolled');
+                    hero.classList.remove('scrolled');
+                    headerShrunkMobile = false;
+                }
+            }
+        }, {passive: true});
+
+        // Alternar Menú Hamburguesa en Móvil
+        function toggleMenu() {
+            document.getElementById('nav-links').classList.toggle('activo');
+        }
+    </script>
+
+</body>
+</html>

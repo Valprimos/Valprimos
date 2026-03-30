@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Valprimos</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="escudo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Squada+One&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --verde-principal: #0A4325;
+            --verde-oscuro: #04140a;
+            --marron-principal: #3B2421;
+            --dorado: #E8C15A;
+            --blanco-roto: #F0F4F1;
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-moderna: 'Montserrat', sans-serif;
+            --fuente-deportiva: 'Squada One', cursive;
+            --transicion-fluida: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            --sombra-texto: 2px 4px 10px rgba(0,0,0,0.8);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--fuente-moderna); margin: 0; padding: 0;
+            background-color: var(--verde-oscuro); color: var(--blanco-roto);
+            background-image: linear-gradient(180deg, var(--verde-oscuro) 0%, #082b17 100%);
+            overflow-x: hidden; 
+        }
+
+        /* --- ENCABEZADO FIJO --- */
+        .header-container { 
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
+            background-color: var(--verde-principal); border-bottom: 2px solid rgba(232, 193, 90, 0.2); 
+            transition: var(--transicion-fluida);
+        }
+        
+        .header-content { display: flex; flex-direction: column; align-items: center; padding-top: 20px; padding-bottom: 30px; transition: var(--transicion-fluida); }
+        .escudo { height: 280px; width: auto; margin-bottom: 30px; transition: var(--transicion-fluida); filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        h1 { 
+            font-family: var(--fuente-titulos); color: var(--dorado); 
+            font-size: 4rem; letter-spacing: 4px; margin: 0; text-transform: uppercase; 
+            text-shadow: var(--sombra-texto); transition: var(--transicion-fluida);
+        }
+        .subtitulo { font-family: var(--fuente-titulos); font-style: italic; color: var(--dorado); font-size: 1.4rem; transition: var(--transicion-fluida); letter-spacing: 4px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+        
+        /* --- NAVEGACIÓN --- */
+        nav { 
+            background-color: var(--marron-principal); padding: 15px 0; text-align: center; 
+            border-top: 1px solid rgba(232, 193, 90, 0.4); border-bottom: 3px solid var(--dorado); 
+            transition: var(--transicion-fluida); position: relative;
+        }
+
+        .menu-toggle { display: none; } /* Oculto en PC */
+        .nav-links { display: flex; justify-content: center; align-items: center; width: 100%; }
+
+        .nav-links a { color: var(--dorado); text-decoration: none; font-weight: 600; margin: 0 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: 0.3s;}
+        .nav-links a:hover, .nav-links a.activo { color: #FFF; border-bottom: 2px solid #FFF; padding-bottom: 5px; }
+
+        /* SCROLL */
+        .header-container.scrolled .header-content { padding-top: 10px; padding-bottom: 5px; }
+        .header-container.scrolled .escudo { height: 70px; margin-bottom: 0; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .header-container.scrolled h1 { font-size: 1.8rem; letter-spacing: 2px; }
+        .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
+        .header-container.scrolled nav { padding: 10px 0; }
+
+        /* --- CONTENIDO --- */
+        .espaciador { height: 550px; transition: var(--transicion-fluida); }
+        .espaciador.scrolled { height: 220px; }
+
+        main { max-width: 1100px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+
+        .info-seccion h2 { font-family: var(--fuente-titulos); color: var(--dorado); font-size: 3.5rem; margin-bottom: 15px; text-transform: uppercase; text-shadow: var(--sombra-texto); }
+        .aficionado-text { color: var(--blanco-roto); margin-bottom: 40px; line-height: 1.6; opacity: 0.9; font-size: 1.1rem; }
+
+        .tarjeta-dato { 
+            background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; 
+            border-left: 4px solid var(--dorado); margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .tarjeta-dato:hover { background: rgba(232, 193, 90, 0.05); transform: translateX(10px); }
+        .tarjeta-dato h4 { margin: 0 0 5px 0; color: var(--dorado); font-family: var(--fuente-deportiva); font-size: 1.4rem; text-transform: uppercase; }
+        .tarjeta-dato p { margin: 0; color: #ccc; }
+
+        /* --- FORMULARIO Y ÉXITO --- */
+        .form-box { 
+            background: rgba(10, 67, 37, 0.3); padding: 50px; border-radius: 20px; 
+            border: 1px solid rgba(232, 193, 90, 0.1); position: relative; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .input-group { margin-bottom: 25px; }
+        label { display: block; color: var(--dorado); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        input, textarea { 
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(232, 193, 90, 0.2);
+            border-radius: 8px; color: white; font-family: var(--fuente-moderna); box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--dorado); outline: none; background: rgba(10, 67, 37, 0.5); }
+
+        .btn-enviar {
+            width: 100%; padding: 20px; background: var(--dorado); color: var(--marron-principal);
+            border: none; border-radius: 8px; font-family: var(--fuente-deportiva); font-size: 1.8rem;
+            cursor: pointer; transition: all 0.4s ease; text-transform: uppercase;
+        }
+        .btn-enviar:hover { background: #FFF; transform: translateY(-3px); }
+
+        /* ÉXITO */
+        .success-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--verde-principal); display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 10; text-align: center; 
+            padding: 40px; box-sizing: border-box;
+            gap: 15px;
+        }
+        .success-overlay h3 { font-family: var(--fuente-deportiva); font-size: 4rem; color: var(--dorado); margin: 0; line-height: 1; }
+        .success-overlay p { font-size: 1.3rem; color: #FFF; margin: 0; opacity: 0.9; max-width: 85%; }
+        
+        .success-overlay button {
+            background: none; border: 2px solid var(--dorado); color: var(--dorado);
+            cursor: pointer; padding: 12px 30px; margin-top: 30px; 
+            text-transform: uppercase; font-weight: bold; font-family: var(--fuente-moderna);
+            font-size: 0.9rem; letter-spacing: 1px; transition: 0.3s;
+        }
+        .success-overlay button:hover { background: var(--dorado); color: var(--marron-principal); }
+
+        /* =========================================================
+           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+           ========================================================= */
+        @media (max-width: 850px) { 
+            /* 1. Encabezado más proporcionado */
+            .escudo { height: 150px; margin-bottom: 15px; }
+            h1 { font-size: 2.2rem; letter-spacing: 2px; }
+            .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
+            
+            /* 2. Menú Hamburguesa */
+            nav { padding: 12px 0; }
+            .menu-toggle { 
+                display: block; color: var(--dorado); font-weight: 800; 
+                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
+            }
+            .nav-links { 
+                display: none; position: absolute; top: 100%; left: 0; width: 100%; 
+                background-color: var(--marron-principal); flex-direction: column; 
+                padding: 10px 0; border-bottom: 3px solid var(--dorado); 
+                box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001;
+            }
+            .nav-links.activo { display: flex; }
+            .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
+
+            /* 3. Comportamiento Scrolled en Móvil */
+            .header-container.scrolled .escudo { height: 50px; }
+            .header-container.scrolled h1 { font-size: 1.3rem; }
+
+            /* 4. Ajustes del Contenido */
+            .espaciador { height: 350px; }
+            .espaciador.scrolled { height: 150px; }
+
+            main { grid-template-columns: 1fr; gap: 40px; padding: 30px 15px 0; }
+            
+            .info-seccion h2 { font-size: 2.5rem; }
+            .aficionado-text { font-size: 1rem; margin-bottom: 25px; }
+
+            .form-box { padding: 30px 20px; border-radius: 12px; }
+            .btn-enviar { font-size: 1.4rem; padding: 15px; }
+
+            .success-overlay h3 { font-size: 2.8rem; }
+            .success-overlay p { font-size: 1.1rem; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container" id="main-header">
+        <div class="header-content">
+            <img src="escudo.png" alt="Valprimos" class="escudo">
+            <h1>VALPRIMOS</h1>
+            <div class="subtitulo">RAÍCES DE LEYENDA</div>
+        </div>
+        <nav>
+            <!-- Botón del menú hamburguesa -->
+            <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
+            <!-- Contenedor de enlaces -->
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="tienda.html">Tienda</a>
+                <a href="jugadores.html">Jugadores</a> 
+                <a href="historia.html">Historia</a>
+                <a href="contacto.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Contacto</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="espaciador" id="espaciador-fantasma"></div>
+
+    <main>
+        <div class="info-seccion">
+            <h2>CONTACTO</h2>
+            <p class="aficionado-text">
+                En Valprimos, <strong>más que un equipo somos una piña</strong> y eso nos obliga a escuchar a quienes nos hacen grandes: vosotros. Vuestras ideas y vuestra voz son la savia que nos alimenta.
+            </p>
+            
+            <div class="tarjeta-dato">
+                <h4>UBICACIÓN</h4>
+                <p>Valpinos, Las Colonias</p>
+                <p>Sanchidrián</p>
+            </div>
+            
+            <div class="tarjeta-dato">
+                <h4>CONECTA</h4>
+                <p>Instagram: @valprimos_fc</p>
+                <p>Email: info@valprimos.com</p>
+            </div>
+        </div>
+
+        <div class="form-box" id="formBox">
+            <div class="success-overlay" id="successMsg">
+                <h3>¡PLANTADO!</h3>
+                <p>Mensaje plantado, te devolveremos el fruto de nuestra respuesta.</p>
+                <button onclick="location.reload()">VOLVER AL PINAR</button>
+            </div>
+
+            <form id="contactForm">
+                <div class="input-group">
+                    <label>Nombre</label>
+                    <input type="text" placeholder="Tu nombre..." required>
+                </div>
+                <div class="input-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" placeholder="tu@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Tu Mensaje</label>
+                    <textarea rows="6" placeholder="Cuéntanos..." required></textarea>
+                </div>
+                <button type="submit" class="btn-enviar" id="sendBtn">PLANTA TU MENSAJE</button>
+            </form>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px; font-family: var(--fuente-moderna);">
+        <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+            VALPRIMOS 2026
+        </div>
+        &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
+    </footer>
+
+    <script>
+        const header = document.getElementById('main-header');
+        const espaciador = document.getElementById('espaciador-fantasma');
+        let headerShrunkMobile = false;
+        let startY = 0;
+
+        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth > 850) {
+                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                    espaciador.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                    espaciador.classList.remove('scrolled');
+                }
+            } else {
+                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                    espaciador.classList.add('scrolled');
+                    headerShrunkMobile = true;
+                }
+            }
+        });
+
+        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
+        window.addEventListener('touchstart', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10) {
+                startY = ev.touches[0].clientY;
+            }
+        }, {passive: true});
+
+        window.addEventListener('touchmove', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+                let currentY = ev.touches[0].clientY;
+                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
+                if (currentY - startY > 40) {
+                    header.classList.remove('scrolled');
+                    espaciador.classList.remove('scrolled');
+                    headerShrunkMobile = false;
+                }
+            }
+        }, {passive: true});
+
+        // Alternar Menú Hamburguesa en Móvil
+        function toggleMenu() {
+            document.getElementById('nav-links').classList.toggle('activo');
+        }
+
+        const form = document.getElementById('contactForm');
+        const success = document.getElementById('successMsg');
+        const btn = document.getElementById('sendBtn');
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            btn.innerText = "PLANTANDO...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                success.style.display = 'flex';
+            }, 800);
+        };
+    </script>
+
+</body>
+</html>
