@@ -135,8 +135,8 @@
         .cerrar-x { position: absolute; top: 25px; right: 30px; color: var(--dorado); font-size: 45px; cursor: pointer; z-index: 100; transition: 0.3s; }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
-           ========================================================= */
+            OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+            ========================================================= */
         @media (max-width: 850px) { 
             /* 1. Encabezado más proporcionado */
             .escudo { height: 150px; margin-bottom: 15px; }
@@ -321,7 +321,7 @@
             { nombre: "Pedro", dorsal: "79", foto: "pedro.jpg", copa: true, p: 0, m: 0, g: 0, a: 0 },
             { nombre: "Juan", dorsal: "90", foto: "juan.jpg", copa: true, p: 0, m: 0, g: 0, a: 0 },
             { nombre: "César", dorsal: "88", foto: "cesar.JPG", copa: false, p: 0, m: 0, g: 0, a: 0 },
-            { nombre: "Pablo", dorsal: "86", foto: "pablo.JPG", copa: true, p: 0, m: 0, g: 0, a: 0 }
+            { nombre: "Pablo", dorsal: "86", foto: "pablo.JPG", copa: false, p: 0, m: 0, g: 0, a: 0 } 
         ];
 
         jugadores.sort((a, b) => (a.dorsal === "00" ? -1 : b.dorsal === "00" ? 1 : parseInt(a.dorsal) - parseInt(b.dorsal)));
