@@ -76,18 +76,13 @@
             transition: var(--transicion-fluida); position: relative;
         }
 
-        .menu-toggle { display: none; } /* Oculto en PC */
-
-        .nav-links {
-            display: flex; justify-content: center; align-items: center; width: 100%;
-        }
-
+        .menu-toggle { display: none; }
+        .nav-links { display: flex; justify-content: center; align-items: center; width: 100%; }
         .nav-links a {
             color: var(--dorado); text-decoration: none; font-weight: 600; font-size: 0.9rem;
             margin: 0 20px; text-transform: uppercase; letter-spacing: 1px;
             transition: 0.3s;
         }
-
         .nav-links a:hover, .nav-links a.activo { color: #FFF; border-bottom: 2px solid #FFF; padding-bottom: 5px; }
 
         /* --- ESTADOS SCROLLED --- */
@@ -97,11 +92,9 @@
         .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .header-container.scrolled nav { padding: 10px 0; }
 
-        /* --- ESPACIADOR --- */
         .espaciador { height: 550px; transition: var(--transicion-fluida); }
         .espaciador.scrolled { height: 220px; }
 
-        /* --- CONTENIDO --- */
         main { max-width: 1100px; margin: 0 auto 100px; padding: 60px 20px 0; text-align: center; }
 
         /* --- CARDS GENERALES --- */
@@ -126,12 +119,12 @@
             background: linear-gradient(135deg, rgba(59, 36, 33, 0.9) 0%, rgba(10, 67, 37, 0.9) 100%);
             border: 2px solid var(--dorado); display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .match-card .competicion { font-size: 0.85rem; font-weight: 800; color: var(--dorado); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
+        .competicion { font-size: 0.85rem; font-weight: 800; color: var(--dorado); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
         .match-teams { display: flex; align-items: center; justify-content: center; gap: 30px; font-family: var(--fuente-titulos); font-size: 2.5rem; color: #FFF; width: 100%; }
         .match-vs { font-family: var(--fuente-deportiva); font-size: 2rem; color: var(--dorado); }
         .match-info { margin-top: 25px; font-size: 1rem; color: #ccc; letter-spacing: 1px; }
 
-        /* --- NOTICIAS --- */
+        /* --- NOTICIAS (SIN FOTOS, LIMPIAS) --- */
         .grid-noticias {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px; margin-top: 40px; text-align: left;
@@ -140,8 +133,9 @@
         .noticia {
             background: rgba(4, 20, 10, 0.6); padding: 30px; border-radius: 8px;
             border-left: 4px solid var(--dorado); transition: 0.3s;
-            display: flex; flex-direction: column; justify-content: space-between;
+            display: flex; flex-direction: column; justify-content: flex-start;
             cursor: pointer; position: relative; overflow: hidden;
+            min-height: 220px; box-sizing: border-box;
         }
 
         .noticia::after {
@@ -154,32 +148,11 @@
         .noticia:hover { transform: translateY(-5px); background: rgba(10, 67, 37, 0.6); border-color: #FFF;}
         .noticia:hover::after { opacity: 1; transform: translateX(0); }
 
-        .fecha-noticia { display: block; color: var(--dorado); font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; }
-        .noticia h3 { font-family: var(--fuente-titulos); color: #FFF; font-size: 1.5rem; margin: 0 0 15px 0; line-height: 1.2; }
-        .noticia p { font-size: 0.95rem; margin: 0 0 20px 0; }
+        .fecha-noticia { display: block; color: var(--dorado); font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; text-transform: uppercase; }
+        .noticia h3 { font-family: var(--fuente-titulos); color: #FFF; font-size: 1.5rem; margin: 0 0 15px 0; line-height: 1.2; padding-right: 20px;}
+        .noticia p { font-size: 0.95rem; margin: 0 0 20px 0; color: #ccc; line-height: 1.5;}
 
-        /* --- MODAL NOTICIAS --- */
-        .modal-overlay { 
-            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center; 
-        }
-        .modal-overlay.activo { display: flex; }
-        
-        .modal-content { 
-            background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-principal) 100%); 
-            width: 800px; max-width: 90%; max-height: 85vh; padding: 50px 40px; border: 2px solid var(--dorado); 
-            border-radius: 15px; position: relative; box-shadow: 0 0 80px rgba(0,0,0,1); text-align: left;
-            overflow-y: auto;
-        }
-
-        .modal-content .fecha-noticia { font-size: 1rem; margin-bottom: 15px; }
-        .modal-content h2 { font-family: var(--fuente-titulos); color: #FFF; font-size: 2.8rem; margin: 0 0 25px 0; line-height: 1.1; text-transform: uppercase; }
-        .modal-content p { color: #d1d9d4; font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; font-family: var(--fuente-moderna); }
-        
-        .cerrar-modal { position: absolute; top: 20px; right: 30px; color: #FFF; font-size: 40px; cursor: pointer; z-index: 100; transition: 0.3s;}
-        .cerrar-modal:hover { color: var(--dorado); }
-
-        /* --- BOTÓN --- */
+        /* --- BOTONES --- */
         .btn {
             background-color: var(--dorado); color: var(--marron-principal);
             padding: 15px 40px; text-decoration: none; font-weight: 800;
@@ -187,74 +160,63 @@
             display: inline-block; transition: 0.3s; margin-top: 20px;
             font-family: var(--fuente-deportiva); font-size: 1.4rem; border: none; cursor: pointer;
         }
-
         .btn:hover { background-color: #FFF; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(232, 193, 90, 0.3); }
 
         /* --- BANNER TIENDA --- */
         .banner-tienda {
-            background: url('textura-madera.jpg') center/cover;
-            position: relative; overflow: hidden;
+            background: linear-gradient(90deg, var(--verde-oscuro) 0%, rgba(10, 67, 37, 0.8) 100%);
+            padding: 3rem;
         }
-        .banner-tienda::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, var(--verde-oscuro) 0%, rgba(10, 67, 37, 0.8) 100%); z-index: 1;
-        }
-        .banner-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; text-align: left; padding: 0 40px; }
+        .banner-content { display: flex; align-items: center; justify-content: space-between; text-align: left; padding: 0 20px; }
         .banner-text h2 { margin-bottom: 10px; }
-        .banner-text p { margin: 0; max-width: 500px; }
+        .banner-text p { margin: 0; max-width: 500px; color: #d1d9d4; }
+
+        /* --- MODAL --- */
+        .modal-overlay { 
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center; 
+        }
+        .modal-overlay.activo { display: flex; }
+        .modal-content { 
+            background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-principal) 100%); 
+            width: 800px; max-width: 90%; max-height: 85vh; padding: 50px 40px; border: 2px solid var(--dorado); 
+            border-radius: 15px; position: relative; overflow-y: auto; text-align: left;
+        }
+        .cerrar-modal { position: absolute; top: 20px; right: 30px; color: #FFF; font-size: 40px; cursor: pointer; }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+           OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 850px) {
-            /* 1. Encabezado más proporcionado */
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
-            h1 { font-size: 2.2rem; letter-spacing: 2px; }
-            .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
-            
-            /* 2. Menú Hamburguesa */
-            nav { padding: 12px 0; }
-            .menu-toggle { 
-                display: block; color: var(--dorado); font-weight: 800; 
-                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
-            }
+            h1 { font-size: 2.2rem; }
+            .subtitulo { font-size: 0.9rem; }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; cursor: pointer; }
             .nav-links { 
                 display: none; position: absolute; top: 100%; left: 0; width: 100%; 
-                background-color: var(--marron-principal); flex-direction: column; 
-                padding: 10px 0; border-bottom: 3px solid var(--dorado); 
-                box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001;
+                background-color: var(--marron-principal); flex-direction: column; padding: 10px 0; 
+                border-bottom: 3px solid var(--dorado); z-index: 1001; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             }
             .nav-links.activo { display: flex; }
             .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
             
-            /* 3. Comportamiento Scrolled en Móvil */
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
+            
             .espaciador { height: 350px; }
             .espaciador.scrolled { height: 150px; }
-
-            /* 4. Ajustes del Contenido y Cards */
+            
             main { padding: 30px 15px 0; }
             .card { padding: 2rem 1.5rem; margin-bottom: 30px; }
-            .card h2 { font-size: 1.8rem; }
-            .card p { font-size: 1rem; }
+            .card h2 { font-size: 2rem; }
+            
+            .grid-noticias { grid-template-columns: 1fr; gap: 20px; margin-top: 25px; }
+            .noticia { min-height: auto; }
             
             .match-teams { flex-direction: column; gap: 10px; font-size: 1.8rem; }
-            .match-vs { font-size: 1.4rem; }
-            .match-info { font-size: 0.85rem; line-height: 1.5; }
-
-            /* 5. Banner Tienda en columna */
-            .banner-content { flex-direction: column; text-align: center; padding: 0; }
-            .banner-text p { margin-bottom: 30px; margin-left: auto; margin-right: auto;}
-
-            /* 6. Modal a Pantalla Completa (Mejor experiencia táctil) */
-            .modal-content { 
-                width: 100%; height: 100vh; max-height: 100vh; max-width: 100%; 
-                border-radius: 0; border: none; padding: 60px 20px 30px; 
-            }
-            .cerrar-modal { top: 10px; right: 20px; font-size: 50px; }
-            .modal-content h2 { font-size: 2rem; }
-            .modal-content p { font-size: 1rem; }
+            .banner-content { flex-direction: column; text-align: center; }
+            .banner-text p { margin-bottom: 20px; margin-left: auto; margin-right: auto; }
+            .modal-content { width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; padding: 60px 20px; border: none; }
         }
     </style>
 </head>
@@ -266,13 +228,10 @@
             <h1>VALPRIMOS</h1>
             <div class="subtitulo">RAÍCES DE LEYENDA</div>
         </div>
-
         <nav>
-            <!-- Botón del menú hamburguesa -->
             <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
-            <!-- Contenedor de enlaces -->
             <div class="nav-links" id="nav-links">
-                <a href="valprimos.html" class="activo">Inicio</a>
+                <a href="index.html" class="activo">Inicio</a>
                 <a href="tienda.html">Tienda</a>
                 <a href="jugadores.html">Jugadores</a>
                 <a href="historia.html">Historia</a>
@@ -301,32 +260,25 @@
             <h2>ACTUALIDAD DEL CLUB</h2>
             <div class="grid-noticias">
                 
-                <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.')">
-                    <div>
-                        <span class="fecha-noticia">TEMPORADA 25/26</span>
-                        <h3>Arranque de la Nueva Etapa</h3>
-                        <p>Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.</p>
-                    </div>
+                <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables.')">
+                    <span class="fecha-noticia">TEMPORADA 25/26</span>
+                    <h3>Arranque de la Nueva Etapa</h3>
+                    <p>Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.</p>
                 </article>
 
-                <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.')">
-                    <div>
-                        <span class="fecha-noticia">PRIMER EQUIPO</span>
-                        <h3>Plantilla Cerrada</h3>
-                        <p>Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.</p>
-                    </div>
+                <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos.', 'VER PLANTILLA', 'jugadores.html')">
+                    <span class="fecha-noticia">PRIMER EQUIPO</span>
+                    <h3>Plantilla Cerrada</h3>
+                    <p>Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.</p>
                 </article>
 
-                <article class="noticia" onclick="abrirNoticia('La Grada de Las Colonias', 'COMUNIDAD', 'Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.<br><br>Sabemos que sin vosotros, nada de esto tendría sentido. Por eso, desde la directiva estamos preparando iniciativas para que el Tomás Luis de Victoria sea una auténtica caldera en cada partido. Queremos que las gradas rujan, que los colores inunden el recinto y que, pase lo que pase en el césped, ganemos siempre el partido en la grada.')">
-                    <div>
-                        <span class="fecha-noticia">COMUNIDAD</span>
-                        <h3>La Grada de Las Colonias</h3>
-                        <p>Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.</p>
-                    </div>
+                <article class="noticia" onclick="abrirNoticia('La Grada de Las Colonias', 'COMUNIDAD', 'Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.<br><br>Sabemos que sin vosotros, nada de esto tendría sentido. Por eso, desde la directiva estamos preparando iniciativas para que el Tomás Luis de Victoria sea una auténtica caldera en cada partido.')">
+                    <span class="fecha-noticia">COMUNIDAD</span>
+                    <h3>La Grada de Las Colonias</h3>
+                    <p>Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.</p>
                 </article>
 
             </div>
-            
             <div style="margin-top: 40px;">
                 <a href="noticias.html" class="btn" style="font-size: 1.1rem; padding: 12px 30px;">Ver todas las noticias</a>
             </div>
@@ -349,20 +301,18 @@
         </div>
     </main>
 
-    <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px; font-family: var(--fuente-moderna);">
-        <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
-            VALPRIMOS 2026
-        </div>
+    <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px;">
+        <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px;">VALPRIMOS 2026</div>
         &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
     </footer>
 
-    <!-- MODAL DE NOTICIAS -->
     <div id="modal-noticia" class="modal-overlay" onclick="cerrarNoticia()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="cerrar-modal" onclick="cerrarNoticia()">&times;</span>
-            <span class="fecha-noticia" id="m-news-date">CATEGORÍA</span>
-            <h2 id="m-news-title">Título de la noticia</h2>
-            <p id="m-news-body">Contenido extendido de la noticia...</p>
+            <span class="fecha-noticia" id="m-news-date" style="display:block; margin-bottom:15px; font-size:1rem;"></span>
+            <h2 id="m-news-title" style="margin: 0 0 20px 0; font-family: var(--fuente-titulos); color: #FFF; font-size: 2.5rem; text-transform: uppercase;"></h2>
+            <p id="m-news-body" style="color: #d1d9d4; font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; font-family: var(--fuente-moderna);"></p>
+            <a href="#" id="m-news-link" class="btn" style="display: none; font-size: 1.1rem; padding: 12px 30px; text-align: center;"></a>
         </div>
     </div>
 
@@ -372,66 +322,54 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
+        // Lógica de Scroll ampliada a <= 1024 para incluir iPads
         window.addEventListener('scroll', () => {
-            if (window.innerWidth > 850) {
-                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
-                if (window.scrollY > 40) {
-                    header.classList.add('scrolled');
-                    espaciador.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                    espaciador.classList.remove('scrolled');
-                }
+            if (window.innerWidth > 1024) {
+                if (window.scrollY > 40) { header.classList.add('scrolled'); espaciador.classList.add('scrolled'); } 
+                else { header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); }
             } else {
-                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
-                if (window.scrollY > 40) {
-                    header.classList.add('scrolled');
-                    espaciador.classList.add('scrolled');
-                    headerShrunkMobile = true;
-                }
+                if (window.scrollY > 40) { header.classList.add('scrolled'); espaciador.classList.add('scrolled'); headerShrunkMobile = true; }
             }
         });
 
-        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
-        window.addEventListener('touchstart', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10) {
-                startY = ev.touches[0].clientY;
-            }
-        }, {passive: true});
-
+        // Gestos táctiles aplicados hasta 1024px (iPad/Tablets)
+        window.addEventListener('touchstart', ev => { if (window.innerWidth <= 1024 && window.scrollY <= 10) startY = ev.touches[0].clientY; }, {passive: true});
         window.addEventListener('touchmove', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
-                let currentY = ev.touches[0].clientY;
-                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
-                if (currentY - startY > 40) {
-                    header.classList.remove('scrolled');
-                    espaciador.classList.remove('scrolled');
-                    headerShrunkMobile = false;
-                }
+            if (window.innerWidth <= 1024 && window.scrollY <= 10 && headerShrunkMobile) {
+                if (ev.touches[0].clientY - startY > 40) { header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); headerShrunkMobile = false; }
             }
         }, {passive: true});
 
-        // Alternar Menú Hamburguesa en Móvil
-        function toggleMenu() {
-            document.getElementById('nav-links').classList.toggle('activo');
-        }
-
-        // Funciones del Modal de Noticias
-        function abrirNoticia(titulo, fecha, contenido) {
+        function toggleMenu() { document.getElementById('nav-links').classList.toggle('activo'); }
+        
+        // FUNCIÓN MEJORADA: Soporta texto de botón y URL
+        function abrirNoticia(titulo, fecha, contenido, textoLink = null, urlLink = null) {
             document.getElementById('m-news-title').innerText = titulo;
             document.getElementById('m-news-date').innerText = fecha;
             document.getElementById('m-news-body').innerHTML = contenido;
             
+            const btnEnlace = document.getElementById('m-news-link');
+            if (textoLink && urlLink) {
+                btnEnlace.innerText = textoLink;
+                btnEnlace.href = urlLink;
+                btnEnlace.style.display = 'inline-block';
+            } else {
+                btnEnlace.style.display = 'none';
+            }
+
             document.getElementById('modal-noticia').classList.add('activo');
-            document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function cerrarNoticia() { 
+            document.getElementById('modal-noticia').classList.remove('activo'); 
+            document.body.style.overflow = 'auto'; 
         }
 
-        function cerrarNoticia() {
-            document.getElementById('modal-noticia').classList.remove('activo');
-            document.body.style.overflow = 'auto'; // Restaura el scroll
-        }
+        // Cerrar modal con la tecla Escape
+        window.addEventListener('keydown', (e) => { 
+            if(e.key === 'Escape') cerrarNoticia(); 
+        });
     </script>
-
 </body>
 </html>
