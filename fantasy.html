@@ -66,11 +66,10 @@
         .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .header-container.scrolled nav { padding: 10px 0; }
 
-        /* ESPACIADOR AUMENTADO */
         .espaciador { height: 580px; transition: var(--transicion-fluida); }
         .espaciador.scrolled { height: 220px; }
 
-        /* --- FANTASY LAYOUT CON MÁS MARGEN SUPERIOR --- */
+        /* --- FANTASY LAYOUT --- */
         main { max-width: 1200px; margin: 60px auto 60px; padding: 0 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start; }
         
         .titulo-seccion { font-family: var(--fuente-titulos); color: var(--dorado); font-size: 3rem; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; text-shadow: var(--sombra-texto); }
@@ -301,7 +300,6 @@
         const espaciador = document.getElementById('espaciador-fantasma');
         let headerShrunkMobile = false; let startY = 0;
         
-        // Puntos de corte para la animación del escudo
         const puntoDeCorteBajar = 180;
         const puntoDeCorteSubir = 40;
 
@@ -545,11 +543,16 @@
             });
         };
 
-        // --- LECTURA DEL RANKING (AHORA LEE COLUMNA A Y B DIRECTAMENTE) ---
+        // --- LECTURA DEL RANKING WEB (COLUMNA A Y B) ---
         async function cargarRanking() {
-            const urlTSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
+            
+            // ¡¡¡CAMBIA ESTE ENLACE!!!
+            // Debes publicar en la web tu nueva pestaña del ranking (Archivo > Compartir > Publicar en la web > Valores separados por tabuladores)
+            const urlTSV = "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV";
             
             try {
+                if(urlTSV === "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV") throw new Error("Falta configurar el enlace TSV");
+
                 const res = await fetch(urlTSV);
                 
                 if (!res.ok) {
@@ -571,13 +574,19 @@
                     return;
                 }
 
+                // Lee directamente la Columna A (0) como Manager y la Columna B (1) como Puntos
                 let ranking = filas.map(f => {
                     const col = f.split('\t');
                     return { 
                         manager: col[0] ? col[0].trim() : "Desconocido", 
                         puntos: parseInt(col[1]) || 0 
                     };
-                }).filter(eq => eq.manager !== "Mánager" && eq.manager !== "Nombre").sort((a,b) => b.puntos - a.puntos);
+                }).filter(eq => eq.manager && eq.manager !== "Mánager" && eq.manager !== "Nombre").sort((a,b) => b.puntos - a.puntos);
+
+                if (ranking.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='3' class='status-message'>No hay mánagers válidos en la clasificación.</td></tr>";
+                    return;
+                }
 
                 ranking.forEach((eq, i) => {
                     const tr = document.createElement('tr');
@@ -595,7 +604,7 @@
                 
             } catch (error) { 
                 console.error("Detalle del error:", error.message);
-                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='3' class='status-message' style='color: #E8C15A;'>❌ No se pudo leer el ranking.<br><span style='font-size:0.8rem; color:#ccc'>Asegúrate de ejecutar la web desde un servidor online o revisa los permisos de Sheets.</span></td></tr>`; 
+                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='3' class='status-message' style='color: #E8C15A;'>❌ No se pudo leer el ranking.<br><span style='font-size:0.8rem; color:#ccc'>Recuerda pegar tu nuevo enlace TSV publicado en el código (línea 390).</span></td></tr>`; 
             }
         }
 
