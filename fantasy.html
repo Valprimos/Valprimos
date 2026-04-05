@@ -281,7 +281,6 @@
         // LÓGICA DE IMÁGENES DINÁMICAS: Busca "NombreDelJugador.jpg"
         function getFotoJugador(nombre) {
             if (!nombre || nombre === "") return "escudo.png";
-            // Eliminamos espacios extra si los hubiera
             const nombreLimpio = nombre.trim();
             return `${nombreLimpio}.jpg`;
         }
@@ -406,8 +405,7 @@
         let datosAlineaciones = [];
         async function cargarRanking() {
             const urlRank = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
-            // CUANDO TENGAS EL HISTORIAL, PEGA AQUÍ EL ENLACE TSV
-            const urlHist = "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV_DEL_HISTORIAL";
+            const urlHist = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=1190188212&single=true&output=tsv";
 
             try {
                 const r1 = await fetch(urlRank); const t1 = await r1.text();
@@ -427,13 +425,12 @@
                     tbody.appendChild(tr);
                 });
 
-                if (urlHist !== "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV_DEL_HISTORIAL") {
-                    const r2 = await fetch(urlHist); const t2 = await r2.text();
-                    datosAlineaciones = t2.split(/\r?\n/).slice(1).map(f => {
-                        const c = f.split('\t');
-                        return { m: c[0].trim(), jor: c[1], j1: c[2], p1: c[3], j2: c[4], p2: c[5], j3: c[6], p3: c[7], j4: c[8], p4: c[9], j5: c[10], p5: c[11] };
-                    });
-                }
+                const r2 = await fetch(urlHist); const t2 = await r2.text();
+                datosAlineaciones = t2.split(/\r?\n/).slice(1).map(f => {
+                    const c = f.split('\t');
+                    return { m: c[0] ? c[0].trim() : "", jor: c[1], j1: c[2], p1: c[3], j2: c[4], p2: c[5], j3: c[6], p3: c[7], j4: c[8], p4: c[9], j5: c[10], p5: c[11] };
+                }).filter(d => d.m !== "");
+                
             } catch (e) { console.error(e); }
         }
 
@@ -441,7 +438,7 @@
             document.getElementById('modalManagerName').innerText = m;
             const container = document.getElementById('historialContainer'); container.innerHTML = "";
             const hist = datosAlineaciones.filter(d => d.m === m);
-            if (hist.length === 0) { container.innerHTML = "<p style='color:#ccc; text-align:center;'>Pendiente de actualización del historial.</p>"; } 
+            if (hist.length === 0) { container.innerHTML = "<p style='color:#ccc; text-align:center;'>Aún no hay datos de alineaciones para este mánager.</p>"; } 
             else {
                 hist.forEach(d => {
                     const tot = [d.p1, d.p2, d.p3, d.p4, d.p5].reduce((a, b) => a + parseInt(b || 0), 0);
@@ -450,7 +447,7 @@
                                       <div class="jornada-grid">
                                         ${[1,2,3,4,5].map(i => `
                                             <div class="jugador-mini">
-                                                <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador">
+                                                <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador" onerror="this.src='escudo.png'">
                                                 <span class="nombre-jugador">${d['j'+i] || '-'}</span>
                                                 <span class="pts-jugador">${d['p'+i] || '0'}</span>
                                             </div>`).join('')}
