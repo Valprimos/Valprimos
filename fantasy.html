@@ -66,11 +66,12 @@
         .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .header-container.scrolled nav { padding: 10px 0; }
 
-        .espaciador { height: 550px; transition: var(--transicion-fluida); }
+        /* ESPACIADOR AUMENTADO */
+        .espaciador { height: 580px; transition: var(--transicion-fluida); }
         .espaciador.scrolled { height: 220px; }
 
-        /* --- FANTASY LAYOUT --- */
-        main { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start; }
+        /* --- FANTASY LAYOUT CON MÁS MARGEN SUPERIOR --- */
+        main { max-width: 1200px; margin: 60px auto 60px; padding: 0 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start; }
         
         .titulo-seccion { font-family: var(--fuente-titulos); color: var(--dorado); font-size: 3rem; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; text-shadow: var(--sombra-texto); }
         .desc-text { color: #d1d9d4; line-height: 1.6; margin-bottom: 30px; font-size: 1.05rem; }
@@ -125,6 +126,8 @@
         }
         .player-item:hover { background: rgba(232, 193, 90, 0.2); }
         .player-item.disabled { opacity: 0.3; cursor: not-allowed; }
+        .player-item.active { background: rgba(232, 193, 90, 0.4); border-color: #FFF; border-style: solid; } 
+        
         .p-number { font-family: var(--fuente-deportiva); color: var(--dorado); font-size: 1.5rem; min-width: 30px; text-align: center;}
         .p-name { font-weight: 600; color: #FFF; font-size: 1rem; text-transform: uppercase;}
 
@@ -207,7 +210,7 @@
     <main>
         <div>
             <h2 class="titulo-seccion">El Quinteto Ideal</h2>
-            <p class="desc-text">Configura tu alineación de 5 jugadores para esta jornada. Cada cuenta de correo solo puede enviar un equipo válido.</p>
+            <p class="desc-text">Configura tu alineación de 5 jugadores. Solo computará el último envío realizado por correo para cada jornada.</p>
 
             <div class="pitch-container">
                 <div class="pitch-row">
@@ -235,6 +238,11 @@
                             <option value="Jornada 3">Jornada 3</option>
                             <option value="Jornada 4">Jornada 4</option>
                             <option value="Jornada 5">Jornada 5</option>
+                            <option value="Jornada 6">Jornada 6</option>
+                            <option value="Jornada 7">Jornada 7</option>
+                            <option value="Jornada 8">Jornada 8</option>
+                            <option value="Jornada 9">Jornada 9</option>
+                            <option value="Jornada 10">Jornada 10</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -242,10 +250,9 @@
                     </div>
                     <div class="input-group">
                         <input type="email" id="userEmail" placeholder="Tu cuenta de correo electrónico" required>
-                        <span class="nota-email">* El último envío por jornada será el que cuente.</span>
                     </div>
                     <button type="submit" class="btn-enviar" id="btnSubmit" disabled>ENVIAR ALINEACIÓN (0/5)</button>
-                    <p id="msgForm" style="color: var(--dorado); font-size: 0.85rem; text-align: center; margin-top: 10px; display: none;">¡Alineación registrada! Ya está en nuestra base de datos.</p>
+                    <p id="msgForm" style="color: var(--dorado); font-size: 0.85rem; text-align: center; margin-top: 10px; display: none; font-weight: 600;">¡Alineación registrada! Ya está en nuestra base de datos.</p>
                 </form>
             </div>
         </div>
@@ -253,7 +260,7 @@
         <div>
             <div class="players-panel">
                 <h3>Plantilla Disponible</h3>
-                <p class="instruccion" id="instruccionText">Toca una posición vacía en el campo y luego elige al jugador aquí.</p>
+                <p class="instruccion" id="instruccionText">Toca una posición vacía o elige primero al jugador.</p>
                 
                 <div id="playersList">
                 </div>
@@ -268,13 +275,12 @@
                         <tr>
                             <th style="text-align: center; width: 80px;">Pos</th>
                             <th style="text-align: left;">Mánager / Equipo</th>
-                            <th style="text-align: center; width: 130px;">Jornada</th>
-                            <th style="text-align: center; width: 130px;">Total</th>
+                            <th style="text-align: center; width: 130px;">Puntos Totales</th>
                         </tr>
                     </thead>
                     <tbody id="rankingBody">
                         <tr>
-                            <td colspan="4" class="status-message">
+                            <td colspan="3" class="status-message">
                                 ⏳ Consultando el VAR y conectando con el campo...
                             </td>
                         </tr>
@@ -286,30 +292,37 @@
 
     <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px;">
         <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px;">VALPRIMOS 2026</div>
-        &copy; MÁS QUE UN EQUIPO UNA PIÑA
+        &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
     </footer>
 
     <script>
+        // --- LÓGICA DE INTERFAZ Y RESPONSIVE ---
         const header = document.getElementById('main-header');
         const espaciador = document.getElementById('espaciador-fantasma');
         let headerShrunkMobile = false; let startY = 0;
         
-        // Punto de corte ajustado a 180px para que tarde más en encogerse
-        const puntoDeCorte = 180;
+        // Puntos de corte para la animación del escudo
+        const puntoDeCorteBajar = 180;
+        const puntoDeCorteSubir = 40;
 
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 1024) {
-                if (window.scrollY > puntoDeCorte) { 
-                    header.classList.add('scrolled'); espaciador.classList.add('scrolled'); 
-                } 
-                else { 
-                    header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); 
+                if (window.scrollY > puntoDeCorteBajar) { 
+                    header.classList.add('scrolled'); 
+                    espaciador.classList.add('scrolled'); 
+                } else if (window.scrollY < puntoDeCorteSubir) { 
+                    header.classList.remove('scrolled'); 
+                    espaciador.classList.remove('scrolled'); 
                 }
             } else {
-                if (window.scrollY > puntoDeCorte) { 
-                    header.classList.add('scrolled'); espaciador.classList.add('scrolled'); headerShrunkMobile = true; 
-                } else if (window.scrollY < 10) {
-                    header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); headerShrunkMobile = false;
+                if (window.scrollY > puntoDeCorteBajar) { 
+                    header.classList.add('scrolled'); 
+                    espaciador.classList.add('scrolled'); 
+                    headerShrunkMobile = true; 
+                } else if (window.scrollY < puntoDeCorteSubir) {
+                    header.classList.remove('scrolled'); 
+                    espaciador.classList.remove('scrolled'); 
+                    headerShrunkMobile = false;
                 }
             }
         });
@@ -325,6 +338,7 @@
 
         function toggleMenu() { document.getElementById('nav-links').classList.toggle('activo'); }
 
+        // --- LÓGICA FANTASY ---
         const jugadoresDb = [
             { id: "00", name: "Álvaro", number: "00" },
             { id: "10", name: "Daniel", number: "10" },
@@ -342,6 +356,7 @@
         ];
 
         let activeSlot = null;
+        let activePlayer = null; 
         let selectedPlayers = []; 
         const totalSlots = 5; 
 
@@ -350,10 +365,15 @@
             container.innerHTML = '';
             jugadoresDb.forEach(player => {
                 const isSelected = selectedPlayers.includes(player.id);
+                const isActive = activePlayer && activePlayer.id === player.id; 
+
                 const div = document.createElement('div');
-                div.className = `player-item ${isSelected ? 'disabled' : ''}`;
+                div.className = `player-item ${isSelected ? 'disabled' : ''} ${isActive ? 'active' : ''}`;
                 div.innerHTML = `<span class="p-number">${player.number}</span><span class="p-name">${player.name}</span>`;
-                if (!isSelected) { div.onclick = () => assignPlayer(player); }
+                
+                if (!isSelected) { 
+                    div.onclick = () => handlePlayerSelection(player); 
+                }
                 container.appendChild(div);
             });
             updateSubmitButton();
@@ -361,41 +381,114 @@
 
         function selectSlot(slotElement) {
             document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+            
             if (slotElement.dataset.playerId) {
-                selectedPlayers = selectedPlayers.filter(id => id != slotElement.dataset.playerId);
+                const idToRemove = slotElement.dataset.playerId;
+                selectedPlayers = selectedPlayers.filter(id => id != idToRemove);
+                
                 slotElement.innerHTML = `<span class="icon">➕</span><span class="name">JUGADOR</span>`;
                 slotElement.classList.remove('filled');
                 delete slotElement.dataset.playerId;
-                renderPlayersList();
+                
+                renderPlayersList(); 
+                updateInstructionText("default");
+                return;
             }
-            slotElement.classList.add('active');
+
             activeSlot = slotElement;
-            document.getElementById('instruccionText').innerText = `Selecciona a un jugador de la lista.`;
-            document.getElementById('instruccionText').style.color = "var(--dorado)";
+            slotElement.classList.add('active'); 
+
+            if (activePlayer) {
+                completarAsignacion(activeSlot, activePlayer);
+            } else {
+                updateInstructionText("slotFirst");
+            }
         }
 
-        function assignPlayer(player) {
-            if (!activeSlot) { alert("Primero toca un hueco vacío en el campo."); return; }
-            activeSlot.dataset.playerId = player.id;
-            activeSlot.classList.add('filled');
-            activeSlot.classList.remove('active');
-            activeSlot.innerHTML = `<span class="dorsal">${player.number}</span><span class="name">${player.name}</span>`;
-            selectedPlayers.push(player.id);
-            activeSlot = null;
-            
-            if(selectedPlayers.length < totalSlots) {
-                document.getElementById('instruccionText').innerText = "Toca otro hueco vacío.";
-                document.getElementById('instruccionText').style.color = "#ccc";
+        function handlePlayerSelection(player) {
+            activePlayer = player;
+            renderPlayersList(); 
+
+            if (activeSlot) {
+                completarAsignacion(activeSlot, activePlayer);
             } else {
-                document.getElementById('instruccionText').innerText = "¡Alineación completada!";
-                document.getElementById('instruccionText').style.color = "var(--dorado)";
+                updateInstructionText("playerFirst");
             }
-            renderPlayersList();
+        }
+
+        function completarAsignacion(slot, player) {
+            slot.dataset.playerId = player.id;
+            slot.classList.add('filled');
+            slot.classList.remove('active'); 
+            slot.innerHTML = `<span class="dorsal">${player.number}</span><span class="name">${player.name}</span>`;
+            
+            selectedPlayers.push(player.id);
+            
+            activeSlot = null;
+            activePlayer = null;
+            
+            renderPlayersList(); 
+            updateInstructionText("assigned");
+        }
+
+        function updateInstructionText(state) {
+            const txt = document.getElementById('instruccionText');
+            switch (state) {
+                case "slotFirst":
+                    txt.innerText = "Posición elegida. Ahora toca un jugador de la plantilla.";
+                    txt.style.color = "var(--dorado)";
+                    break;
+                case "playerFirst":
+                    txt.innerText = `${activePlayer.name} seleccionado. Toca una posición vacía en el campo.`;
+                    txt.style.color = "var(--dorado)";
+                    break;
+                case "assigned":
+                    if(selectedPlayers.length < totalSlots) {
+                        txt.innerText = "Toca otra posición vacía o elige otro jugador.";
+                        txt.style.color = "#ccc";
+                    } else {
+                        txt.innerText = "¡Alineación completada!";
+                        txt.style.color = "var(--dorado)";
+                    }
+                    break;
+                default:
+                    txt.innerText = "Toca una posición vacía o elige primero al jugador.";
+                    txt.style.color = "#ccc";
+            }
+        }
+
+        // --- PREVENCIÓN DE DOBLE ENVÍO ---
+        const jornadaSelect = document.getElementById('jornadaSelect');
+        jornadaSelect.addEventListener('change', checkJornadaSubmission);
+
+        function checkJornadaSubmission() {
+            const selectedJ = jornadaSelect.value;
+            const btn = document.getElementById('btnSubmit');
+            const msg = document.getElementById('msgForm');
+            
+            if (localStorage.getItem('valprimos_' + selectedJ)) {
+                btn.disabled = true;
+                btn.innerText = "YA ENVIASTE ESTA JORNADA";
+                msg.style.display = "block";
+                msg.innerText = "Ya has registrado una alineación para esta jornada desde este dispositivo.";
+                msg.style.color = "#ff6b6b"; 
+            } else {
+                msg.style.display = "none";
+                updateSubmitButton(); 
+            }
         }
 
         function updateSubmitButton() {
+            const selectedJ = document.getElementById('jornadaSelect') ? document.getElementById('jornadaSelect').value : null;
             const btn = document.getElementById('btnSubmit');
             const count = selectedPlayers.length;
+
+            if (selectedJ && localStorage.getItem('valprimos_' + selectedJ)) {
+                btn.disabled = true;
+                btn.innerText = "YA ENVIASTE ESTA JORNADA";
+                return;
+            }
+
             if (count === totalSlots) {
                 btn.disabled = false;
                 btn.innerText = "ENVIAR ALINEACIÓN";
@@ -409,13 +502,15 @@
         document.getElementById('fantasyForm').onsubmit = (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
+            const selectedJ = document.getElementById('jornadaSelect').value;
+
             btn.innerText = "ENVIANDO ALINEACIÓN...";
             btn.disabled = true;
             
             const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfu549aSdvoviKnc26R6RVnuMJGu7jaVRqEz5QsCUCOn1fp2Q/formResponse";
             const formData = new URLSearchParams();
             
-            formData.append("entry.2139151321", document.getElementById('jornadaSelect').value);
+            formData.append("entry.2139151321", selectedJ);
             formData.append("entry.1853736198", document.getElementById('userName').value);
             formData.append("entry.1280453686", document.getElementById('userEmail').value);
             
@@ -436,8 +531,12 @@
                 body: formData.toString()
             })
             .then(() => {
+                localStorage.setItem('valprimos_' + selectedJ, "enviado");
+                
                 btn.style.display = "none";
                 document.getElementById('msgForm').style.display = "block";
+                document.getElementById('msgForm').innerText = "¡Alineación registrada! Ya está en nuestra base de datos.";
+                document.getElementById('msgForm').style.color = "var(--dorado)";
             })
             .catch((error) => {
                 alert("Hubo un error de conexión. Inténtalo de nuevo.");
@@ -446,7 +545,7 @@
             });
         };
 
-        // --- LECTURA DEL RANKING DESDE GOOGLE SHEETS A PRUEBA DE FALLOS ---
+        // --- LECTURA DEL RANKING (AHORA LEE COLUMNA A Y B DIRECTAMENTE) ---
         async function cargarRanking() {
             const urlTSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
             
@@ -468,18 +567,17 @@
                 tbody.innerHTML = '';
                 
                 if (filas.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='4' class='status-message'>No hay equipos en la clasificación todavía.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='3' class='status-message'>No hay equipos en la clasificación todavía.</td></tr>";
                     return;
                 }
 
                 let ranking = filas.map(f => {
                     const col = f.split('\t');
                     return { 
-                        manager: col[0] || "Desconocido", 
-                        jActual: col[1] || "0", 
-                        total: parseInt(col[2]) || 0 
+                        manager: col[0] ? col[0].trim() : "Desconocido", 
+                        puntos: parseInt(col[1]) || 0 
                     };
-                }).filter(eq => eq.manager !== "Mánager" && eq.manager !== "Nombre").sort((a,b) => b.total - a.total);
+                }).filter(eq => eq.manager !== "Mánager" && eq.manager !== "Nombre").sort((a,b) => b.puntos - a.puntos);
 
                 ranking.forEach((eq, i) => {
                     const tr = document.createElement('tr');
@@ -490,15 +588,14 @@
                     tr.innerHTML = `
                         <td style="text-align: center; font-weight: 800;">${pos}</td>
                         <td style="text-align: left;">${eq.manager}</td>
-                        <td style="text-align: center; color: #ccc;">${eq.jActual}</td>
-                        <td style="text-align: center; font-size: 1.1rem; color: var(--dorado); font-weight: bold;">${eq.total}</td>
+                        <td style="text-align: center; font-size: 1.1rem; color: var(--dorado); font-weight: bold;">${eq.puntos}</td>
                     `;
                     tbody.appendChild(tr);
                 });
                 
             } catch (error) { 
                 console.error("Detalle del error:", error.message);
-                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='4' class='status-message' style='color: #E8C15A;'>❌ No se pudo leer el ranking.<br><span style='font-size:0.8rem; color:#ccc'>Asegúrate de ejecutar la web desde un servidor online o revisa los permisos de Sheets.</span></td></tr>`; 
+                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='3' class='status-message' style='color: #E8C15A;'>❌ No se pudo leer el ranking.<br><span style='font-size:0.8rem; color:#ccc'>Asegúrate de ejecutar la web desde un servidor online o revisa los permisos de Sheets.</span></td></tr>`; 
             }
         }
 
