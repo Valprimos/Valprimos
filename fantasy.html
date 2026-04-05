@@ -209,7 +209,7 @@
     <main>
         <div>
             <h2 class="titulo-seccion">El Quinteto Ideal</h2>
-            <p class="desc-text">Configura tu alineación de 5 jugadores. Solo computará el último envío realizado por correo para cada jornada.</p>
+            <p class="desc-text">Con resina en la sangre y madera de campeones, configura tu alineación para esta jornada. Solo computará el último envío realizado por correo para cada mánager.</p>
 
             <div class="pitch-container">
                 <div class="pitch-row">
@@ -295,48 +295,31 @@
     </footer>
 
     <script>
-        // --- LÓGICA DE INTERFAZ Y RESPONSIVE ---
         const header = document.getElementById('main-header');
         const espaciador = document.getElementById('espaciador-fantasma');
         let headerShrunkMobile = false; let startY = 0;
-        
         const puntoDeCorteBajar = 180;
         const puntoDeCorteSubir = 40;
 
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 1024) {
-                if (window.scrollY > puntoDeCorteBajar) { 
-                    header.classList.add('scrolled'); 
-                    espaciador.classList.add('scrolled'); 
-                } else if (window.scrollY < puntoDeCorteSubir) { 
-                    header.classList.remove('scrolled'); 
-                    espaciador.classList.remove('scrolled'); 
-                }
+                if (window.scrollY > puntoDeCorteBajar) { header.classList.add('scrolled'); espaciador.classList.add('scrolled'); } 
+                else if (window.scrollY < puntoDeCorteSubir) { header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); }
             } else {
-                if (window.scrollY > puntoDeCorteBajar) { 
-                    header.classList.add('scrolled'); 
-                    espaciador.classList.add('scrolled'); 
-                    headerShrunkMobile = true; 
-                } else if (window.scrollY < puntoDeCorteSubir) {
-                    header.classList.remove('scrolled'); 
-                    espaciador.classList.remove('scrolled'); 
-                    headerShrunkMobile = false;
-                }
+                if (window.scrollY > puntoDeCorteBajar) { header.classList.add('scrolled'); espaciador.classList.add('scrolled'); headerShrunkMobile = true; } 
+                else if (window.scrollY < puntoDeCorteSubir) { header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); headerShrunkMobile = false; }
             }
         });
 
         window.addEventListener('touchstart', ev => { if (window.innerWidth <= 1024 && window.scrollY <= 10) startY = ev.touches[0].clientY; }, {passive: true});
         window.addEventListener('touchmove', ev => {
             if (window.innerWidth <= 1024 && window.scrollY <= 10 && headerShrunkMobile) {
-                if (ev.touches[0].clientY - startY > 40) { 
-                    header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); headerShrunkMobile = false; 
-                }
+                if (ev.touches[0].clientY - startY > 40) { header.classList.remove('scrolled'); espaciador.classList.remove('scrolled'); headerShrunkMobile = false; }
             }
         }, {passive: true});
 
         function toggleMenu() { document.getElementById('nav-links').classList.toggle('activo'); }
 
-        // --- LÓGICA FANTASY ---
         const jugadoresDb = [
             { id: "00", name: "Álvaro", number: "00" },
             { id: "10", name: "Daniel", number: "10" },
@@ -364,14 +347,10 @@
             jugadoresDb.forEach(player => {
                 const isSelected = selectedPlayers.includes(player.id);
                 const isActive = activePlayer && activePlayer.id === player.id; 
-
                 const div = document.createElement('div');
                 div.className = `player-item ${isSelected ? 'disabled' : ''} ${isActive ? 'active' : ''}`;
                 div.innerHTML = `<span class="p-number">${player.number}</span><span class="p-name">${player.name}</span>`;
-                
-                if (!isSelected) { 
-                    div.onclick = () => handlePlayerSelection(player); 
-                }
+                if (!isSelected) { div.onclick = () => handlePlayerSelection(player); }
                 container.appendChild(div);
             });
             updateSubmitButton();
@@ -379,39 +358,27 @@
 
         function selectSlot(slotElement) {
             document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
-            
             if (slotElement.dataset.playerId) {
                 const idToRemove = slotElement.dataset.playerId;
                 selectedPlayers = selectedPlayers.filter(id => id != idToRemove);
-                
                 slotElement.innerHTML = `<span class="icon">➕</span><span class="name">JUGADOR</span>`;
                 slotElement.classList.remove('filled');
                 delete slotElement.dataset.playerId;
-                
                 renderPlayersList(); 
                 updateInstructionText("default");
                 return;
             }
-
             activeSlot = slotElement;
             slotElement.classList.add('active'); 
-
-            if (activePlayer) {
-                completarAsignacion(activeSlot, activePlayer);
-            } else {
-                updateInstructionText("slotFirst");
-            }
+            if (activePlayer) { completarAsignacion(activeSlot, activePlayer); } 
+            else { updateInstructionText("slotFirst"); }
         }
 
         function handlePlayerSelection(player) {
             activePlayer = player;
             renderPlayersList(); 
-
-            if (activeSlot) {
-                completarAsignacion(activeSlot, activePlayer);
-            } else {
-                updateInstructionText("playerFirst");
-            }
+            if (activeSlot) { completarAsignacion(activeSlot, activePlayer); } 
+            else { updateInstructionText("playerFirst"); }
         }
 
         function completarAsignacion(slot, player) {
@@ -419,43 +386,24 @@
             slot.classList.add('filled');
             slot.classList.remove('active'); 
             slot.innerHTML = `<span class="dorsal">${player.number}</span><span class="name">${player.name}</span>`;
-            
             selectedPlayers.push(player.id);
-            
-            activeSlot = null;
-            activePlayer = null;
-            
-            renderPlayersList(); 
-            updateInstructionText("assigned");
+            activeSlot = null; activePlayer = null;
+            renderPlayersList(); updateInstructionText("assigned");
         }
 
         function updateInstructionText(state) {
             const txt = document.getElementById('instruccionText');
             switch (state) {
-                case "slotFirst":
-                    txt.innerText = "Posición elegida. Ahora toca un jugador de la plantilla.";
-                    txt.style.color = "var(--dorado)";
-                    break;
-                case "playerFirst":
-                    txt.innerText = `${activePlayer.name} seleccionado. Toca una posición vacía en el campo.`;
-                    txt.style.color = "var(--dorado)";
-                    break;
+                case "slotFirst": txt.innerText = "Posición elegida. Ahora toca un jugador de la plantilla."; txt.style.color = "var(--dorado)"; break;
+                case "playerFirst": txt.innerText = `${activePlayer.name} seleccionado. Toca una posición vacía en el campo.`; txt.style.color = "var(--dorado)"; break;
                 case "assigned":
-                    if(selectedPlayers.length < totalSlots) {
-                        txt.innerText = "Toca otra posición vacía o elige otro jugador.";
-                        txt.style.color = "#ccc";
-                    } else {
-                        txt.innerText = "¡Alineación completada!";
-                        txt.style.color = "var(--dorado)";
-                    }
+                    if(selectedPlayers.length < totalSlots) { txt.innerText = "Toca otra posición vacía o elige otro jugador."; txt.style.color = "#ccc"; } 
+                    else { txt.innerText = "¡Alineación completada!"; txt.style.color = "var(--dorado)"; }
                     break;
-                default:
-                    txt.innerText = "Toca una posición vacía o elige primero al jugador.";
-                    txt.style.color = "#ccc";
+                default: txt.innerText = "Toca una posición vacía o elige primero al jugador."; txt.style.color = "#ccc";
             }
         }
 
-        // --- PREVENCIÓN DE DOBLE ENVÍO ---
         const jornadaSelect = document.getElementById('jornadaSelect');
         jornadaSelect.addEventListener('change', checkJornadaSubmission);
 
@@ -463,154 +411,76 @@
             const selectedJ = jornadaSelect.value;
             const btn = document.getElementById('btnSubmit');
             const msg = document.getElementById('msgForm');
-            
             if (localStorage.getItem('valprimos_' + selectedJ)) {
-                btn.disabled = true;
-                btn.innerText = "YA ENVIASTE ESTA JORNADA";
-                msg.style.display = "block";
-                msg.innerText = "Ya has registrado una alineación para esta jornada desde este dispositivo.";
-                msg.style.color = "#ff6b6b"; 
-            } else {
-                msg.style.display = "none";
-                updateSubmitButton(); 
-            }
+                btn.disabled = true; btn.innerText = "YA ENVIASTE ESTA JORNADA";
+                msg.style.display = "block"; msg.innerText = "Ya has registrado una alineación para esta jornada desde este dispositivo."; msg.style.color = "#ff6b6b"; 
+            } else { msg.style.display = "none"; updateSubmitButton(); }
         }
 
         function updateSubmitButton() {
-            const selectedJ = document.getElementById('jornadaSelect') ? document.getElementById('jornadaSelect').value : null;
+            const selectedJ = document.getElementById('jornadaSelect').value;
             const btn = document.getElementById('btnSubmit');
             const count = selectedPlayers.length;
-
-            if (selectedJ && localStorage.getItem('valprimos_' + selectedJ)) {
-                btn.disabled = true;
-                btn.innerText = "YA ENVIASTE ESTA JORNADA";
-                return;
-            }
-
-            if (count === totalSlots) {
-                btn.disabled = false;
-                btn.innerText = "ENVIAR ALINEACIÓN";
-            } else {
-                btn.disabled = true;
-                btn.innerText = `SELECCIONA JUGADORES (${count}/${totalSlots})`;
-            }
+            if (selectedJ && localStorage.getItem('valprimos_' + selectedJ)) { btn.disabled = true; btn.innerText = "YA ENVIASTE ESTA JORNADA"; return; }
+            if (count === totalSlots) { btn.disabled = false; btn.innerText = "ENVIAR ALINEACIÓN"; } 
+            else { btn.disabled = true; btn.innerText = `SELECCIONA JUGADORES (${count}/${totalSlots})`; }
         }
 
-        // --- CONEXIÓN DE ENVÍO AL FORMULARIO ---
         document.getElementById('fantasyForm').onsubmit = (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
             const selectedJ = document.getElementById('jornadaSelect').value;
-
-            btn.innerText = "ENVIANDO ALINEACIÓN...";
-            btn.disabled = true;
-            
+            btn.innerText = "ENVIANDO ALINEACIÓN..."; btn.disabled = true;
             const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfu549aSdvoviKnc26R6RVnuMJGu7jaVRqEz5QsCUCOn1fp2Q/formResponse";
             const formData = new URLSearchParams();
-            
             formData.append("entry.2139151321", selectedJ);
             formData.append("entry.1853736198", document.getElementById('userName').value);
             formData.append("entry.1280453686", document.getElementById('userEmail').value);
-            
-            const nombresJugadores = selectedPlayers.map(id => {
-                return jugadoresDb.find(j => j.id === id).name;
-            });
-
-            formData.append("entry.1045844309", nombresJugadores[0]); 
-            formData.append("entry.58283155", nombresJugadores[1]); 
-            formData.append("entry.2039320572", nombresJugadores[2]); 
-            formData.append("entry.1730106392", nombresJugadores[3]); 
+            const nombresJugadores = selectedPlayers.map(id => jugadoresDb.find(j => j.id === id).name);
+            formData.append("entry.1045844309", nombresJugadores[0]); formData.append("entry.58283155", nombresJugadores[1]); 
+            formData.append("entry.2039320572", nombresJugadores[2]); formData.append("entry.1730106392", nombresJugadores[3]); 
             formData.append("entry.1594566996", nombresJugadores[4]); 
-
-            fetch(formURL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData.toString()
-            })
+            fetch(formURL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: formData.toString() })
             .then(() => {
                 localStorage.setItem('valprimos_' + selectedJ, "enviado");
-                
-                btn.style.display = "none";
-                document.getElementById('msgForm').style.display = "block";
+                btn.style.display = "none"; document.getElementById('msgForm').style.display = "block";
                 document.getElementById('msgForm').innerText = "¡Alineación registrada! Ya está en nuestra base de datos.";
-                document.getElementById('msgForm').style.color = "var(--dorado)";
             })
-            .catch((error) => {
-                alert("Hubo un error de conexión. Inténtalo de nuevo.");
-                btn.innerText = "REINTENTAR";
-                btn.disabled = false;
-            });
+            .catch(() => { alert("Hubo un error de conexión."); btn.innerText = "REINTENTAR"; btn.disabled = false; });
         };
 
-        // --- LECTURA DEL RANKING WEB (COLUMNA A Y B) ---
         async function cargarRanking() {
-            
-            // ¡¡¡CAMBIA ESTE ENLACE!!!
-            // Debes publicar en la web tu nueva pestaña del ranking (Archivo > Compartir > Publicar en la web > Valores separados por tabuladores)
-            const urlTSV = "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV";
+            // Enlace TSV generado al publicar la pestaña de ranking
+            const urlTSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
             
             try {
-                if(urlTSV === "AQUÍ_PEGA_TU_NUEVO_ENLACE_TSV") throw new Error("Falta configurar el enlace TSV");
-
                 const res = await fetch(urlTSV);
-                
-                if (!res.ok) {
-                    throw new Error("El Excel no es público o la URL es incorrecta.");
-                }
-
+                if (!res.ok) throw new Error("Error en red");
                 const tsv = await res.text();
-                
-                if (tsv.includes("<!DOCTYPE html>")) {
-                    throw new Error("El enlace redirige a una página web. Comprueba los permisos de publicación.");
-                }
-
                 const filas = tsv.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
-                const tbody = document.getElementById('rankingBody'); 
-                tbody.innerHTML = '';
+                const tbody = document.getElementById('rankingBody'); tbody.innerHTML = '';
                 
-                if (filas.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='3' class='status-message'>No hay equipos en la clasificación todavía.</td></tr>";
-                    return;
-                }
+                if (filas.length === 0) { tbody.innerHTML = "<tr><td colspan='3' class='status-message'>Clasificación vacía.</td></tr>"; return; }
 
-                // Lee directamente la Columna A (0) como Manager y la Columna B (1) como Puntos
                 let ranking = filas.map(f => {
                     const col = f.split('\t');
-                    return { 
-                        manager: col[0] ? col[0].trim() : "Desconocido", 
-                        puntos: parseInt(col[1]) || 0 
-                    };
-                }).filter(eq => eq.manager && eq.manager !== "Mánager" && eq.manager !== "Nombre").sort((a,b) => b.puntos - a.puntos);
-
-                if (ranking.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='3' class='status-message'>No hay mánagers válidos en la clasificación.</td></tr>";
-                    return;
-                }
+                    return { manager: col[0] ? col[0].trim() : "", puntos: parseInt(col[1]) || 0 };
+                }).filter(eq => eq.manager && eq.manager.toLowerCase() !== "mánager").sort((a,b) => b.puntos - a.puntos);
 
                 ranking.forEach((eq, i) => {
                     const tr = document.createElement('tr');
                     let pos = i + 1; 
-                    if(i === 0) pos = "🥇"; 
-                    if(i === 1) pos = "🥈"; 
-                    if(i === 2) pos = "🥉";
-                    tr.innerHTML = `
-                        <td style="text-align: center; font-weight: 800;">${pos}</td>
-                        <td style="text-align: left;">${eq.manager}</td>
-                        <td style="text-align: center; font-size: 1.1rem; color: var(--dorado); font-weight: bold;">${eq.puntos}</td>
-                    `;
+                    if(i === 0) pos = "🥇"; if(i === 1) pos = "🥈"; if(i === 2) pos = "🥉";
+                    tr.innerHTML = `<td style="text-align: center; font-weight: 800;">${pos}</td><td style="text-align: left;">${eq.manager}</td><td style="text-align: center; color: var(--dorado); font-weight: bold;">${eq.puntos}</td>`;
                     tbody.appendChild(tr);
                 });
-                
             } catch (error) { 
-                console.error("Detalle del error:", error.message);
-                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='3' class='status-message' style='color: #E8C15A;'>❌ No se pudo leer el ranking.<br><span style='font-size:0.8rem; color:#ccc'>Recuerda pegar tu nuevo enlace TSV publicado en el código (línea 390).</span></td></tr>`; 
+                document.getElementById('rankingBody').innerHTML = `<tr><td colspan='3' class='status-message' style='color: var(--dorado);'>Error al conectar con la tabla.</td></tr>`; 
             }
         }
 
         renderPlayersList();
         cargarRanking();
-
     </script>
 </body>
 </html>
