@@ -149,7 +149,7 @@
             background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-principal) 100%); 
             width: 800px; max-width: 90%; max-height: 85vh; padding: 60px 50px; border: 2px solid var(--dorado); 
             border-radius: 15px; position: relative; box-shadow: 0 0 80px rgba(0,0,0,1); text-align: left;
-            overflow-y: auto; box-sizing: border-box; /* Solución para que el padding no rompa el scroll */
+            overflow-y: auto; box-sizing: border-box; 
             -webkit-overflow-scrolling: touch;
         }
 
@@ -159,6 +159,10 @@
         
         .cerrar-modal { position: absolute; top: 20px; right: 30px; color: #FFF; font-size: 40px; cursor: pointer; z-index: 100; transition: 0.3s;}
         .cerrar-modal:hover { color: var(--dorado); }
+
+        /* Contenedor dinámico para imagen o vídeo en las noticias */
+        .modal-media { margin-top: 25px; margin-bottom: 25px; text-align: center; }
+        .modal-media img, .modal-media video { max-width: 100%; border-radius: 10px; border: 2px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
         /* Botón dentro de la noticia */
         .btn-noticia {
@@ -173,17 +177,12 @@
            OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
            ========================================================= */
         @media (max-width: 850px) { 
-            /* 1. Encabezado más proporcionado */
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
             
-            /* 2. Menú Hamburguesa */
             nav { padding: 12px 0; }
-            .menu-toggle { 
-                display: block; color: var(--dorado); font-weight: 800; 
-                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
-            }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
             .nav-links { 
                 display: none; position: absolute; top: 100%; left: 0; width: 100%; 
                 background-color: var(--marron-principal); flex-direction: column; 
@@ -193,11 +192,9 @@
             .nav-links.activo { display: flex; }
             .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
 
-            /* 3. Comportamiento Scrolled en Móvil */
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
 
-            /* 4. Ajustes del Contenido */
             .espaciador { height: 350px; }
             .espaciador.scrolled { height: 150px; }
 
@@ -208,11 +205,10 @@
             .noticia { padding: 30px 20px; }
             .noticia h3 { font-size: 1.5rem; }
 
-            /* 5. Modal a Pantalla Completa (Arreglo de Scroll) */
             .modal-content { 
                 width: 100%; height: 100vh; max-height: 100vh; max-width: 100%; 
                 border-radius: 0; border: none; padding: 75px 20px 30px; 
-                box-sizing: border-box; /* Fundamental para que el padding no desborde la pantalla */
+                box-sizing: border-box; 
             }
             .cerrar-modal { top: 25px; right: 20px; font-size: 50px; } 
             .modal-content h2 { font-size: 2rem; margin-bottom: 20px; }
@@ -230,9 +226,7 @@
         </div>
 
         <nav>
-            <!-- Botón del menú hamburguesa -->
             <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
-            <!-- Contenedor de enlaces -->
             <div class="nav-links" id="nav-links">
                 <a href="index.html">Inicio</a>
                 <a href="tienda.html">Tienda</a>
@@ -251,6 +245,15 @@
         
         <div class="grid-noticias">
             
+            <!-- NUEVA NOTICIA DE LA CORTEZA -->
+            <article class="noticia" onclick="abrirNoticia('La Nueva Corteza 25/26', 'TIENDA OFICIAL', 'Ha llegado el momento. Ya está a la venta la armadura con la que saltaremos al césped por primera vez en nuestra historia. Porque tenemos <strong>raíces de leyenda y madera de campeones</strong>, este diseño nos representa mejor que nunca. Hazte con tu camiseta y defiende el pinar.', '<video src=\'Arreglo.mp4\' controls autoplay muted loop></video>', 'tienda.html', 'Comprar ahora')">
+                <div>
+                    <span class="fecha-noticia">TIENDA OFICIAL</span>
+                    <h3>La Nueva Corteza 25/26</h3>
+                    <p>Nuestra nueva piel ya está a la venta. Hazte con la camiseta oficial de la temporada y demuestra tu orgullo por el equipo.</p>
+                </div>
+            </article>
+
             <!-- Noticia 1 -->
             <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.')">
                 <div>
@@ -261,7 +264,7 @@
             </article>
 
             <!-- Noticia 2 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', 'jugadores.html', 'Conoce a la plantilla')">
+            <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', null, 'jugadores.html', 'Conoce a la plantilla')">
                 <div>
                     <span class="fecha-noticia">PRIMER EQUIPO</span>
                     <h3>Plantilla Cerrada</h3>
@@ -270,34 +273,7 @@
             </article>
 
             <!-- Noticia 3 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('La Grada de Las Colonias', 'COMUNIDAD', 'Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.<br><br>Sabemos que sin vosotros, nada de esto tendría sentido. Por eso, desde la directiva estamos preparando iniciativas para que el Tomás Luis de Victoria sea una auténtica caldera en cada partido. Queremos que las gradas rujan, que los colores inunden el recinto y que, pase lo que pase en el césped, ganemos siempre el partido en la grada.', 'contacto.html', 'Únete a la familia')">
-                <div>
-                    <span class="fecha-noticia">COMUNIDAD</span>
-                    <h3>La Grada de Las Colonias</h3>
-                    <p>Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 4 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('Presentación de la Armadura 25/26', 'MERCHANDISING', 'La espera ha terminado. Ya está disponible en nuestra tienda oficial la nueva equipación para esta temporada.<br><br>Con un diseño que respeta nuestro verde bosque tradicional y añade elegantes detalles en oro, esta nueva piel está fabricada con materiales de primera calidad para garantizar el máximo rendimiento en el campo y la mayor comodidad en la grada. Pásate por la sección de Tienda para hacerte con la tuya y personalizarla con tu nombre o el de tu jugador favorito.', 'tienda.html', 'Descubre la armadura')">
-                <div>
-                    <span class="fecha-noticia">MERCHANDISING</span>
-                    <h3>Presentación de la Armadura 25/26</h3>
-                    <p>La nueva equipación oficial ya está disponible en nuestra tienda online. Viste los colores del equipo y siente la resina en cada partido.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 5 -->
-            <article class="noticia" onclick="abrirNoticia('Fechas de Pretemporada Confirmadas', 'CALENDARIO', 'El cuerpo técnico ha hecho oficial el calendario de amistosos previos al inicio del Torneo de Peñas.<br><br>El equipo disputará un total de cuatro encuentros preparatorios para coger ritmo de competición y ajustar los nuevos sistemas tácticos. Será una excelente oportunidad para ver los primeros minutos de nuestras nuevas incorporaciones y empezar a engrasar la maquinaria antes del fuego real.')">
-                <div>
-                    <span class="fecha-noticia">CALENDARIO</span>
-                    <h3>Fechas de Pretemporada Confirmadas</h3>
-                    <p>El equipo disputará varios amistosos para coger ritmo y afinar la maquinaria antes del inicio oficial del Torneo de Peñas.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 6 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('El Legado de Valprimos', 'HISTORIA', 'Hemos inaugurado una nueva sección en la web dedicada íntegramente a repasar la trayectoria de nuestro club.<br><br>Porque para saber a dónde vamos, nunca debemos olvidar de dónde venimos. En la sección \'Historia\' podréis encontrar los orígenes del equipo, nuestras mayores gestas y cómo hemos llegado a ser la gran familia que somos hoy. Una lectura obligatoria para cualquier aficionado que sienta estos colores.', 'historia.html', 'Conoce nuestra historia')">
+            <article class="noticia" onclick="abrirNoticia('El Legado de Valprimos', 'HISTORIA', 'Hemos inaugurado una nueva sección en la web dedicada íntegramente a repasar la trayectoria de nuestro club.<br><br>Porque para saber a dónde vamos, nunca debemos olvidar de dónde venimos. En la sección \'Historia\' podréis encontrar los orígenes del equipo, nuestras mayores gestas y cómo hemos llegado a ser la gran familia que somos hoy. Una lectura obligatoria para cualquier aficionado que sienta estos colores.', null, 'historia.html', 'Conoce nuestra historia')">
                 <div>
                     <span class="fecha-noticia">HISTORIA</span>
                     <h3>El Legado de Valprimos</h3>
@@ -321,7 +297,8 @@
             <span class="cerrar-modal" onclick="cerrarNoticia()">&times;</span>
             <span class="fecha-noticia" id="m-news-date">CATEGORÍA</span>
             <h2 id="m-news-title">Título de la noticia</h2>
-            <p id="m-news-body">Contenido extendido de la noticia...</p>
+            <!-- Cambiado de <p> a <div> para poder meter el vídeo correctamente -->
+            <div id="m-news-body">Contenido extendido de la noticia...</div>
         </div>
     </div>
 
@@ -331,10 +308,8 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 850) {
-                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     espaciador.classList.add('scrolled');
@@ -343,7 +318,6 @@
                     espaciador.classList.remove('scrolled');
                 }
             } else {
-                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     espaciador.classList.add('scrolled');
@@ -352,7 +326,6 @@
             }
         });
 
-        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
         window.addEventListener('touchstart', ev => {
             if (window.innerWidth <= 850 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
@@ -362,7 +335,6 @@
         window.addEventListener('touchmove', ev => {
             if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
                 let currentY = ev.touches[0].clientY;
-                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
                 if (currentY - startY > 40) {
                     header.classList.remove('scrolled');
                     espaciador.classList.remove('scrolled');
@@ -371,32 +343,47 @@
             }
         }, {passive: true});
 
-        // Alternar Menú Hamburguesa en Móvil
         function toggleMenu() {
             document.getElementById('nav-links').classList.toggle('activo');
         }
 
-        // Funciones del Modal de Noticias modificadas para aceptar botón
-        function abrirNoticia(titulo, fecha, contenido, urlBoton = null, textoBoton = null) {
+        // Función abrirNoticia actualizada para soportar vídeo y botones
+        function abrirNoticia(titulo, fecha, contenido, mediaHTML = null, urlBoton = null, textoBoton = null) {
             document.getElementById('m-news-title').innerText = titulo;
             document.getElementById('m-news-date').innerText = fecha;
             
-            // Si le pasamos urlBoton y textoBoton, construimos el enlace y lo sumamos al contenido
-            let htmlFinal = contenido;
+            let htmlFinal = `<p>${contenido}</p>`;
+            
+            if (mediaHTML) {
+                htmlFinal += `<div class="modal-media">${mediaHTML}</div>`;
+            }
+
             if (urlBoton && textoBoton) {
-                htmlFinal += `<br><br><a href="${urlBoton}" class="btn-noticia">${textoBoton}</a>`;
+                htmlFinal += `<a href="${urlBoton}" class="btn-noticia">${textoBoton}</a>`;
             }
             
             document.getElementById('m-news-body').innerHTML = htmlFinal;
             
             document.getElementById('modal-noticia').classList.add('activo');
-            document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+            document.body.style.overflow = 'hidden'; 
         }
 
         function cerrarNoticia() {
             document.getElementById('modal-noticia').classList.remove('activo');
-            document.body.style.overflow = 'auto'; // Restaura el scroll
+            document.body.style.overflow = 'auto'; 
+            
+            // Pausar el vídeo si el usuario cierra el modal
+            const mediaContainer = document.getElementById('m-news-body');
+            const videoElement = mediaContainer.querySelector('video');
+            if(videoElement) {
+                videoElement.pause();
+            }
         }
+        
+        // Cerrar modal con ESC
+        window.addEventListener('keydown', (e) => { 
+            if(e.key === 'Escape') cerrarNoticia(); 
+        });
     </script>
 
 </body>
