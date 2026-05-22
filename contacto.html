@@ -56,7 +56,7 @@
             transition: var(--transicion-fluida); position: relative;
         }
 
-        .menu-toggle { display: none; } /* Oculto en PC */
+        .menu-toggle { display: none; }
         .nav-links { display: flex; justify-content: center; align-items: center; width: 100%; }
 
         .nav-links a { color: var(--dorado); text-decoration: none; font-weight: 600; margin: 0 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: 0.3s;}
@@ -87,20 +87,9 @@
         .tarjeta-dato h4 { margin: 0 0 10px 0; color: var(--dorado); font-family: var(--fuente-deportiva); font-size: 1.4rem; text-transform: uppercase; }
         .tarjeta-dato p { margin: 5px 0; color: #ccc; }
         
-        /* ENLACE INSTAGRAM Y TEXTO DESTACADO */
-        .link-ig {
-            color: var(--dorado);
-            text-decoration: none;
-            font-weight: 800;
-            transition: 0.3s;
-        }
-        .link-ig:hover {
-            color: #FFF;
-        }
-        .texto-destacado {
-            color: var(--dorado);
-            font-weight: 800;
-        }
+        .link-ig { color: var(--dorado); text-decoration: none; font-weight: 800; transition: 0.3s; }
+        .link-ig:hover { color: #FFF; }
+        .texto-destacado { color: var(--dorado); font-weight: 800; }
 
         /* --- FORMULARIO Y ÉXITO --- */
         .form-box { 
@@ -129,8 +118,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--verde-principal); display: none; flex-direction: column;
             justify-content: center; align-items: center; z-index: 10; text-align: center; 
-            padding: 40px; box-sizing: border-box;
-            gap: 15px;
+            padding: 40px; box-sizing: border-box; gap: 15px;
         }
         .success-overlay h3 { font-family: var(--fuente-deportiva); font-size: 4rem; color: var(--dorado); margin: 0; line-height: 1; }
         .success-overlay p { font-size: 1.3rem; color: #FFF; margin: 0; opacity: 0.9; max-width: 85%; }
@@ -143,35 +131,21 @@
         }
         .success-overlay button:hover { background: var(--dorado); color: var(--marron-principal); }
 
-        /* =========================================================
-           OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
-           ========================================================= */
+        /* OPTIMIZACIÓN iPAD Y MÓVIL */
         @media (max-width: 1024px) { 
-            /* 1. Encabezado más proporcionado */
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
             
-            /* 2. Menú Hamburguesa */
             nav { padding: 12px 0; }
-            .menu-toggle { 
-                display: block; color: var(--dorado); font-weight: 800; 
-                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
-            }
-            .nav-links { 
-                display: none; position: absolute; top: 100%; left: 0; width: 100%; 
-                background-color: var(--marron-principal); flex-direction: column; 
-                padding: 10px 0; border-bottom: 3px solid var(--dorado); 
-                box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001;
-            }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--marron-principal); flex-direction: column; padding: 10px 0; border-bottom: 3px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001; }
             .nav-links.activo { display: flex; }
             .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
 
-            /* 3. Comportamiento Scrolled en Móvil */
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
 
-            /* 4. Ajustes del Contenido */
             .espaciador { height: 350px; }
             .espaciador.scrolled { height: 150px; }
 
@@ -204,6 +178,7 @@
                 <a href="jugadores.html">Jugadores</a> 
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Contacto</a>
             </div>
         </nav>
@@ -215,7 +190,7 @@
         <div class="info-seccion">
             <h2>CONTACTO</h2>
             <p class="aficionado-text">
-                En Valprimos, <strong>más que un equipo somos una piña</strong> y eso nos obliga a escuchar a quienes nos hacen grandes: vosotros. Vuestras ideas y vuestra voz son la savia que nos alimenta.
+                En Valprimos, <strong>más que un equipo somos una piña</strong> y eso nos obliga a escuchar a quienes nos hacen grandes: vosotros. Vuestras ideas y vuestra voz son la savia que nos alimenta de las raíces a la copa.
             </p>
             
             <div class="tarjeta-dato">
@@ -234,22 +209,22 @@
         <div class="form-box" id="formBox">
             <div class="success-overlay" id="successMsg">
                 <h3>¡PLANTADO!</h3>
-                <p>Mensaje plantado, te devolveremos el fruto de nuestra respuesta.</p>
+                <p>Mensaje plantado con éxito. Pronto te devolveremos el fruto de nuestra respuesta.</p>
                 <button onclick="location.reload()">VOLVER AL PINAR</button>
             </div>
 
             <form id="contactForm">
                 <div class="input-group">
                     <label>Nombre</label>
-                    <input type="text" placeholder="Tu nombre..." required>
+                    <input type="text" name="nombre" placeholder="Tu nombre..." required>
                 </div>
                 <div class="input-group">
                     <label>Correo Electrónico</label>
-                    <input type="email" placeholder="tu@email.com" required>
+                    <input type="email" name="email" placeholder="tu@email.com" required>
                 </div>
                 <div class="input-group">
                     <label>Tu Mensaje</label>
-                    <textarea rows="6" placeholder="Cuéntanos..." required></textarea>
+                    <textarea rows="6" name="mensaje" placeholder="Cuéntanos..." required></textarea>
                 </div>
                 <button type="submit" class="btn-enviar" id="sendBtn">PLANTA TU MENSAJE</button>
             </form>
@@ -269,7 +244,6 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN iPAD/MÓVIL) ---
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 1024) {
                 if (window.scrollY > 40) {
@@ -288,7 +262,6 @@
             }
         });
 
-        // Gestos táctiles
         window.addEventListener('touchstart', ev => {
             if (window.innerWidth <= 1024 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
@@ -320,9 +293,33 @@
             btn.style.opacity = "0.7";
             btn.disabled = true;
 
-            setTimeout(() => {
-                success.style.display = 'flex';
-            }, 800);
+            const formData = new FormData(form);
+
+            // URL directa de Formspree inyectada aquí:
+            const urlFormspree = "https://formspree.io/f/xlgaqrlk";
+
+            fetch(urlFormspree, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    success.style.display = 'flex';
+                    form.reset();
+                } else {
+                    alert("Hubo un error al enviar el mensaje. Inténtalo de nuevo.");
+                    btn.innerText = "PLANTA TU MENSAJE";
+                    btn.style.opacity = "1";
+                    btn.disabled = false;
+                }
+            }).catch(error => {
+                alert("Hubo un error de conexión.");
+                btn.innerText = "PLANTA TU MENSAJE";
+                btn.style.opacity = "1";
+                btn.disabled = false;
+            });
         };
     </script>
 

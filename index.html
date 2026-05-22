@@ -182,11 +182,15 @@
         .cerrar-modal { position: absolute; top: 20px; right: 30px; color: #FFF; font-size: 40px; cursor: pointer; z-index: 100; transition: 0.3s;}
         .cerrar-modal:hover { color: var(--dorado); }
 
+        /* Contenedor dinámico para imagen o vídeo en las noticias */
+        .modal-media { margin-top: 25px; margin-bottom: 25px; text-align: center; }
+        .modal-media img, .modal-media video { max-width: 100%; border-radius: 10px; border: 2px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
         /* Botón dentro de la noticia */
         .btn-noticia {
             display: inline-block; background-color: var(--dorado); color: var(--marron-principal);
             padding: 12px 30px; text-decoration: none; font-weight: 800; font-family: var(--fuente-deportiva);
-            font-size: 1.4rem; text-transform: uppercase; border-radius: 4px; margin-top: 25px;
+            font-size: 1.4rem; text-transform: uppercase; border-radius: 4px; margin-top: 15px;
             transition: 0.3s; cursor: pointer; border: none;
         }
         .btn-noticia:hover { background-color: #FFF; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(232, 193, 90, 0.3); }
@@ -257,11 +261,11 @@
             .banner-content { flex-direction: column; text-align: center; padding: 0;}
             .banner-text p { margin-bottom: 30px; margin-left: auto; margin-right: auto;}
 
-            /* MODAL PANTALLA COMPLETA (Cruz y Scroll perfectos) */
+            /* MODAL PANTALLA COMPLETA */
             .modal-content { 
                 width: 100%; height: 100vh; max-height: 100vh; max-width: 100%; 
-                border-radius: 0; border: none; padding: 75px 20px 30px; /* Margen superior amplio para la cruz */
-                box-sizing: border-box; /* Fundamental para que el padding no desborde la pantalla */
+                border-radius: 0; border: none; padding: 75px 20px 30px; 
+                box-sizing: border-box; 
             }
             .cerrar-modal { top: 15px; right: 20px; font-size: 50px; } 
             .modal-content h2 { font-size: 2rem; margin-bottom: 20px; }
@@ -286,6 +290,7 @@
                 <a href="jugadores.html">Jugadores</a>
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>
@@ -311,6 +316,15 @@
             
             <div class="grid-noticias">
                 
+                <!-- NUEVA NOTICIA DE LA CORTEZA -->
+                <article class="noticia" onclick="abrirNoticia('La Nueva Corteza 25/26', 'TIENDA OFICIAL', 'Ha llegado el momento. Ya está a la venta la armadura con la que saltaremos al césped por primera vez en nuestra historia. Porque tenemos <strong>raíces de leyenda y madera de campeones</strong>, este diseño nos representa mejor que nunca. Hazte con tu camiseta y defiende el pinar.', '<video src=\'Arreglo.mp4\' controls autoplay muted loop></video>', 'tienda.html', 'Comprar ahora')">
+                    <div>
+                        <span class="fecha-noticia">TIENDA OFICIAL</span>
+                        <h3>La Nueva Corteza 25/26</h3>
+                        <p>Nuestra nueva piel ya está a la venta. Hazte con la camiseta oficial de la temporada y demuestra tu orgullo por el equipo.</p>
+                    </div>
+                </article>
+                
                 <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.')">
                     <div>
                         <span class="fecha-noticia">TEMPORADA 25/26</span>
@@ -319,19 +333,11 @@
                     </div>
                 </article>
 
-                <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', 'jugadores.html', 'Conoce a la plantilla')">
+                <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', null, 'jugadores.html', 'Conoce a la plantilla')">
                     <div>
                         <span class="fecha-noticia">PRIMER EQUIPO</span>
                         <h3>Plantilla Cerrada</h3>
                         <p>Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.</p>
-                    </div>
-                </article>
-
-                <article class="noticia" onclick="abrirNoticia('La Grada de Las Colonias', 'COMUNIDAD', 'Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.<br><br>Sabemos que sin vosotros, nada de esto tendría sentido. Por eso, desde la directiva estamos preparando iniciativas para que el Tomás Luis de Victoria sea una auténtica caldera en cada partido. Queremos que las gradas rujan, que los colores inunden el recinto y que, pase lo que pase en el césped, ganemos siempre el partido en la grada.', 'contacto.html', 'Únete a la familia')">
-                    <div>
-                        <span class="fecha-noticia">COMUNIDAD</span>
-                        <h3>La Grada de Las Colonias</h3>
-                        <p>Seguimos escuchando a nuestra afición. Muy pronto anunciaremos novedades y eventos exclusivos para los seguidores más fieles del club.</p>
                     </div>
                 </article>
 
@@ -422,12 +428,18 @@
             document.getElementById('nav-links').classList.toggle('activo');
         }
 
-        // Funciones del Modal de Noticias (Acepta botón)
-        function abrirNoticia(titulo, fecha, contenido, urlBoton = null, textoBoton = null) {
+        // Funciones del Modal de Noticias (Acepta foto/vídeo y botón)
+        function abrirNoticia(titulo, fecha, contenido, mediaHTML = null, urlBoton = null, textoBoton = null) {
             document.getElementById('m-news-title').innerText = titulo;
             document.getElementById('m-news-date').innerText = fecha;
             
             let htmlFinal = `<p>${contenido}</p>`;
+            
+            // Inyectar el vídeo o la foto si se ha enviado
+            if (mediaHTML) {
+                htmlFinal += `<div class="modal-media">${mediaHTML}</div>`;
+            }
+
             if (urlBoton && textoBoton) {
                 htmlFinal += `<a href="${urlBoton}" class="btn-noticia">${textoBoton}</a>`;
             }
@@ -441,6 +453,13 @@
         function cerrarNoticia() {
             document.getElementById('modal-noticia').classList.remove('activo');
             document.body.style.overflow = 'auto'; 
+            
+            // Pausar el vídeo si el usuario cierra el modal mientras se reproduce
+            const mediaContainer = document.getElementById('m-news-body');
+            const videoElement = mediaContainer.querySelector('video');
+            if(videoElement) {
+                videoElement.pause();
+            }
         }
 
         // Cerrar modal con ESC

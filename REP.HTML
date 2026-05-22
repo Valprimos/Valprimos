@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Romo Morales | Representación Legal</title>
+    <style>
+        /* Paleta de colores sobria y profesional */
+        :root {
+            --bg-dark: #111827;
+            --bg-light: #f9fafb;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --accent-silver: #9ca3af;
+            --border-line: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .logo {
+            font-family: 'Georgia', 'Times New Roman', serif; /* Tipografía clásica para despachos */
+        }
+
+        /* Cabecera */
+        header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-line);
+            padding: 1.5rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: normal;
+            color: var(--bg-dark);
+            letter-spacing: 1px;
+        }
+
+        .logo strong {
+            font-weight: bold;
+        }
+
+        .logo span {
+            display: block;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--bg-dark);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            padding: 6rem 10%;
+            text-align: left;
+            border-bottom: 4px solid var(--accent-silver);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: normal;
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #d1d5db;
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: transparent;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #ffffff;
+            color: var(--bg-dark);
+        }
+
+        /* Sección Manifiesto / Valores */
+        .manifesto {
+            padding: 5rem 10%;
+            background-color: #ffffff;
+        }
+
+        .manifesto-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .manifesto-header h2 {
+            font-size: 2.2rem;
+            color: var(--bg-dark);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .service-card {
+            border-top: 1px solid var(--border-line);
+            padding-top: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--bg-dark);
+        }
+
+        .service-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-align: justify;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-dark);
+            color: #9ca3af;
+            padding: 3rem 10%;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        footer strong {
+            color: #ffffff;
+            font-weight: normal;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <strong>ROMO MORALES</strong>
+            <span>Representación Legal</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#firma">La Firma</a></li>
+                <li><a href="#practica">Áreas de Práctica</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Rigor jurídico y defensa estratégica frente a la adversidad corporativa.</h1>
+        <p>Asesoramiento extrajudicial y representación formal para la resolución de conflictos laborales. Protegemos sus intereses con absoluta determinación.</p>
+        <a href="#contacto" class="btn">Estudiar su caso</a>
+    </section>
+
+    <section id="firma" class="manifesto">
+        <div class="manifesto-header">
+            <h2>Nuestros Fundamentos</h2>
+        </div>
+        <div class="grid-3">
+            <div class="service-card">
+                <h3>Sinergia Estratégica</h3>
+                <p>Abordamos cada encargo asumiendo el conflicto como propio. Entendemos que el éxito reside en cerrar filas junto a nuestro representado, operando con una cohesión absoluta en la que demostramos ser, ante la contraparte, más que un equipo una piña.</p>
+            </div>
+            <div class="service-card">
+                <h3>Rigor Estructural</h3>
+                <p>La improvisación no tiene cabida en nuestro ejercicio. Analizamos la documentación, la jurisprudencia y los plazos administrativos para construir defensas blindadas y estructuradas de las raíces a la copa, asegurando resultados tangibles.</p>
+            </div>
+            <div class="service-card">
+                <h3>Excelencia y Carácter</h3>
+                <p>Frente a los abusos burocráticos y la inercia de las grandes estructuras empresariales, imponemos un estándar superior. Negociamos y reclamamos con la autoridad y la firmeza propias de quienes están forjados con madera de campeones.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <strong>ROMO MORALES | REPRESENTACIÓN LEGAL</strong>
+        <p>Sede Operativa: Galapagar, Comunidad de Madrid, España.</p>
+        <p>Gestión de litigios | Reclamación de haberes | Mediación extrajudicial</p>
+        <br>
+        <p>&copy; 2026 Romo Morales Representación Legal. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
