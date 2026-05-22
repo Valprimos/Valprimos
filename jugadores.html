@@ -107,7 +107,7 @@
             line-height: 1; text-transform: uppercase; text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
         }
 
-        /* --- MODAL --- */
+        /* --- MODAL ESCRITORIO --- */
         .modal-jugador {
             display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); justify-content: center; align-items: center;
@@ -118,7 +118,7 @@
             border: 2px solid var(--dorado); border-radius: 15px; overflow: hidden;
             display: flex; position: relative; box-shadow: 0 0 60px rgba(0,0,0,1);
         }
-        .modal-foto-sec { flex: 1; background: #000; }
+        .modal-foto-sec { flex: 1; background: #000; position: relative;}
         .modal-foto-sec img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
         .modal-info-sec { flex: 1.3; padding: 50px; text-align: left; background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-principal) 100%); display: flex; flex-direction: column; justify-content: center; overflow-y: auto;}
         
@@ -177,23 +177,53 @@
             .capitan-space { width: 30px; }
             .c-capitan { width: 24px; height: 24px; font-size: 0.9rem; }
 
-            /* 5. Modal a Pantalla Completa (Vertical) */
+            /* 5. MODAL A PANTALLA COMPLETA MEJORADO */
             .modal-content-horizontal { 
                 flex-direction: column; height: 100vh; max-height: 100vh; width: 100%; max-width: 100%;
                 border-radius: 0; border: none; overflow-y: auto; padding: 0;
+                background: var(--verde-oscuro);
             }
-            .modal-foto-sec { height: 50vh; flex: none; }
-            .modal-info-sec { padding: 30px 20px; flex: none; justify-content: flex-start; min-height: 50vh;}
+            .modal-foto-sec { 
+                height: 60vh; /* Foto mucho más grande */
+                flex: none; 
+                position: relative;
+            }
+            /* Degradado inferior para fusionar foto con el fondo verde */
+            .modal-foto-sec::after {
+                content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 40%;
+                background: linear-gradient(to bottom, transparent 0%, var(--verde-oscuro) 100%);
+                pointer-events: none;
+            }
+
+            .modal-info-sec { 
+                padding: 0 25px 40px; 
+                flex: none; justify-content: flex-start; 
+                min-height: 40vh;
+                background: var(--verde-oscuro);
+                margin-top: -60px; /* Sube la información para montarla sobre el degradado */
+                position: relative; z-index: 2;
+            }
             
-            .modal-header-info { flex-wrap: wrap; gap: 10px; align-items: center; }
-            .modal-dorsal-grande { font-size: 4rem; }
-            .modal-nombre { font-size: 2.2rem; flex-grow: 1;}
+            .modal-header-info { 
+                flex-wrap: nowrap; gap: 15px; align-items: flex-end; 
+                border-bottom: 1px solid rgba(232, 193, 90, 0.2); 
+                padding-bottom: 15px; margin-bottom: 25px; 
+            }
+            .modal-dorsal-grande { font-size: 4rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+            .modal-nombre { font-size: 2.3rem; flex-grow: 1; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); word-break: break-word;}
             
-            .stats-grid { gap: 10px; }
-            .stat-card { padding: 10px; }
+            .stats-grid { gap: 12px; }
+            .stat-card { padding: 12px; background: rgba(255,255,255,0.05); }
             .stat-num { font-size: 1.8rem; }
             
-            .cerrar-x { top: 15px; right: 20px; font-size: 50px; color: #FFF; text-shadow: 0 0 10px #000;}
+            /* Botón cerrar como un círculo flotante muy limpio */
+            .cerrar-x { 
+                top: 20px; right: 20px; font-size: 35px; color: #FFF; 
+                background: rgba(0,0,0,0.5); width: 45px; height: 45px;
+                display: flex; justify-content: center; align-items: center;
+                border-radius: 50%; backdrop-filter: blur(5px);
+                text-shadow: none; padding-bottom: 4px; box-sizing: border-box;
+            }
         }
     </style>
 </head>
@@ -263,10 +293,9 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
+        // --- LÓGICA DEL ENCABEZADO ---
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 850) {
-                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
                 if (window.scrollY > 40) { 
                     header.classList.add('scrolled'); 
                     espaciador.classList.add('scrolled'); 
@@ -275,7 +304,6 @@
                     espaciador.classList.remove('scrolled'); 
                 }
             } else {
-                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     espaciador.classList.add('scrolled');
@@ -284,7 +312,7 @@
             }
         });
 
-        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
+        // Gestos táctiles para el "doble scroll" en móvil
         window.addEventListener('touchstart', ev => {
             if (window.innerWidth <= 850 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
@@ -294,7 +322,6 @@
         window.addEventListener('touchmove', ev => {
             if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
                 let currentY = ev.touches[0].clientY;
-                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
                 if (currentY - startY > 40) {
                     header.classList.remove('scrolled');
                     espaciador.classList.remove('scrolled');
@@ -303,7 +330,6 @@
             }
         }, {passive: true});
 
-        // Alternar Menú Hamburguesa en Móvil
         function toggleMenu() {
             document.getElementById('nav-links').classList.toggle('activo');
         }
