@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="escudo.png">
     <link rel="apple-touch-icon" href="escudo.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0A4325">
+    <meta name="theme-color" content="#3B2421">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Valprimos">
@@ -518,7 +518,7 @@
         // Registro del Service Worker (PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then(r => console.log('SW registrado:', r.scope))
                     .catch(e => console.log('SW error:', e));
             });

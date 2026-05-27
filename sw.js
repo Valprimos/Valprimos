@@ -1,19 +1,19 @@
 const CACHE_NAME = 'valprimos-v1';
+const BASE = '/Valprimos';
 const ASSETS = [
-  '/index.html',
-  '/jugadores.html',
-  '/historia.html',
-  '/galeria.html',
-  '/calendario.html',
-  '/tienda.html',
-  '/contacto.html',
-  '/noticias.html',
-  '/fantasy.html',
-  '/escudo.png',
-  '/manifest.json'
+  BASE + '/index.html',
+  BASE + '/jugadores.html',
+  BASE + '/historia.html',
+  BASE + '/galeria.html',
+  BASE + '/calendario.html',
+  BASE + '/tienda.html',
+  BASE + '/contacto.html',
+  BASE + '/noticias.html',
+  BASE + '/fantasy.html',
+  BASE + '/escudo.png',
+  BASE + '/manifest.json'
 ];
 
-// Instalar: guardar en caché los recursos principales
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -21,7 +21,6 @@ self.addEventListener('install', e => {
   self.skipWaiting();
 });
 
-// Activar: borrar cachés antiguas
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -31,29 +30,20 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch: network-first para Google Sheets (fantasy), cache-first para el resto
 self.addEventListener('fetch', e => {
   const url = e.request.url;
-
-  // Para Google Sheets siempre intentar red primero
-  if (url.includes('docs.google.com') || url.includes('fonts.googleapis.com')) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
-    );
+  if (url.includes('docs.google.com') || url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
-
-  // Para el resto: cache primero, red como respaldo
   e.respondWith(
     caches.match(e.request).then(cached => {
       return cached || fetch(e.request).then(response => {
-        // Guardar en caché respuestas válidas
         if (response && response.status === 200 && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, response.clone()));
         }
         return response;
       });
-    }).catch(() => caches.match('/index.html'))
+    }).catch(() => caches.match(BASE + '/index.html'))
   );
 });

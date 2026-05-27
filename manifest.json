@@ -2,10 +2,11 @@
   "name": "Valprimos",
   "short_name": "Valprimos",
   "description": "Raíces de Leyenda — Madera de Campeones",
-  "start_url": "/index.html",
+  "start_url": "/Valprimos/index.html",
+  "scope": "/Valprimos/",
   "display": "standalone",
-  "background_color": "#04140a",
-  "theme_color": "#0A4325",
+  "background_color": "#3B2421",
+  "theme_color": "#3B2421",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -21,6 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
   "categories": ["sports"]
 }
