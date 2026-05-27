@@ -174,9 +174,9 @@
         .btn-noticia:hover { background-color: #FFF; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(232, 193, 90, 0.3); }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+           OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 850px) { 
+        @media (max-width: 1024px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -309,7 +309,7 @@
         let startY = 0;
 
         window.addEventListener('scroll', () => {
-            if (window.innerWidth > 850) {
+            if (window.innerWidth > 1024) {
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     espaciador.classList.add('scrolled');
@@ -327,13 +327,13 @@
         });
 
         window.addEventListener('touchstart', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
             }
         }, {passive: true});
 
         window.addEventListener('touchmove', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10 && headerShrunkMobile) {
                 let currentY = ev.touches[0].clientY;
                 if (currentY - startY > 40) {
                     header.classList.remove('scrolled');

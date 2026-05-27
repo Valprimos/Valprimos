@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario | Valprimos</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="escudo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Squada+One&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --verde-principal: #0A4325;
+            --verde-oscuro: #04140a;
+            --marron-principal: #3B2421;
+            --dorado: #E8C15A;
+            --blanco-roto: #F0F4F1;
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-moderna: 'Montserrat', sans-serif;
+            --fuente-deportiva: 'Squada One', cursive;
+            --transicion-fluida: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            --sombra-texto: 2px 4px 10px rgba(0,0,0,0.8);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: var(--fuente-moderna); margin: 0; padding: 0;
+            background-color: var(--verde-oscuro); color: var(--blanco-roto);
+            background-image: linear-gradient(180deg, var(--verde-oscuro) 0%, #082b17 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- ENCABEZADO FIJO --- */
+        .header-container {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            background-color: var(--verde-principal); border-bottom: 2px solid rgba(232, 193, 90, 0.2);
+            transition: var(--transicion-fluida);
+        }
+
+        .header-content { display: flex; flex-direction: column; align-items: center; padding-top: 20px; padding-bottom: 30px; transition: var(--transicion-fluida); }
+        .escudo { height: 280px; width: auto; margin-bottom: 30px; transition: var(--transicion-fluida); filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+
+        h1 {
+            font-family: var(--fuente-titulos); color: var(--dorado);
+            font-size: 4rem; letter-spacing: 4px; margin: 0; text-transform: uppercase;
+            text-shadow: var(--sombra-texto); transition: var(--transicion-fluida);
+        }
+
+        .subtitulo { font-family: var(--fuente-titulos); font-style: italic; color: var(--dorado); font-size: 1.4rem; transition: var(--transicion-fluida); letter-spacing: 4px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+
+        /* --- NAVEGACIÓN --- */
+        nav {
+            background-color: var(--marron-principal); padding: 15px 0; text-align: center;
+            border-top: 1px solid rgba(232, 193, 90, 0.4); border-bottom: 3px solid var(--dorado);
+            transition: var(--transicion-fluida); position: relative;
+        }
+
+        .menu-toggle { display: none; }
+        .nav-links { display: flex; justify-content: center; align-items: center; width: 100%; }
+        .nav-links a { color: var(--dorado); text-decoration: none; font-weight: 600; margin: 0 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.activo { color: #FFF; border-bottom: 2px solid #FFF; padding-bottom: 5px; }
+
+        /* ESTADOS SCROLLED */
+        .header-container.scrolled .header-content { padding-top: 10px; padding-bottom: 5px; }
+        .header-container.scrolled .escudo { height: 70px; margin-bottom: 0; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .header-container.scrolled h1 { font-size: 1.8rem; letter-spacing: 2px; }
+        .header-container.scrolled .subtitulo { font-size: 0; opacity: 0; height: 0; overflow: hidden; margin: 0; }
+        .header-container.scrolled nav { padding: 10px 0; }
+
+        /* ESPACIADOR FIJO: Evita que la página pegue saltos raros al bajar */
+        .espaciador { height: 480px; }
+
+        /* --- TABS DE NAVEGACIÓN SECCIÓN --- */
+        .section-tabs {
+            display: flex; justify-content: center; gap: 0;
+            max-width: 600px; margin: 0 auto 50px;
+            background: rgba(10, 67, 37, 0.3);
+            border: 2px solid rgba(232, 193, 90, 0.4);
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .tab-btn {
+            flex: 1; padding: 16px 20px; background: transparent; border: none;
+            color: rgba(232, 193, 90, 0.6); font-family: var(--fuente-deportiva);
+            font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s; position: relative;
+        }
+        .tab-btn.activo {
+            background: var(--dorado); color: var(--marron-principal); font-weight: 800;
+        }
+        .tab-btn:not(:last-child) { border-right: 2px solid rgba(232, 193, 90, 0.4); }
+        .tab-btn:hover:not(.activo) { background: rgba(232, 193, 90, 0.1); color: var(--dorado); }
+
+        /* --- CALENDARIO CONTENIDO --- */
+        main { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; }
+        .titulo-seccion { font-family: var(--fuente-titulos); color: var(--dorado); font-size: 3.5rem; text-align: center; margin-bottom: 40px; text-transform: uppercase; text-shadow: var(--sombra-texto); }
+
+        .seccion-contenido { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .seccion-contenido.activa { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- NUEVAS TARJETAS DE PARTIDO (Basadas en index.html) --- */
+        .lista-partidos {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .match-card {
+            background: linear-gradient(135deg, rgba(59, 36, 33, 0.9) 0%, rgba(10, 67, 37, 0.9) 100%);
+            border: 2px solid var(--dorado); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 12px;
+            padding: 35px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: 0.3s;
+            margin-bottom: 25px; /* Margen para separarla de la lista generada por JS */
+        }
+        .match-card:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
+        
+        .match-card .competicion { 
+            font-size: 0.9rem; font-weight: 800; color: var(--dorado); 
+            letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; text-align: center;
+        }
+        .match-teams { 
+            display: flex; align-items: center; justify-content: center; gap: 20px; 
+            font-family: var(--fuente-titulos); font-size: 2.5rem; color: #FFF; width: 100%; text-align: center; 
+            max-width: 800px;
+        }
+        .match-team { flex: 1; text-transform: uppercase; line-height: 1.1; word-break: break-word; }
+        .match-team.valprimos { color: var(--dorado); text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        
+        .match-vs { font-family: var(--fuente-deportiva); font-size: 2.5rem; color: var(--dorado); padding: 0 15px; }
+        
+        .match-info { 
+            margin-top: 25px; font-size: 1.1rem; color: #ccc; letter-spacing: 1px; 
+            text-align: center; line-height: 1.6;
+        }
+        .match-info strong { color: var(--dorado); }
+
+        /* Colores específicos para Resultados */
+        .competicion.victoria { color: #4caf50; }
+        .competicion.derrota { color: #e53935; }
+        .competicion.empate { color: #9e9e9e; }
+        
+        .marcador-pasado { font-size: 4rem; color: #FFF; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .marcador-pasado.victoria { color: #4caf50; }
+        .marcador-pasado.derrota { color: #e53935; }
+        .marcador-pasado.empate { color: #9e9e9e; }
+
+        /* Mensaje de vacío */
+        .mensaje-vacio {
+            text-align: center; color: rgba(232, 193, 90, 0.7); padding: 50px 20px;
+            font-size: 1.3rem; font-weight: 600; background: rgba(10, 67, 37, 0.2);
+            border-radius: 12px; border: 1px dashed rgba(232, 193, 90, 0.3);
+        }
+
+        /* =========================================================
+            OPTIMIZACIÓN MÓVIL
+            ========================================================= */
+        @media (max-width: 850px) {
+            .escudo { height: 150px; margin-bottom: 15px; }
+            h1 { font-size: 2.2rem; letter-spacing: 2px; }
+            .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
+
+            nav { padding: 12px 0; }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--marron-principal); flex-direction: column; padding: 10px 0; border-bottom: 3px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001; }
+            .nav-links.activo { display: flex; }
+            .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important; }
+
+            .header-container.scrolled .escudo { height: 50px; }
+            .header-container.scrolled h1 { font-size: 1.3rem; }
+
+            .espaciador { height: 260px; }
+
+            main { padding: 20px 12px 0; }
+            .titulo-seccion { font-size: 2.5rem; margin-bottom: 25px; }
+
+            .section-tabs { margin-bottom: 30px; border-radius: 8px; }
+            .tab-btn { padding: 12px 10px; font-size: 1.1rem; letter-spacing: 1px; }
+
+            /* Tarjetas de partido en móvil */
+            .match-card { padding: 25px 15px; }
+            .match-teams { font-size: 1.8rem; gap: 10px; }
+            .match-vs { font-size: 1.8rem; padding: 0; }
+            .marcador-pasado { font-size: 2.5rem; letter-spacing: 2px; }
+            .match-info { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container" id="main-header">
+        <div class="header-content">
+            <img src="escudo.png" alt="Escudo Valprimos" class="escudo">
+            <h1>VALPRIMOS</h1>
+            <div class="subtitulo">RAÍCES DE LEYENDA</div>
+        </div>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="tienda.html">Tienda</a>
+                <a href="jugadores.html">Jugadores</a>
+                <a href="calendario.html" class="activo" style="border-bottom: 2px solid var(--dorado)">Calendario</a>
+                <a href="historia.html">Historia</a>
+                <a href="galeria.html">Galería</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="espaciador" id="espaciador-fantasma"></div>
+
+    <main>
+        <h2 class="titulo-seccion">CALENDARIO</h2>
+
+        <!-- Tabs de sección -->
+        <div class="section-tabs">
+            <button class="tab-btn activo" onclick="cambiarTab('futuros', this)">Próximos Partidos</button>
+            <button class="tab-btn" onclick="cambiarTab('pasados', this)">Resultados</button>
+        </div>
+
+        <!-- SECCIÓN PRÓXIMOS PARTIDOS -->
+        <div id="sec-futuros" class="seccion-contenido activa">
+            
+            <!-- TARJETA PRÓXIMO PARTIDO ESTÁTICA -->
+            <div class="match-card">
+                <div class="competicion">Próximo Partido - Torneo de Peñas</div>
+                <div class="match-teams">
+                    <div class="match-team valprimos">VALPRIMOS</div>
+                    <div class="match-vs">VS</div>
+                    <div class="match-team" style="color: #aaa;">RIVAL POR DEFINIR</div>
+                </div>
+                <div class="match-info">
+                    📅 Fecha a determinar | 📍 Polideportivo Tomás Luis de Victoria
+                </div>
+            </div>
+
+            <div class="lista-partidos" id="contenedor-futuros">
+                <!-- Se rellena con JS -->
+            </div>
+        </div>
+
+        <!-- SECCIÓN RESULTADOS -->
+        <div id="sec-pasados" class="seccion-contenido">
+            <div class="lista-partidos" id="contenedor-pasados">
+                <!-- Se rellena con JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px; font-family: var(--fuente-moderna);">
+        <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+            VALPRIMOS 2026
+        </div>
+        &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
+    </footer>
+
+    <script>
+        /* --- SCROLL HEADER SÓLIDO (Sin alterar alturas para no saltar) --- */
+        const header = document.getElementById('main-header');
+        let headerShrunkMobile = false;
+        let startY = 0;
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth > 850) {
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled'); 
+                } else {
+                    header.classList.remove('scrolled'); 
+                }
+            } else {
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled'); 
+                    headerShrunkMobile = true;
+                }
+            }
+        });
+
+        window.addEventListener('touchstart', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10) startY = ev.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', ev => {
+            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+                if (ev.touches[0].clientY - startY > 40) {
+                    header.classList.remove('scrolled'); 
+                    headerShrunkMobile = false;
+                }
+            }
+        }, { passive: true });
+
+        function toggleMenu() { document.getElementById('nav-links').classList.toggle('activo'); }
+
+        /* --- TABS --- */
+        function cambiarTab(seccion, btn) {
+            document.querySelectorAll('.seccion-contenido').forEach(s => s.classList.remove('activa'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+            document.getElementById('sec-' + seccion).classList.add('activa');
+            btn.classList.add('activo');
+        }
+
+        /* --- DATOS DE LOS PARTIDOS --- 
+           Añade aquí tus partidos cuando tengas las fechas. 
+           
+           EJEMPLO PARA PRÓXIMO PARTIDO:
+           { dia: 24, mes: 4, año: 2026, hora: "19:00", rival: "Sporting C.", local: true, jugado: false, lugar: "Polideportivo T.L. Victoria" }
+           
+           EJEMPLO PARA PARTIDO JUGADO:
+           { dia: 16, mes: 4, año: 2026, rival: "Real Vagos", local: true, jugado: true, golesV: 4, golesR: 1 }
+        */
+        const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+        // De momento la lista está vacía
+        const partidos = [];
+
+        /* --- RENDERIZADO DEL CALENDARIO --- */
+        const contFuturos = document.getElementById('contenedor-futuros');
+        const contPasados = document.getElementById('contenedor-pasados');
+
+        function generarTarjetas() {
+            // Filtrar partidos
+            const partidosFuturos = partidos.filter(p => !p.jugado);
+            const partidosPasados = partidos.filter(p => p.jugado);
+
+            // Mostrar mensaje si no hay datos.
+            // Para el contenedor de futuros, al tener la tarjeta fija encima, puede que no necesites este mensaje, 
+            // pero lo dejamos por si más adelante la quitas.
+            if (partidosFuturos.length === 0) {
+                // contFuturos.innerHTML = '<div class="mensaje-vacio">Aún no hay próximos partidos programados.</div>';
+            }
+            if (partidosPasados.length === 0) {
+                contPasados.innerHTML = '<div class="mensaje-vacio">Aún no hay resultados para mostrar.</div>';
+            }
+
+            // Generar tarjetas HTML para los datos del array `partidos`
+            partidos.forEach(p => {
+                const nombreMes = meses[p.mes - 1]; 
+                
+                // Formateo de los nombres de equipo según si jugamos en casa (local)
+                let htmlEquipoIzq = p.local ? `<div class="match-team valprimos">VALPRIMOS</div>` : `<div class="match-team">${p.rival}</div>`;
+                let htmlEquipoDer = p.local ? `<div class="match-team">${p.rival}</div>` : `<div class="match-team valprimos">VALPRIMOS</div>`;
+
+                if (p.jugado) {
+                    // --- TARJETA PARTIDO PASADO (RESULTADO) ---
+                    let golesIzq = p.local ? p.golesV : p.golesR;
+                    let golesDer = p.local ? p.golesR : p.golesV;
+                    let marcador = `${golesIzq} - ${golesDer}`;
+                    
+                    let claseResultado = p.golesV > p.golesR ? 'victoria' : (p.golesV < p.golesR ? 'derrota' : 'empate');
+                    let textoResultado = p.golesV > p.golesR ? 'VICTORIA' : (p.golesV < p.golesR ? 'DERROTA' : 'EMPATE');
+
+                    contPasados.innerHTML += `
+                        <div class="match-card">
+                            <div class="competicion ${claseResultado}">${textoResultado}</div>
+                            <div class="match-teams">
+                                ${htmlEquipoIzq}
+                                <div class="match-vs marcador-pasado ${claseResultado}">${marcador}</div>
+                                ${htmlEquipoDer}
+                            </div>
+                            <div class="match-info">
+                                📅 ${p.dia} ${nombreMes} ${p.año}
+                            </div>
+                        </div>
+                    `;
+
+                } else {
+                    // --- TARJETA PRÓXIMO PARTIDO ---
+                    contFuturos.innerHTML += `
+                        <div class="match-card">
+                            <div class="competicion">PRÓXIMO PARTIDO</div>
+                            <div class="match-teams">
+                                ${htmlEquipoIzq}
+                                <div class="match-vs">VS</div>
+                                ${htmlEquipoDer}
+                            </div>
+                            <div class="match-info">
+                                📅 ${p.dia} ${nombreMes} ${p.año} | ⏱ ${p.hora}<br>
+                                📍 <strong>${p.lugar}</strong>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        generarTarjetas();
+
+    </script>
+</body>
+</html>

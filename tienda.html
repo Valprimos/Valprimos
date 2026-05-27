@@ -179,9 +179,9 @@
         .btn-cerrar-cart:hover { background: var(--dorado); color: var(--verde-oscuro); }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL
+           OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 850px) { 
+        @media (max-width: 1024px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -238,6 +238,7 @@
                 <a href="index.html">Inicio</a>
                 <a href="tienda.html" class="activo" style="border-bottom: 2px solid var(--dorado)">Tienda</a>
                 <a href="jugadores.html">Jugadores</a>
+                <a href="calendario.html">Calendario</a>
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="contacto.html">Contacto</a>
@@ -517,7 +518,7 @@
 
         // --- LÓGICA DEL ENCABEZADO ---
         window.addEventListener('scroll', () => {
-            if (window.innerWidth > 850) {
+            if (window.innerWidth > 1024) {
                 if (window.scrollY > 40) { 
                     h.classList.add('scrolled'); e.classList.add('scrolled'); 
                 } else { 
@@ -532,13 +533,13 @@
         });
 
         window.addEventListener('touchstart', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
             }
         }, {passive: true});
 
         window.addEventListener('touchmove', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10 && headerShrunkMobile) {
                 let currentY = ev.touches[0].clientY;
                 if (currentY - startY > 40) {
                     h.classList.remove('scrolled'); 

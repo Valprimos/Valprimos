@@ -122,7 +122,9 @@
         .match-card {
             background: linear-gradient(135deg, rgba(59, 36, 33, 0.9) 0%, rgba(10, 67, 37, 0.9) 100%);
             border: 2px solid var(--dorado); display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s;
         }
+        .match-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .match-card .competicion { font-size: 0.85rem; font-weight: 800; color: var(--dorado); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
         .match-teams { display: flex; align-items: center; justify-content: center; gap: 30px; font-family: var(--fuente-titulos); font-size: 2.5rem; color: #FFF; width: 100%; }
         .match-vs { font-family: var(--fuente-deportiva); font-size: 2rem; color: var(--dorado); }
@@ -182,11 +184,9 @@
         .cerrar-modal { position: absolute; top: 20px; right: 30px; color: #FFF; font-size: 40px; cursor: pointer; z-index: 100; transition: 0.3s;}
         .cerrar-modal:hover { color: var(--dorado); }
 
-        /* Contenedor dinámico para imagen o vídeo en las noticias */
         .modal-media { margin-top: 25px; margin-bottom: 25px; text-align: center; }
         .modal-media img, .modal-media video { max-width: 100%; border-radius: 10px; border: 2px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
-        /* Botón dentro de la noticia */
         .btn-noticia {
             display: inline-block; background-color: var(--dorado); color: var(--marron-principal);
             padding: 12px 30px; text-decoration: none; font-weight: 800; font-family: var(--fuente-deportiva);
@@ -218,16 +218,38 @@
         .banner-text h2 { margin-bottom: 10px; }
         .banner-text p { margin: 0; max-width: 500px; color: #d1d9d4;}
 
+        /* --- SIMBOLOGÍA (ÍNDICE) --- */
+        .grid-simbologia { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; text-align: center; margin-top: 40px;
+        }
+        .tarjeta-simbolo { 
+            background: rgba(0, 0, 0, 0.3); padding: 40px 30px; border-radius: 12px; 
+            border: 1px solid rgba(232, 193, 90, 0.1); border-top: 3px solid var(--dorado); 
+            transition: 0.4s; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .tarjeta-simbolo:hover { 
+            transform: translateY(-8px); background: rgba(0, 0, 0, 0.5); 
+            border-color: rgba(232, 193, 90, 0.4); 
+        }
+        .icon-simbolo { font-size: 3.5rem; margin-bottom: 20px; display: block; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
+        .tarjeta-simbolo h4 { font-family: var(--fuente-titulos); color: #FFF; font-size: 1.8rem; margin: 0 0 15px 0; text-transform: uppercase; }
+        .tarjeta-simbolo p { font-size: 1rem; line-height: 1.6; color: #d1d9d4; margin: 0; }
+        .frase-destacada { 
+            color: var(--dorado); font-weight: 800; font-style: italic; display: block; 
+            margin-top: 25px; font-family: var(--fuente-titulos); font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
         /* =========================================================
            OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
            ========================================================= */
         @media (max-width: 1024px) { 
-            /* Encabezado */
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
             
-            /* Menú Hamburguesa */
             nav { padding: 12px 0; }
             .menu-toggle { 
                 display: block; color: var(--dorado); font-weight: 800; 
@@ -242,26 +264,23 @@
             .nav-links.activo { display: flex; }
             .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
 
-            /* Comportamiento Scrolled en Móvil/Tablet */
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
             .espaciador { height: 350px; }
             .espaciador.scrolled { height: 150px; }
 
-            /* Ajustes del Contenido */
             main { padding: 30px 15px 0; }
             .card { padding: 2rem 1.5rem; margin-bottom: 30px; }
             .card h2 { font-size: 2rem; }
             
-            .grid-noticias { grid-template-columns: 1fr; gap: 20px; }
-            .noticia { padding: 30px 20px; min-height: auto;}
-            .noticia h3 { font-size: 1.5rem; }
+            .grid-noticias, .grid-simbologia { grid-template-columns: 1fr; gap: 20px; }
+            .noticia, .tarjeta-simbolo { padding: 30px 20px; min-height: auto;}
+            .noticia h3, .tarjeta-simbolo h4 { font-size: 1.5rem; }
 
             .match-teams { flex-direction: column; gap: 10px; font-size: 1.8rem; }
             .banner-content { flex-direction: column; text-align: center; padding: 0;}
             .banner-text p { margin-bottom: 30px; margin-left: auto; margin-right: auto;}
 
-            /* MODAL PANTALLA COMPLETA */
             .modal-content { 
                 width: 100%; height: 100vh; max-height: 100vh; max-width: 100%; 
                 border-radius: 0; border: none; padding: 75px 20px 30px; 
@@ -288,6 +307,7 @@
                 <a href="index.html" class="activo">Inicio</a>
                 <a href="tienda.html">Tienda</a>
                 <a href="jugadores.html">Jugadores</a>
+                <a href="calendario.html">Calendario</a>
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="contacto.html">Contacto</a>
@@ -298,7 +318,8 @@
     <div class="espaciador" id="espaciador-fantasma"></div>
 
     <main>
-        <div class="card match-card">
+        <!-- PRÓXIMO PARTIDO INTACTO + CLICK -->
+        <div class="card match-card" onclick="window.location.href='calendario.html'">
             <div class="competicion">Próximo Partido - Torneo de Peñas</div>
             <div class="match-teams">
                 <span>VALPRIMOS</span>
@@ -315,7 +336,7 @@
             
             <div class="grid-noticias">
                 
-                <!-- NUEVA NOTICIA DE LA CORTEZA -->
+                <!-- NOTICIA CORTEZA -->
                 <article class="noticia" onclick="abrirNoticia('La Nueva Corteza 25/26', 'TIENDA OFICIAL', 'Ha llegado el momento. Ya está a la venta la armadura con la que saltaremos al césped por primera vez en nuestra historia. Porque tenemos <strong>raíces de leyenda y madera de campeones</strong>, este diseño nos representa mejor que nunca. Hazte con tu camiseta y defiende el pinar.', '<video src=\'Arreglo.mp4\' controls autoplay muted loop></video>', 'tienda.html', 'Comprar ahora')">
                     <div>
                         <span class="fecha-noticia">TIENDA OFICIAL</span>
@@ -324,7 +345,8 @@
                     </div>
                 </article>
                 
-                <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.')">
+                <!-- NOTICIA ARRANQUE NUEVA ETAPA -->
+                <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.', null, 'calendario.html', 'Ver calendario')">
                     <div>
                         <span class="fecha-noticia">TEMPORADA 25/26</span>
                         <h3>Arranque de la Nueva Etapa</h3>
@@ -357,10 +379,38 @@
             </div>
         </div>
 
+        <!-- SECCIÓN SIMBOLOGÍA QUE SUSTITUYE AL ADN -->
         <div class="card" style="margin-bottom: 0;">
-            <h2>NUESTRO ADN</h2>
-            <p style="font-size: 1.25rem; font-style: italic; color: var(--dorado); margin-bottom: 15px;">"De las raíces a la copa."</p>
-            <p>Valprimos es el resultado de años de evolución y esfuerzo. Cada vez que pisamos el césped, recordamos de dónde venimos y demostramos, pase a pase, que somos fieles a nuestra historia.</p>
+            <h2>NUESTRA SIMBOLOGÍA</h2>
+            
+            <div class="grid-simbologia">
+                <div class="tarjeta-simbolo">
+                    <div>
+                        <span class="icon-simbolo">🌲</span>
+                        <h4>El Nombre</h4>
+                        <p>Nuestra identidad nace de la unión de nuestra sangre y nuestro lugar de origen: somos unos primos que veranean en la colonia de Valpinos. En el pasado competimos en torneos bajo los nombres de "Valpinos" y "Los Primos". Hoy, hemos fusionado ambos legados para defender un único escudo: Valprimos.</p>
+                    </div>
+                    <span class="frase-destacada">"Más que un equipo, una piña."</span>
+                </div>
+
+                <div class="tarjeta-simbolo">
+                    <div>
+                        <span class="icon-simbolo">🎨</span>
+                        <h4>Los Colores</h4>
+                        <p>Vestimos la naturaleza de nuestro pinar. El verde de las copas en el pecho, el marrón de los troncos en el pantalón, y detalles en dorado en honor al amarillo de las equipaciones de Galapagar que vestimos en nuestros primeros torneos.</p>
+                    </div>
+                    <span class="frase-destacada">"Madera de campeones."</span>
+                </div>
+
+                <div class="tarjeta-simbolo">
+                    <div>
+                        <span class="icon-simbolo">🛡️</span>
+                        <h4>El Escudo</h4>
+                        <p>Un emblema que cuenta nuestra historia. Presenta 16 puntas en honor a los 16 primos que forman la plantilla, nuestros icónicos pinos, y el año 2000, marcando el nacimiento de los primeros primos, la semilla de este legado.</p>
+                    </div>
+                    <span class="frase-destacada">"De las raíces a la copa."</span>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -386,7 +436,6 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // Lógica de Scroll ampliada a <= 1024 para incluir iPads
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 1024) {
                 if (window.scrollY > 40) {
@@ -405,7 +454,6 @@
             }
         });
 
-        // Gestos táctiles aplicados hasta 1024px (iPad/Tablets)
         window.addEventListener('touchstart', ev => {
             if (window.innerWidth <= 1024 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
@@ -427,14 +475,12 @@
             document.getElementById('nav-links').classList.toggle('activo');
         }
 
-        // Funciones del Modal de Noticias (Acepta foto/vídeo y botón)
         function abrirNoticia(titulo, fecha, contenido, mediaHTML = null, urlBoton = null, textoBoton = null) {
             document.getElementById('m-news-title').innerText = titulo;
             document.getElementById('m-news-date').innerText = fecha;
             
             let htmlFinal = `<p>${contenido}</p>`;
             
-            // Inyectar el vídeo o la foto si se ha enviado
             if (mediaHTML) {
                 htmlFinal += `<div class="modal-media">${mediaHTML}</div>`;
             }
@@ -453,7 +499,6 @@
             document.getElementById('modal-noticia').classList.remove('activo');
             document.body.style.overflow = 'auto'; 
             
-            // Pausar el vídeo si el usuario cierra el modal mientras se reproduce
             const mediaContainer = document.getElementById('m-news-body');
             const videoElement = mediaContainer.querySelector('video');
             if(videoElement) {
@@ -461,7 +506,6 @@
             }
         }
 
-        // Cerrar modal con ESC
         window.addEventListener('keydown', (e) => { 
             if(e.key === 'Escape') cerrarNoticia(); 
         });

@@ -81,10 +81,10 @@
             border-bottom: 2px solid var(--dorado); padding-bottom: 10px;
         }
 
-        main { max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+        main { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; }
 
         /* --- TIMELINE --- */
-        .timeline { position: relative; padding: 40px 0; }
+        .timeline { position: relative; padding: 40px 0; margin-bottom: 60px; }
         .timeline::before {
             content: ''; position: absolute; left: 50%; width: 2px; height: 100%;
             background: var(--dorado); opacity: 0.2; transform: translateX(-50%);
@@ -114,59 +114,32 @@
         .timeline-content p { line-height: 1.7; color: #ddd; font-size: 1.05rem; margin: 0; font-weight: 400; }
         .highlight { color: var(--dorado); font-weight: 700; }
 
-        /* --- BOTONES GALERÍA --- */
         .btn-historia-galeria {
-            display: inline-block;
-            background-color: transparent;
-            color: var(--dorado);
-            border: 2px solid var(--dorado);
-            padding: 8px 20px;
-            text-decoration: none;
-            font-family: var(--fuente-moderna);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 5px;
-            margin-top: 15px;
-            font-size: 0.85rem;
+            display: inline-block; background-color: transparent; color: var(--dorado);
+            border: 2px solid var(--dorado); padding: 8px 20px; text-decoration: none;
+            font-family: var(--fuente-moderna); font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; border-radius: 5px; margin-top: 15px; font-size: 0.85rem;
             transition: 0.3s;
         }
-
-        .btn-historia-galeria:hover {
-            background-color: var(--dorado);
-            color: var(--verde-oscuro);
-            transform: scale(1.05);
-        }
+        .btn-historia-galeria:hover { background-color: var(--dorado); color: var(--verde-oscuro); transform: scale(1.05); }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL (Smartphones y Tablets pequeñas)
+           OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 850px) { 
-            /* 1. Encabezado más proporcionado */
+        @media (max-width: 1024px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
             
-            /* 2. Menú Hamburguesa */
             nav { padding: 12px 0; }
-            .menu-toggle { 
-                display: block; color: var(--dorado); font-weight: 800; 
-                font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
-            }
-            .nav-links { 
-                display: none; position: absolute; top: 100%; left: 0; width: 100%; 
-                background-color: var(--marron-principal); flex-direction: column; 
-                padding: 10px 0; border-bottom: 3px solid var(--dorado); 
-                box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001;
-            }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--marron-principal); flex-direction: column; padding: 10px 0; border-bottom: 3px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001; }
             .nav-links.activo { display: flex; }
             .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important;}
 
-            /* 3. Comportamiento Scrolled en Móvil */
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
 
-            /* 4. Ajustes del Timeline y Hero para Móvil */
             .hero-historia { margin-top: 350px; }
             .hero-historia.scrolled { margin-top: 150px; }
             .hero-historia p { font-size: 1.6rem; }
@@ -192,13 +165,12 @@
             <div class="subtitulo">RAÍCES DE LEYENDA</div>
         </div>
         <nav>
-            <!-- Botón del menú hamburguesa -->
             <div class="menu-toggle" onclick="toggleMenu()">☰ Menú</div>
-            <!-- Contenedor de enlaces -->
             <div class="nav-links" id="nav-links">
                 <a href="index.html">Inicio</a>
                 <a href="tienda.html">Tienda</a>
                 <a href="jugadores.html">Jugadores</a> 
+                <a href="calendario.html">Calendario</a>
                 <a href="historia.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="contacto.html">Contacto</a>
@@ -252,7 +224,7 @@
                 <div class="timeline-content">
                     <span class="fecha" style="text-shadow: var(--sombra-texto);">2026</span>
                     <h3 style="text-shadow: var(--sombra-texto);">FUNDACIÓN VALPRIMOS</h3>
-                    <p>Llegamos a la unificación definitiva. Dejamos atrás las antiguas denominaciones para fundar oficialmente el club como <span class="highlight">Valprimos</span>, con una plantilla de 16 jugadores comprometidos. <strong>De las raíces a la copa.</strong></p>
+                    <p>Llegamos a la unificación definitiva. Dejamos atrás las antiguas denominaciones para fundar oficialmente el club como <span class="highlight">Valprimos</span>, con una plantilla de 16 jugadores comprometidos.</p>
                     <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
                 </div>
             </div>
@@ -273,10 +245,8 @@
         let headerShrunkMobile = false;
         let startY = 0;
 
-        // --- LÓGICA DEL ENCABEZADO (CON DOBLE SCROLL EN MÓVIL) ---
         window.addEventListener('scroll', () => {
-            if (window.innerWidth > 850) {
-                // PC: Comportamiento normal (se encoge y se despliega automáticamente al subir)
+            if (window.innerWidth > 1024) {
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     hero.classList.add('scrolled');
@@ -285,7 +255,6 @@
                     hero.classList.remove('scrolled');
                 }
             } else {
-                // MÓVIL: Se encoge al bajar, pero NO se despliega automáticamente al subir
                 if (window.scrollY > 40) {
                     header.classList.add('scrolled');
                     hero.classList.add('scrolled');
@@ -294,17 +263,15 @@
             }
         });
 
-        // Gestos táctiles para el "doble scroll" en móvil (pull to refresh style)
         window.addEventListener('touchstart', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10) {
                 startY = ev.touches[0].clientY;
             }
         }, {passive: true});
 
         window.addEventListener('touchmove', ev => {
-            if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
+            if (window.innerWidth <= 1024 && window.scrollY <= 10 && headerShrunkMobile) {
                 let currentY = ev.touches[0].clientY;
-                // Si el usuario arrastra hacia abajo al menos 40px estando arriba del todo
                 if (currentY - startY > 40) {
                     header.classList.remove('scrolled');
                     hero.classList.remove('scrolled');
@@ -313,7 +280,6 @@
             }
         }, {passive: true});
 
-        // Alternar Menú Hamburguesa en Móvil
         function toggleMenu() {
             document.getElementById('nav-links').classList.toggle('activo');
         }
