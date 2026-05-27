@@ -404,56 +404,89 @@
         };
 
         let datosAlineaciones = [];
-        async function cargarRanking() {
-            const urlRank = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
-            const urlHist = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?output=tsv";
 
+        // GID 0 = primera hoja (Respuestas de formulario 1)
+        const URL_RESPUESTAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=0&single=true&output=tsv";
+        const URL_RANKING    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaMILJrOU784DybM7l6tuJd7CrqcSqbPTYBUzwknpp54BUf8vAxce7DF4N2NgBAhIKNIUc6wJKtqTD/pub?gid=316780325&single=true&output=tsv";
+
+        function normalizar(s) {
+            return (s || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        async function cargarRanking() {
+            // --- RANKING ---
             try {
-                const r1 = await fetch(urlRank); const t1 = await r1.text();
+                const r1 = await fetch(URL_RANKING);
+                const t1 = await r1.text();
                 const filas = t1.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
-                const tbody = document.getElementById('rankingBody'); tbody.innerHTML = '';
-                
+                const tbody = document.getElementById('rankingBody');
+                tbody.innerHTML = '';
                 let rank = filas.map(f => {
                     const c = f.split('\t');
-                    return { m: c[0] ? c[0].trim() : "", p: parseInt(c[1]) || 0 };
-                }).filter(e => e.m && e.m.toLowerCase() !== "mánager").sort((a,b) => b.p - a.p);
+                    return { m: (c[0] || "").trim(), p: parseInt(c[1]) || 0 };
+                }).filter(e => e.m && normalizar(e.m) !== "manager" && normalizar(e.m) !== "mánager").sort((a,b) => b.p - a.p);
 
                 rank.forEach((e, i) => {
                     const tr = document.createElement('tr');
                     let pos = (i === 0) ? "🥇" : (i === 1) ? "🥈" : (i === 2) ? "🥉" : (i + 1);
-                    tr.innerHTML = `<td>${pos}</td><td style="text-align:left">${e.m}</td><td style="color:var(--dorado); font-weight:bold">${e.p}</td>
-                                    <td><button class="btn-ver" onclick="abrirModal('${e.m}')">👁️ EQUIPO</button></td>`;
+                    tr.innerHTML = `<td>${pos}</td><td style="text-align:left">${e.m}</td>
+                                    <td style="color:var(--dorado);font-weight:bold">${e.p}</td>
+                                    <td><button class="btn-ver" onclick="abrirModal('${e.m.replace(/'/g,"\\'")}')">👁️ EQUIPO</button></td>`;
                     tbody.appendChild(tr);
                 });
+            } catch(e) { console.error("Error ranking:", e); }
 
-                const r2 = await fetch(urlHist); const t2 = await r2.text();
-                    datosAlineaciones = t2.split(/\r?\n/).filter(f => f.trim() !== "").slice(1).map(f => {
-                        const c = f.split('\t');
-                        // Columnas: 0=Marca temporal, 1=Nombre equipo, 2=Correo, 3=J1, 4=J2, 5=J3, 6=J4, 7=J5, 8=Jornada
-                        if (!c[1] || !c[1].trim()) return null;
-                        return { m: c[1].trim(), jor: c[8] ? c[8].trim() : '', j1: c[3] ? c[3].trim() : '', j2: c[4] ? c[4].trim() : '', j3: c[5] ? c[5].trim() : '', j4: c[6] ? c[6].trim() : '', j5: c[7] ? c[7].trim() : '', p1: 0, p2: 0, p3: 0, p4: 0, p5: 0 };
-                    }).filter(Boolean);
-            } catch (e) { console.error(e); }
+            // --- HISTORIAL DE ALINEACIONES ---
+            try {
+                const r2 = await fetch(URL_RESPUESTAS);
+                const t2 = await r2.text();
+                // Columnas TSV: 0=Marca temporal | 1=Nombre equipo | 2=Correo | 3=Jugador1 | 4=Jugador2 | 5=Jugador3 | 6=Jugador4 | 7=Jugador5 | 8=Jornada
+                const lineas = t2.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
+                datosAlineaciones = lineas.map(f => {
+                    const c = f.split('\t');
+                    const equipo = (c[1] || "").trim();
+                    const jornada = (c[8] || "").trim();
+                    if (!equipo || !jornada) return null;
+                    return {
+                        m: equipo, jor: jornada,
+                        j1: (c[3] || "").trim(), j2: (c[4] || "").trim(),
+                        j3: (c[5] || "").trim(), j4: (c[6] || "").trim(),
+                        j5: (c[7] || "").trim(),
+                        p1: 0, p2: 0, p3: 0, p4: 0, p5: 0
+                    };
+                }).filter(Boolean);
+                console.log("Alineaciones cargadas:", datosAlineaciones.length, datosAlineaciones);
+            } catch(e) { console.error("Error historial:", e); }
         }
 
         function abrirModal(m) {
             document.getElementById('modalManagerName').innerText = m;
-            const container = document.getElementById('historialContainer'); container.innerHTML = "";
-            const hist = datosAlineaciones.filter(d => d.m === m);
-            if (hist.length === 0) { container.innerHTML = "<p style='color:#ccc; text-align:center;'>Pendiente de actualización del historial.</p>"; } 
-            else {
+            const container = document.getElementById('historialContainer');
+            container.innerHTML = "";
+
+            // Comparación flexible: ignora tildes, mayúsculas y espacios extra
+            const hist = datosAlineaciones.filter(d => normalizar(d.m) === normalizar(m));
+
+            if (hist.length === 0) {
+                container.innerHTML = `<p style='color:#ccc;text-align:center;'>Pendiente de actualización del historial.</p>
+                    <p style='color:#888;text-align:center;font-size:0.8rem;font-style:italic;'>
+                    (${datosAlineaciones.length} entradas cargadas — managers: ${[...new Set(datosAlineaciones.map(d=>d.m))].join(", ") || "ninguno"})</p>`;
+            } else {
+                // Ordenar por jornada
+                hist.sort((a,b) => (a.jor || "").localeCompare(b.jor || ""));
                 hist.forEach(d => {
                     const tot = [d.p1, d.p2, d.p3, d.p4, d.p5].reduce((a, b) => a + parseInt(b || 0), 0);
-                    const card = document.createElement('div'); card.className = 'jornada-card';
+                    const card = document.createElement('div');
+                    card.className = 'jornada-card';
                     card.innerHTML = `<div class="jornada-header"><span>${d.jor}</span><span>${tot} Pts</span></div>
-                                      <div class="jornada-grid">
-                                        ${[1,2,3,4,5].map(i => `
-                                            <div class="jugador-mini">
-                                                <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador">
-                                                <span class="nombre-jugador">${d['j'+i] || '-'}</span>
-                                                <span class="pts-jugador">${d['p'+i] || '0'}</span>
-                                            </div>`).join('')}
-                                      </div>`;
+                        <div class="jornada-grid">
+                            ${[1,2,3,4,5].map(i => `
+                                <div class="jugador-mini">
+                                    <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador" onerror="this.src='escudo.png'">
+                                    <span class="nombre-jugador">${d['j'+i] || '-'}</span>
+                                    <span class="pts-jugador">${d['p'+i] || '0'}</span>
+                                </div>`).join('')}
+                        </div>`;
                     container.appendChild(card);
                 });
             }
