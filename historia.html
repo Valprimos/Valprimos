@@ -75,10 +75,15 @@
             text-align: center; margin-top: 550px; transition: var(--transicion-fluida);
         }
         .hero-historia.scrolled { margin-top: 220px; }
-        .hero-historia p { 
-            font-family: var(--fuente-titulos); font-size: 2.2rem; color: #FFF; 
-            font-style: italic; letter-spacing: 1px;
-            border-bottom: 2px solid var(--dorado); padding-bottom: 10px;
+        
+        .titulo-seccion {
+            font-family: var(--fuente-titulos);
+            color: var(--dorado);
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: var(--sombra-texto);
         }
 
         main { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; }
@@ -124,8 +129,8 @@
         .btn-historia-galeria:hover { background-color: var(--dorado); color: var(--verde-oscuro); transform: scale(1.05); }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
-           ========================================================= */
+            OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
+            ========================================================= */
         @media (max-width: 1024px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
@@ -142,7 +147,7 @@
 
             .hero-historia { margin-top: 350px; }
             .hero-historia.scrolled { margin-top: 150px; }
-            .hero-historia p { font-size: 1.6rem; }
+            .titulo-seccion { font-size: 2.5rem; }
 
             .timeline::before { left: 20px; }
             .timeline-item { width: 100%; text-align: left !important; padding-left: 60px; padding-right: 0; }
@@ -179,7 +184,7 @@
     </div>
 
     <section class="hero-historia" id="hero-section">
-        <p>Cronología del Club</p>
+        <h2 class="titulo-seccion">CRONOLOGÍA DEL CLUB</h2>
     </section>
 
     <main>

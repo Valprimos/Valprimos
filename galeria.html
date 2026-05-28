@@ -75,10 +75,15 @@
             text-align: center; margin-top: 550px; transition: var(--transicion-fluida);
         }
         .hero-galeria.scrolled { margin-top: 220px; }
-        .hero-galeria p { 
-            font-family: var(--fuente-titulos); font-size: 2.2rem; color: #FFF; 
-            font-style: italic; letter-spacing: 1px;
-            border-bottom: 2px solid var(--dorado); padding-bottom: 10px;
+        
+        .titulo-seccion {
+            font-family: var(--fuente-titulos);
+            color: var(--dorado);
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: var(--sombra-texto);
         }
 
         /* --- CONTENIDO GALERÍA --- */
@@ -175,8 +180,8 @@
         }
 
         /* =========================================================
-           OPTIMIZACIÓN MÓVIL
-           ========================================================= */
+            OPTIMIZACIÓN MÓVIL
+            ========================================================= */
         @media (max-width: 850px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
@@ -198,7 +203,7 @@
 
             .hero-galeria { margin-top: 350px; }
             .hero-galeria.scrolled { margin-top: 150px; }
-            .hero-galeria p { font-size: 1.6rem; }
+            .titulo-seccion { font-size: 2.5rem; }
 
             .titulo-anio { font-size: 2.8rem; }
             .seccion-anio { scroll-margin-top: 100px; }
@@ -238,7 +243,7 @@
     </div>
 
     <section class="hero-galeria" id="hero-section">
-        <p>Nuestro Legado en Imágenes</p>
+        <h2 class="titulo-seccion">NUESTRO LEGADO EN IMÁGENES</h2>
     </section>
 
     <main>

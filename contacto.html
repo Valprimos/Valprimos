@@ -85,7 +85,11 @@
         }
         .tarjeta-dato:hover { background: rgba(232, 193, 90, 0.05); transform: translateX(10px); }
         .tarjeta-dato h4 { margin: 0 0 10px 0; color: var(--dorado); font-family: var(--fuente-deportiva); font-size: 1.4rem; text-transform: uppercase; }
-        .tarjeta-dato p { margin: 5px 0; color: #ccc; }
+        .tarjeta-dato p { margin: 5px 0; color: #ccc; transition: 0.3s; }
+        
+        /* Enlace de ubicación */
+        .tarjeta-dato.clickable-map { cursor: pointer; }
+        .tarjeta-dato.clickable-map:hover p { color: var(--dorado); }
         
         .link-ig { color: var(--dorado); text-decoration: none; font-weight: 800; transition: 0.3s; }
         .link-ig:hover { color: #FFF; }
@@ -193,7 +197,7 @@
                 En Valprimos, <strong>más que un equipo somos una piña</strong> y eso nos obliga a escuchar a quienes nos hacen grandes: vosotros. Vuestras ideas y vuestra voz son la savia que nos alimenta de las raíces a la copa.
             </p>
             
-            <div class="tarjeta-dato">
+            <div class="tarjeta-dato clickable-map" onclick="window.open('https://www.google.com/maps/search/?api=1&query=40.890310,-4.609682', '_blank')" title="Ver en Google Maps">
                 <h4>UBICACIÓN</h4>
                 <p>Valpinos, Las Colonias</p>
                 <p>Sanchidrián</p>

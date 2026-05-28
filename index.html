@@ -127,13 +127,15 @@
         .match-card {
             background: linear-gradient(135deg, rgba(59, 36, 33, 0.9) 0%, rgba(10, 67, 37, 0.9) 100%);
             border: 2px solid var(--dorado); display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: 0.3s; padding: 35px 20px;
         }
         .match-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .match-card .competicion { font-size: 0.85rem; font-weight: 800; color: var(--dorado); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
-        .match-teams { display: flex; align-items: center; justify-content: center; gap: 30px; font-family: var(--fuente-titulos); font-size: 2.5rem; color: #FFF; width: 100%; }
-        .match-vs { font-family: var(--fuente-deportiva); font-size: 2rem; color: var(--dorado); }
-        .match-info { margin-top: 25px; font-size: 1rem; color: #ccc; letter-spacing: 1px; }
+        .match-card .competicion { font-size: 0.85rem; font-weight: 800; color: var(--dorado); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; text-align: center; }
+        .match-teams { display: flex; align-items: center; justify-content: center; gap: 20px; font-family: var(--fuente-titulos); font-size: 2.5rem; color: #FFF; width: 100%; text-align: center; max-width: 800px; }
+        .match-team { flex: 1; text-transform: uppercase; line-height: 1.1; word-break: break-word; }
+        .match-team.valprimos { color: var(--dorado); text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        .match-vs { font-family: var(--fuente-deportiva); font-size: 2.5rem; color: var(--dorado); padding: 0 15px; }
+        .match-info { margin-top: 25px; font-size: 1.1rem; color: #ccc; letter-spacing: 1px; text-align: center; }
 
         /* --- NOTICIAS --- */
         .grid-noticias {
@@ -248,8 +250,8 @@
         }
 
         /* =========================================================
-           OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
-           ========================================================= */
+            OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
+            ========================================================= */
         @media (max-width: 1024px) { 
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
@@ -282,7 +284,12 @@
             .noticia, .tarjeta-simbolo { padding: 30px 20px; min-height: auto;}
             .noticia h3, .tarjeta-simbolo h4 { font-size: 1.5rem; }
 
+            /* Tarjeta de partido adaptada al móvil */
+            .match-card { padding: 25px 15px; }
             .match-teams { flex-direction: column; gap: 10px; font-size: 1.8rem; }
+            .match-vs { font-size: 1.8rem; padding: 0; }
+            .match-info { font-size: 0.95rem; }
+
             .banner-content { flex-direction: column; text-align: center; padding: 0;}
             .banner-text p { margin-bottom: 30px; margin-left: auto; margin-right: auto;}
 
@@ -323,13 +330,13 @@
     <div class="espaciador" id="espaciador-fantasma"></div>
 
     <main>
-        <!-- PRÓXIMO PARTIDO INTACTO + CLICK -->
+        <!-- PRÓXIMO PARTIDO -->
         <div class="card match-card" onclick="window.location.href='calendario.html'">
             <div class="competicion">Próximo Partido - Torneo de Peñas</div>
             <div class="match-teams">
-                <span>VALPRIMOS</span>
-                <span class="match-vs">VS</span>
-                <span style="color: #aaa;">RIVAL POR DEFINIR</span>
+                <div class="match-team valprimos">VALPRIMOS</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team" style="color: #aaa;">RIVAL POR DEFINIR</div>
             </div>
             <div class="match-info">
                 📅 Fecha a determinar | 📍 Polideportivo Tomás Luis de Victoria
