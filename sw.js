@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valprimos-20260529022822';
+const CACHE_NAME = 'valprimos-20260529191936';
 const BASE = '/Valprimos';
 const ASSETS = [BASE+'/index.html',BASE+'/jugadores.html',BASE+'/historia.html',BASE+'/galeria.html',BASE+'/calendario.html',BASE+'/tienda.html',BASE+'/contacto.html',BASE+'/noticias.html',BASE+'/fantasy.html',BASE+'/escudo.png',BASE+'/manifest.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
