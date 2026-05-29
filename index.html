@@ -302,9 +302,74 @@
             .modal-content h2 { font-size: 2rem; margin-bottom: 20px; }
             .modal-content p { font-size: 1rem; }
         }
+        /* =========================================================
+           SPLASH SCREEN — ANIMACIÓN DE APERTURA
+           ========================================================= */
+        #splash {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--marron-principal);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0;
+            pointer-events: none;
+        }
+        #splash.oculto {
+            animation: splashSalida 0.7s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+        }
+        @keyframes splashSalida {
+            0%   { opacity: 1; transform: scale(1); }
+            60%  { opacity: 1; transform: scale(1.04); }
+            100% { opacity: 0; transform: scale(0.96); }
+        }
+
+        .splash-escudo {
+            width: 160px; height: 160px; object-fit: contain;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6));
+            animation: escudoEntrada 0.9s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+        @keyframes escudoEntrada {
+            from { opacity: 0; transform: scale(0.6) translateY(20px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .splash-titulo {
+            font-family: 'Squada One', cursive;
+            color: var(--dorado); font-size: 3.8rem; letter-spacing: 8px;
+            text-transform: uppercase; margin: 18px 0 0;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: tituloEntrada 0.9s 0.15s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+        @keyframes tituloEntrada {
+            from { opacity: 0; transform: translateY(16px); letter-spacing: 20px; }
+            to   { opacity: 1; transform: translateY(0);   letter-spacing: 8px; }
+        }
+
+        .splash-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; color: rgba(232,193,90,0.65);
+            font-size: 1rem; letter-spacing: 4px; text-transform: uppercase;
+            margin: 8px 0 0;
+            animation: tituloEntrada 0.9s 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+
+        .splash-linea {
+            width: 0; height: 1px; background: rgba(232,193,90,0.4);
+            margin: 20px 0 0;
+            animation: lineaEntrada 0.8s 0.4s ease forwards;
+        }
+        @keyframes lineaEntrada {
+            to { width: 200px; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash">
+        <img src="escudo.png" alt="Valprimos" class="splash-escudo">
+        <div class="splash-titulo">VALPRIMOS</div>
+        <div class="splash-sub">Raíces de Leyenda</div>
+        <div class="splash-linea"></div>
+    </div>
 
     <div class="header-container" id="main-header">
         <div class="header-content">
@@ -530,6 +595,15 @@
                     .catch(e => console.log('SW error:', e));
             });
         }
+
+        // SPLASH SCREEN
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash');
+            setTimeout(() => {
+                splash.classList.add('oculto');
+                splash.addEventListener('animationend', () => splash.remove(), { once: true });
+            }, 1800);
+        });
     </script>
 
 </body>
