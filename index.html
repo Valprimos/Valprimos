@@ -619,58 +619,50 @@
             });
         }
 
-        // SPLASH SCREEN — vuela exactamente al header
+        // SPLASH SCREEN — solo la primera vez que se abre la app en la sesión
         window.addEventListener('load', () => {
-            const splash    = document.getElementById('splash');
-            const splashEsc = splash.querySelector('.splash-escudo');
-            const splashTit = splash.querySelector('.splash-titulo');
-            const splashSub = splash.querySelector('.splash-sub');
-            const splashBrd = splash.querySelector('.splash-borde');
+            const splash = document.getElementById('splash');
+
+            // Si ya se vio en esta sesión, eliminar inmediatamente sin animar
+            if (sessionStorage.getItem('splashVisto')) {
+                splash.remove();
+                return;
+            }
+
+            // Marcar como visto para el resto de la sesión
+            sessionStorage.setItem('splashVisto', '1');
 
             setTimeout(() => {
-                // Medir posición actual de cada elemento splash (centro)
-                const rect = (el) => el.getBoundingClientRect();
+                const splashEsc = splash.querySelector('.splash-escudo');
+                const splashTit = splash.querySelector('.splash-titulo');
+                const splashSub = splash.querySelector('.splash-sub');
+                const splashBrd = splash.querySelector('.splash-borde');
 
-                // Medir posición destino en el header real
+                const rect = (el) => el.getBoundingClientRect();
                 const headerEsc = document.querySelector('.escudo');
                 const headerH1  = document.querySelector('h1');
                 const headerSub = document.querySelector('.subtitulo');
 
-                // Calcular deltaY para cada elemento (destino - origen, centro a centro)
                 function dy(splashEl, headerEl) {
-                    const sr = rect(splashEl);
-                    const hr = rect(headerEl);
-                    const splashCY = sr.top + sr.height / 2;
-                    const headerCY = hr.top + hr.height / 2;
-                    return headerCY - splashCY;
+                    const sr = rect(splashEl); const hr = rect(headerEl);
+                    return (hr.top + hr.height / 2) - (sr.top + sr.height / 2);
                 }
                 function scaleRatio(splashEl, headerEl) {
                     return rect(headerEl).height / rect(splashEl).height;
                 }
 
-                // Escudo
-                const dyEsc = dy(splashEsc, headerEsc);
-                const scEsc = scaleRatio(splashEsc, headerEsc);
-                splashEsc.style.setProperty('--dy-escudo', `${dyEsc}px`);
-                splashEsc.style.setProperty('--sc-escudo', scEsc);
-
-                // Título
-                const dyTit = dy(splashTit, headerH1);
-                splashTit.style.setProperty('--dy-titulo', `${dyTit}px`);
+                splashEsc.style.setProperty('--dy-escudo', `${dy(splashEsc, headerEsc)}px`);
+                splashEsc.style.setProperty('--sc-escudo', scaleRatio(splashEsc, headerEsc));
+                splashTit.style.setProperty('--dy-titulo', `${dy(splashTit, headerH1)}px`);
                 splashTit.style.setProperty('--sc-titulo', 1);
-
-                // Subtítulo
-                const dySub = dy(splashSub, headerSub);
-                splashSub.style.setProperty('--dy-sub', `${dySub}px`);
+                splashSub.style.setProperty('--dy-sub', `${dy(splashSub, headerSub)}px`);
                 splashSub.style.setProperty('--sc-sub', 1);
 
-                // Lanzar animaciones
                 splashEsc.classList.add('volar');
                 splashTit.classList.add('volar');
                 splashSub.classList.add('volar');
                 splashBrd.classList.add('volar');
 
-                // Fade out el fondo y eliminar
                 setTimeout(() => {
                     splash.classList.add('oculto');
                     setTimeout(() => splash.remove(), 450);
