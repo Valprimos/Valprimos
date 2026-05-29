@@ -310,63 +310,77 @@
             background: var(--verde-principal);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             pointer-events: none; overflow: hidden;
+            transition: opacity 0.4s ease;
         }
-        #splash.oculto {
-            animation: splashSalida 0.55s cubic-bezier(0.7, 0, 1, 1) 0.1s forwards;
-        }
-        @keyframes splashSalida {
-            0%   { opacity: 1; }
-            100% { opacity: 0; }
-        }
+        #splash.oculto { opacity: 0; }
 
-        /* Cuando sale, los elementos vuelan hacia arriba */
-        #splash.oculto .splash-escudo,
-        #splash.oculto .splash-titulo,
-        #splash.oculto .splash-sub {
-            animation: volarArriba 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-        }
-        @keyframes volarArriba {
-            to { transform: translateY(-60vh) scale(0.35); opacity: 0; }
-        }
-
+        /* Escudo: mismo tamaño exacto que .escudo en header */
         .splash-escudo {
-            width: 180px; height: 180px; object-fit: contain;
-            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
-            animation: escudoEntrada 0.8s cubic-bezier(0.23, 1, 0.32, 1) both;
+            height: 280px; width: auto; object-fit: contain;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
+            margin-bottom: 30px;
+            animation: escudoEntrada 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
         }
+        /* h1: exactamente font-size 4rem, letter-spacing 4px, Playfair Display */
+        .splash-titulo {
+            font-family: 'Playfair Display', serif;
+            color: var(--dorado); font-size: 4rem; letter-spacing: 4px;
+            text-transform: uppercase; margin: 0; line-height: 1;
+            text-shadow: var(--sombra-texto);
+            animation: entradaAbajo 0.7s 0.1s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+        /* subtitulo: exactamente font-size 1.4rem, letter-spacing 4px */
+        .splash-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; color: var(--dorado);
+            font-size: 1.4rem; letter-spacing: 4px;
+            text-transform: uppercase; margin: 10px 0 0;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            animation: entradaAbajo 0.7s 0.2s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+        .splash-borde {
+            width: 0; height: 2px; margin-top: 22px;
+            background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+            animation: bordeEntrada 0.6s 0.3s ease forwards;
+        }
+
         @keyframes escudoEntrada {
             from { opacity: 0; transform: scale(0.5) translateY(30px); }
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        .splash-titulo {
-            font-family: 'Playfair Display', serif;
-            color: var(--dorado); font-size: 4.2rem; letter-spacing: 6px;
-            text-transform: uppercase; margin: 16px 0 0; line-height: 1;
-            text-shadow: 2px 4px 10px rgba(0,0,0,0.6);
-            animation: tituloEntrada 0.8s 0.12s cubic-bezier(0.23, 1, 0.32, 1) both;
-        }
-        @keyframes tituloEntrada {
-            from { opacity: 0; transform: translateY(20px); filter: blur(6px); }
+        @keyframes entradaAbajo {
+            from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
             to   { opacity: 1; transform: translateY(0);   filter: blur(0); }
-        }
-
-        .splash-sub {
-            font-family: 'Playfair Display', serif;
-            font-style: italic; color: rgba(232,193,90,0.7);
-            font-size: 1.1rem; letter-spacing: 5px; text-transform: uppercase;
-            margin: 10px 0 0;
-            animation: tituloEntrada 0.8s 0.24s cubic-bezier(0.23, 1, 0.32, 1) both;
-        }
-
-        .splash-borde {
-            margin-top: 22px;
-            width: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--dorado), transparent);
-            animation: bordeEntrada 0.7s 0.35s ease forwards;
         }
         @keyframes bordeEntrada {
             to { width: 240px; }
+        }
+
+        /* Animación de salida — cada elemento vuela a su posición en el header */
+        .splash-escudo.volar   { animation: volarEscudo 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards !important; }
+        .splash-titulo.volar   { animation: volarTitulo 0.5s 0.04s cubic-bezier(0.7, 0, 0.3, 1) forwards !important; }
+        .splash-sub.volar      { animation: volarSub    0.5s 0.07s cubic-bezier(0.7, 0, 0.3, 1) forwards !important; }
+        .splash-borde.volar    { animation: volarBorde  0.4s cubic-bezier(0.7, 0, 0.3, 1) forwards !important; }
+
+        /* Las variables --dy-* se calculan en JS para cada elemento */
+        @keyframes volarEscudo {
+            to { transform: translateY(var(--dy-escudo, -40vh)) scale(var(--sc-escudo, 0.25)); opacity: 0; }
+        }
+        @keyframes volarTitulo {
+            to { transform: translateY(var(--dy-titulo, -40vh)) scale(var(--sc-titulo, 0.8)); opacity: 0; }
+        }
+        @keyframes volarSub {
+            to { transform: translateY(var(--dy-sub, -40vh)) scale(var(--sc-sub, 0.6)); opacity: 0; }
+        }
+        @keyframes volarBorde {
+            to { transform: translateY(-50vh); opacity: 0; width: 0; }
+        }
+
+        /* MÓVIL: tamaños exactos del header móvil */
+        @media (max-width: 1024px) {
+            .splash-escudo { height: 150px; margin-bottom: 15px; }
+            .splash-titulo { font-size: 2.2rem; letter-spacing: 2px; }
+            .splash-sub    { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
         }
     </style>
 </head>
@@ -605,12 +619,63 @@
             });
         }
 
-        // SPLASH SCREEN
+        // SPLASH SCREEN — vuela exactamente al header
         window.addEventListener('load', () => {
-            const splash = document.getElementById('splash');
+            const splash    = document.getElementById('splash');
+            const splashEsc = splash.querySelector('.splash-escudo');
+            const splashTit = splash.querySelector('.splash-titulo');
+            const splashSub = splash.querySelector('.splash-sub');
+            const splashBrd = splash.querySelector('.splash-borde');
+
             setTimeout(() => {
-                splash.classList.add('oculto');
-                setTimeout(() => splash.remove(), 700);
+                // Medir posición actual de cada elemento splash (centro)
+                const rect = (el) => el.getBoundingClientRect();
+
+                // Medir posición destino en el header real
+                const headerEsc = document.querySelector('.escudo');
+                const headerH1  = document.querySelector('h1');
+                const headerSub = document.querySelector('.subtitulo');
+
+                // Calcular deltaY para cada elemento (destino - origen, centro a centro)
+                function dy(splashEl, headerEl) {
+                    const sr = rect(splashEl);
+                    const hr = rect(headerEl);
+                    const splashCY = sr.top + sr.height / 2;
+                    const headerCY = hr.top + hr.height / 2;
+                    return headerCY - splashCY;
+                }
+                function scaleRatio(splashEl, headerEl) {
+                    return rect(headerEl).height / rect(splashEl).height;
+                }
+
+                // Escudo
+                const dyEsc = dy(splashEsc, headerEsc);
+                const scEsc = scaleRatio(splashEsc, headerEsc);
+                splashEsc.style.setProperty('--dy-escudo', `${dyEsc}px`);
+                splashEsc.style.setProperty('--sc-escudo', scEsc);
+
+                // Título
+                const dyTit = dy(splashTit, headerH1);
+                splashTit.style.setProperty('--dy-titulo', `${dyTit}px`);
+                splashTit.style.setProperty('--sc-titulo', 1);
+
+                // Subtítulo
+                const dySub = dy(splashSub, headerSub);
+                splashSub.style.setProperty('--dy-sub', `${dySub}px`);
+                splashSub.style.setProperty('--sc-sub', 1);
+
+                // Lanzar animaciones
+                splashEsc.classList.add('volar');
+                splashTit.classList.add('volar');
+                splashSub.classList.add('volar');
+                splashBrd.classList.add('volar');
+
+                // Fade out el fondo y eliminar
+                setTimeout(() => {
+                    splash.classList.add('oculto');
+                    setTimeout(() => splash.remove(), 450);
+                }, 120);
+
             }, 1700);
         });
     </script>
