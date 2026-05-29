@@ -157,7 +157,7 @@
         }
         .comp-foto-col img {
             width: 100%; height: 100%; object-fit: cover;
-            object-position: center 40%; transition: 0.5s;
+            object-position: center 35%; transition: 0.5s;
         }
         .comp-foto-col .comp-nombre-overlay {
             position: absolute; bottom: 0; width: 100%;
@@ -419,38 +419,48 @@
             .capitan-space { width: 30px; }
             .c-capitan { width: 24px; height: 24px; font-size: 0.9rem; }
 
-            /* Stats equipo */
-            .stats-equipo-header { grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
-            .stat-equipo-num { font-size: 3.2rem; }
-            .stat-equipo-label { font-size: 0.75rem; letter-spacing: 1px; }
-            .stat-equipo-card { padding: 20px 10px; }
+            /* Stats equipo — Partidos solo, resto de 2 en 2 */
+            .stats-equipo-header { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
+            .stats-equipo-header .stat-equipo-card:first-child { grid-column: span 2; }
+            .stat-equipo-num { font-size: 3rem; }
+            .stat-equipo-label { font-size: 0.72rem; letter-spacing: 1px; }
+            .stat-equipo-card { padding: 16px 10px; }
 
-            /* Tabla en móvil */
-            .tabla-stats { min-width: 550px; }
-            .tabla-stats thead th { padding: 15px 10px; font-size: 1rem; }
-            .tabla-stats tbody td { padding: 12px 10px; }
-            .td-foto { width: 45px; height: 45px; }
-            .td-nombre { font-size: 1.1rem; }
-            .td-num { font-size: 1.3rem; }
+            /* Tabla en móvil — sin scroll horizontal */
+            .tabla-wrapper { border-radius: 8px; overflow-x: auto; }
+            .tabla-stats { min-width: 0; width: 100%; font-size: 0.82rem; }
+            .tabla-stats thead th { padding: 10px 6px; font-size: 0.82rem; letter-spacing: 0.5px; }
+            .tabla-stats thead th:first-child { padding-left: 10px; }
+            .tabla-stats tbody td { padding: 9px 6px; }
+            .tabla-stats tbody td:first-child { padding-left: 10px; }
+            .td-jugador { gap: 8px; }
+            .td-foto { width: 36px; height: 36px; border-width: 1px; }
+            .td-nombre-wrap { flex-direction: row; align-items: center; gap: 5px; }
+            .td-nombre { font-size: 0.95rem; }
+            .td-dorsal { font-size: 0.7rem; }
+            .td-num { font-size: 1.1rem; }
 
             /* Modal móvil */
-            .modal-content-horizontal { flex-direction: column; height: 100vh; max-height: 100vh; width: 100%; max-width: 100%; border-radius: 0; border: none; overflow-y: auto; padding: 0; background: var(--verde-oscuro); }
-            .modal-foto-sec { height: 60vh; flex: none; position: relative; }
-            .modal-foto-sec::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 40%; background: linear-gradient(to bottom, transparent 0%, var(--verde-oscuro) 100%); pointer-events: none; }
-            .modal-info-sec { padding: 0 20px 40px; flex: none; justify-content: flex-start; min-height: 40vh; background: var(--verde-oscuro); margin-top: -60px; position: relative; z-index: 2; }
-            .modal-header-info { flex-wrap: nowrap; gap: 12px; align-items: flex-end; border-bottom: 1px solid rgba(232, 193, 90, 0.2); padding-bottom: 12px; margin-bottom: 20px; }
-            .modal-dorsal-grande { font-size: 3.5rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
-            .modal-nombre { font-size: 2.3rem; flex-grow: 1; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); word-break: break-word; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .stat-card { padding: 12px; background: rgba(255,255,255,0.05); }
-            .stat-num { font-size: 1.8rem; }
-            .cerrar-x { top: 16px; right: 16px; font-size: 30px; color: #FFF; background: rgba(0,0,0,0.55); width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); text-shadow: none; padding-bottom: 3px; }
+            .modal-content-horizontal { flex-direction: column; height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0; border: none; overflow: hidden; padding: 0; background: var(--verde-oscuro); }
+            .modal-foto-sec { height: 42vh; flex: none; position: relative; }
+            .modal-foto-sec img { object-position: center 50%; }
+            .modal-foto-sec::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 50%; background: linear-gradient(to bottom, transparent 0%, var(--verde-oscuro) 100%); pointer-events: none; }
+            .modal-info-sec { padding: 0 18px 16px; flex: 1; justify-content: flex-start; background: var(--verde-oscuro); margin-top: -50px; position: relative; z-index: 2; overflow: hidden; }
+            .modal-header-info { flex-wrap: nowrap; gap: 10px; align-items: center; border-bottom: 1px solid rgba(232, 193, 90, 0.2); padding-bottom: 10px; margin-bottom: 12px; }
+            .modal-dorsal-grande { font-size: 3rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); line-height: 1; }
+            .modal-nombre { font-size: 2rem; flex-grow: 1; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); word-break: break-word; line-height: 1; }
+            #m-capitan-container { display: flex; align-items: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stats-grid .stat-card:first-child { grid-column: span 2; }
+            .stat-card { padding: 10px 12px; background: rgba(255,255,255,0.05); }
+            .stat-num { font-size: 1.6rem; }
+            .stat-desc { font-size: 0.7rem; margin-top: 2px; }
+            .cup-badge { padding: 6px 14px; font-size: 0.75rem; margin-top: 10px; }
+            .btn-abrir-comparador { padding: 9px 16px; font-size: 0.8rem; margin-top: 10px; }
+            .cerrar-x { top: 12px; right: 12px; font-size: 28px; color: #FFF; background: rgba(0,0,0,0.55); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); text-shadow: none; padding-bottom: 2px; }
         }
 
-        @media (max-width: 480px) {
-            .stats-equipo-header { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .stat-equipo-card:last-child { grid-column: span 2; }
-        }
+        /* Fin estilos */
     </style>
 </head>
 <body>

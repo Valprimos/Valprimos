@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valprimos-20260529014626';
+const CACHE_NAME = 'valprimos-20260529015616';
 const BASE = '/Valprimos';
 const ASSETS = [
   BASE + '/index.html',
@@ -13,23 +13,14 @@ const ASSETS = [
   BASE + '/escudo.png',
   BASE + '/manifest.json'
 ];
-
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
-
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
-  );
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
   self.clients.claim();
 });
-
 self.addEventListener('fetch', e => {
   const url = e.request.url;
   if (url.includes('docs.google.com') || url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
