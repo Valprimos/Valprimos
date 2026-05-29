@@ -139,8 +139,8 @@
             flex-shrink: 0;
         }
         .comp-modal-title {
-            font-family: var(--fuente-titulos); color: var(--dorado); font-size: 1.6rem;
-            font-style: italic; letter-spacing: 2px; text-shadow: var(--sombra-texto);
+            font-family: var(--fuente-deportiva); color: var(--dorado); font-size: 1.8rem;
+            text-transform: uppercase; letter-spacing: 4px; text-shadow: var(--sombra-texto);
         }
         .comp-cerrar-x {
             color: var(--dorado); font-size: 38px; cursor: pointer; transition: 0.3s; line-height: 1;
@@ -157,7 +157,7 @@
         }
         .comp-foto-col img {
             width: 100%; height: 100%; object-fit: cover;
-            object-position: center 35%; transition: 0.5s;
+            object-position: center 25%; transition: 0.5s;
         }
         .comp-foto-col .comp-nombre-overlay {
             position: absolute; bottom: 0; width: 100%;
@@ -287,7 +287,11 @@
             line-height: 1; text-transform: uppercase; text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
         }
         .c-capitan { font-size: 1.2rem; width: 32px; height: 32px; border: 2px solid #FFF; box-shadow: 0 0 10px rgba(232, 193, 90, 0.6), inset 0 0 5px rgba(0,0,0,0.4); }
-        .c-capitan-mini { font-size: 0.85rem; width: 20px; height: 20px; border: 1px solid #FFF; box-shadow: 0 0 5px rgba(232, 193, 90, 0.6), inset 0 0 3px rgba(0,0,0,0.4); margin-left: 8px; vertical-align: middle; }
+        .c-capitan-mini { font-size: 0.7rem; width: 16px; height: 16px; border: 1px solid #FFF; box-shadow: 0 0 5px rgba(232, 193, 90, 0.6); margin-left: 4px; vertical-align: middle; flex-shrink: 0; }
+
+        /* Abreviaturas tabla: largo en escritorio, corto en móvil */
+        .th-corto { display: none; }
+        .th-largo { display: inline; }
 
         /* ============================================================
             ESTADÍSTICAS GENERALES DEL EQUIPO
@@ -333,7 +337,7 @@
         .td-jugador { display: flex; align-items: center; gap: 15px; }
         .td-foto { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; object-position: center 55%; border: 2px solid var(--dorado); flex-shrink: 0; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .td-nombre-wrap { display: flex; flex-direction: column; }
-        .td-nombre { font-family: var(--fuente-deportiva); font-size: 1.4rem; color: #FFF; letter-spacing: 1px; text-transform: uppercase;}
+        .td-nombre { font-family: var(--fuente-deportiva); font-size: 1.4rem; color: #FFF; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
         .td-dorsal { font-size: 0.8rem; color: var(--dorado); font-weight: 800; }
         .td-num { font-family: var(--fuente-deportiva); font-size: 1.6rem; color: #FFF; }
         .td-num.destacado { color: var(--dorado); }
@@ -435,28 +439,30 @@
             .tabla-stats tbody td:first-child { padding-left: 10px; }
             .td-jugador { gap: 8px; }
             .td-foto { width: 36px; height: 36px; border-width: 1px; }
-            .td-nombre-wrap { flex-direction: row; align-items: center; gap: 5px; }
-            .td-nombre { font-size: 0.95rem; }
-            .td-dorsal { font-size: 0.7rem; }
+            .td-nombre-wrap { flex-direction: row; align-items: center; gap: 4px; }
+            .td-nombre { font-size: 0.92rem; gap: 3px; }
+            .td-dorsal { font-size: 0.68rem; }
             .td-num { font-size: 1.1rem; }
+            .th-largo { display: none; }
+            .th-corto { display: inline; }
 
             /* Modal móvil */
             .modal-content-horizontal { flex-direction: column; height: 100dvh; max-height: 100dvh; width: 100%; max-width: 100%; border-radius: 0; border: none; overflow: hidden; padding: 0; background: var(--verde-oscuro); }
-            .modal-foto-sec { height: 42vh; flex: none; position: relative; }
+            .modal-foto-sec { height: 51vh; flex: none; position: relative; }
             .modal-foto-sec img { object-position: center 50%; }
             .modal-foto-sec::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 50%; background: linear-gradient(to bottom, transparent 0%, var(--verde-oscuro) 100%); pointer-events: none; }
-            .modal-info-sec { padding: 0 18px 16px; flex: 1; justify-content: flex-start; background: var(--verde-oscuro); margin-top: -50px; position: relative; z-index: 2; overflow: hidden; }
-            .modal-header-info { flex-wrap: nowrap; gap: 10px; align-items: center; border-bottom: 1px solid rgba(232, 193, 90, 0.2); padding-bottom: 10px; margin-bottom: 12px; }
-            .modal-dorsal-grande { font-size: 3rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); line-height: 1; }
-            .modal-nombre { font-size: 2rem; flex-grow: 1; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); word-break: break-word; line-height: 1; }
-            #m-capitan-container { display: flex; align-items: center; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .modal-info-sec { padding: 0 20px 20px; flex: 1; justify-content: flex-start; background: var(--verde-oscuro); margin-top: -55px; position: relative; z-index: 2; overflow: hidden; }
+            .modal-header-info { flex-wrap: nowrap; gap: 10px; align-items: center; border-bottom: 1px solid rgba(232, 193, 90, 0.2); padding-bottom: 11px; margin-bottom: 14px; }
+            .modal-dorsal-grande { font-size: 3.2rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); line-height: 1; }
+            .modal-nombre { font-size: 2.1rem; flex-grow: 1; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); word-break: break-word; line-height: 1; }
+            #m-capitan-container { display: flex; align-items: center; flex-shrink: 0; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
             .stats-grid .stat-card:first-child { grid-column: span 2; }
-            .stat-card { padding: 10px 12px; background: rgba(255,255,255,0.05); }
-            .stat-num { font-size: 1.6rem; }
-            .stat-desc { font-size: 0.7rem; margin-top: 2px; }
-            .cup-badge { padding: 6px 14px; font-size: 0.75rem; margin-top: 10px; }
-            .btn-abrir-comparador { padding: 9px 16px; font-size: 0.8rem; margin-top: 10px; }
+            .stat-card { padding: 11px 12px; background: rgba(255,255,255,0.05); }
+            .stat-num { font-size: 1.7rem; }
+            .stat-desc { font-size: 0.72rem; margin-top: 3px; }
+            .cup-badge { padding: 7px 14px; font-size: 0.75rem; margin-top: 12px; }
+            .btn-abrir-comparador { padding: 10px 16px; font-size: 0.82rem; margin-top: 11px; }
             .cerrar-x { top: 12px; right: 12px; font-size: 28px; color: #FFF; background: rgba(0,0,0,0.55); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); text-shadow: none; padding-bottom: 2px; }
         }
 
@@ -507,11 +513,11 @@
                     <thead>
                         <tr>
                             <th data-col="nombre" onclick="ordenarTabla('nombre')">Jugador <span>↕</span></th>
-                            <th data-col="p" onclick="ordenarTabla('p')">PARTIDOS <span>↕</span></th>
-                            <th data-col="g" onclick="ordenarTabla('g')">GANADOS <span>↕</span></th>
-                            <th data-col="pe" onclick="ordenarTabla('pe')">PERDIDOS <span>↕</span></th>
-                            <th data-col="go" onclick="ordenarTabla('go')">GOLES <span>↕</span></th>
-                            <th data-col="a" onclick="ordenarTabla('a')">ASISTENCIAS <span>↕</span></th>
+                            <th data-col="p" onclick="ordenarTabla('p')"><span class="th-largo">PARTIDOS</span><span class="th-corto">P</span> <span>↕</span></th>
+                            <th data-col="go" onclick="ordenarTabla('go')"><span class="th-largo">GOLES</span><span class="th-corto">G</span> <span>↕</span></th>
+                            <th data-col="a" onclick="ordenarTabla('a')"><span class="th-largo">ASISTENCIAS</span><span class="th-corto">A</span> <span>↕</span></th>
+                            <th data-col="g" onclick="ordenarTabla('g')"><span class="th-largo">GANADOS</span><span class="th-corto">PG</span> <span>↕</span></th>
+                            <th data-col="pe" onclick="ordenarTabla('pe')"><span class="th-largo">PERDIDOS</span><span class="th-corto">PP</span> <span>↕</span></th>
                         </tr>
                     </thead>
                     <tbody id="tbody-stats"></tbody>
@@ -708,9 +714,11 @@
                     <td><div class="td-jugador"><img class="td-foto" src="${j.foto}" loading="lazy" alt="${j.nombre}"><div class="td-nombre-wrap">
                     <span class="td-nombre">${j.nombre}${j.capitan ? ' <span class="c-capitan-mini" title="Capitán">C</span>' : ''}</span>
                     <span class="td-dorsal">${j.dorsal}</span></div></div></td>
-                    <td><span class="td-num">${j.p}</span></td><td><span class="td-num" style="color:#4caf50">${j.g}</span></td>
-                    <td><span class="td-num" style="color:#e53935">${j.pe}</span></td><td><span class="td-num destacado">${j.go}</span></td>
-                    <td><span class="td-num destacado">${j.a}</span></td>`;
+                    <td><span class="td-num">${j.p}</span></td>
+                    <td><span class="td-num destacado">${j.go}</span></td>
+                    <td><span class="td-num destacado">${j.a}</span></td>
+                    <td><span class="td-num" style="color:#4caf50">${j.g}</span></td>
+                    <td><span class="td-num" style="color:#e53935">${j.pe}</span></td>`;
                 tbody.appendChild(tr);
             });
 
