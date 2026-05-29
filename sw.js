@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valprimos-v1';
+const CACHE_NAME = 'valprimos-20260529014626';
 const BASE = '/Valprimos';
 const ASSETS = [
   BASE + '/index.html',
