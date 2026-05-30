@@ -160,6 +160,15 @@
             .timeline-content p { font-size: 0.95rem; }
         }
     </style>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "1f68b320-ce7b-448d-8e6c-f45f3b5aa2b1",
+        });
+      });
+    </script>
 </head>
 <body>
 
