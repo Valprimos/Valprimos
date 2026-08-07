@@ -384,6 +384,8 @@
         }
     </style>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <body>
 
     <!-- SPLASH SCREEN -->
@@ -419,51 +421,15 @@
 
     <main>
         <!-- PRÓXIMO PARTIDO -->
-        <div class="card match-card" onclick="window.location.href='calendario.html'">
-            <div class="competicion">Próximo Partido - Torneo de Peñas</div>
-            <div class="match-teams">
-                <div class="match-team valprimos">VALPRIMOS</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team" style="color: #aaa;">RIVAL POR DEFINIR</div>
-            </div>
-            <div class="match-info">
-                📅 Fecha a determinar | 📍 Polideportivo Tomás Luis de Victoria
-            </div>
-        </div>
+        <div id="contenedor-proximo-partido"></div>
 
         <div class="card">
             <h2>ACTUALIDAD DEL CLUB</h2>
-            
-            <div class="grid-noticias">
-                
-                <!-- NOTICIA CORTEZA -->
-                <article class="noticia" onclick="abrirNoticia('La Nueva Corteza 25/26', 'TIENDA OFICIAL', 'Ha llegado el momento. Ya está a la venta la armadura con la que saltaremos al césped por primera vez en nuestra historia. Porque tenemos <strong>raíces de leyenda y madera de campeones</strong>, este diseño nos representa mejor que nunca. Hazte con tu camiseta y defiende el pinar.', '<video src=\'Arreglo.mp4\' controls autoplay muted loop></video>', 'tienda.html', 'Comprar ahora')">
-                    <div>
-                        <span class="fecha-noticia">TIENDA OFICIAL</span>
-                        <h3>La Nueva Corteza 25/26</h3>
-                        <p>Nuestra nueva piel ya está a la venta. Hazte con la camiseta oficial de la temporada y demuestra tu orgullo por el equipo.</p>
-                    </div>
-                </article>
-                
-                <!-- NOTICIA ARRANQUE NUEVA ETAPA -->
-                <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.', null, 'calendario.html', 'Ver calendario')">
-                    <div>
-                        <span class="fecha-noticia">TEMPORADA 25/26</span>
-                        <h3>Arranque de la Nueva Etapa</h3>
-                        <p>Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.</p>
-                    </div>
-                </article>
 
-                <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', null, 'jugadores.html', 'Conoce a la plantilla')">
-                    <div>
-                        <span class="fecha-noticia">PRIMER EQUIPO</span>
-                        <h3>Plantilla Cerrada</h3>
-                        <p>Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.</p>
-                    </div>
-                </article>
-
+            <div class="grid-noticias" id="contenedor-noticias-inicio">
+                <!-- Las noticias se cargan dinámicamente desde Supabase -->
             </div>
-            
+
             <div style="margin-top: 40px;">
                 <a href="noticias.html" class="btn" style="font-size: 1.1rem; padding: 12px 30px;">Ver todas las noticias</a>
             </div>
@@ -574,6 +540,84 @@
         function toggleMenu() {
             document.getElementById('nav-links').classList.toggle('activo');
         }
+
+        /* ===== PRÓXIMO PARTIDO (dinámico desde Supabase) ===== */
+        async function cargarProximoPartido() {
+            const cont = document.getElementById('contenedor-proximo-partido');
+            const hoy = new Date().toISOString().slice(0, 10);
+            const { data, error } = await supabaseClient
+                .from('partidos')
+                .select('*')
+                .eq('jugado', false)
+                .gte('fecha', hoy)
+                .order('fecha', { ascending: true })
+                .limit(1);
+
+            if (error || !data || data.length === 0) {
+                cont.innerHTML = `
+                    <div class="card match-card" onclick="window.location.href='calendario.html'">
+                        <div class="competicion">Próximo Partido</div>
+                        <div class="match-teams">
+                            <div class="match-team valprimos">VALPRIMOS</div>
+                            <div class="match-vs">VS</div>
+                            <div class="match-team" style="color: #aaa;">RIVAL POR DEFINIR</div>
+                        </div>
+                        <div class="match-info">📅 Fecha a determinar</div>
+                    </div>`;
+                return;
+            }
+
+            const p = data[0];
+            const f = new Date(p.fecha + 'T00:00:00');
+            const fechaTexto = f.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            cont.innerHTML = `
+                <div class="card match-card" onclick="window.location.href='calendario.html'">
+                    <div class="competicion">Próximo Partido</div>
+                    <div class="match-teams">
+                        <div class="match-team valprimos">VALPRIMOS</div>
+                        <div class="match-vs">VS</div>
+                        <div class="match-team" style="color: #aaa;">${p.rival}</div>
+                    </div>
+                    <div class="match-info">📅 ${fechaTexto}${p.hora ? ' - ' + p.hora : ''} ${p.lugar ? '| 📍 ' + p.lugar : ''}</div>
+                </div>`;
+        }
+        cargarProximoPartido();
+
+        /* ===== NOTICIAS RECIENTES (dinámico desde Supabase) ===== */
+        async function cargarNoticiasInicio() {
+            const cont = document.getElementById('contenedor-noticias-inicio');
+            const { data, error } = await supabaseClient
+                .from('noticias')
+                .select('*')
+                .order('fecha', { ascending: false })
+                .limit(3);
+
+            if (error || !data || data.length === 0) {
+                cont.innerHTML = '<p style="opacity:0.7;">Aún no hay noticias publicadas.</p>';
+                return;
+            }
+
+            cont.innerHTML = data.map((n, i) => `
+                <article class="noticia" data-index="${i}">
+                    <div>
+                        <span class="fecha-noticia">${new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase()}</span>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.contenido.replace(/<[^>]+>/g, '').slice(0, 110)}${n.contenido.length > 110 ? '…' : ''}</p>
+                    </div>
+                </article>
+            `).join('');
+
+            cont.querySelectorAll('.noticia').forEach(el => {
+                el.addEventListener('click', () => {
+                    const n = data[parseInt(el.dataset.index)];
+                    const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
+                    const fechaTexto = new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+                    abrirNoticia(n.titulo, fechaTexto, n.contenido, media);
+                });
+            });
+        }
+        cargarNoticiasInicio();
 
         function abrirNoticia(titulo, fecha, contenido, mediaHTML = null, urlBoton = null, textoBoton = null) {
             document.getElementById('m-news-title').innerText = titulo;
