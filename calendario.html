@@ -334,7 +334,8 @@
                     jugado: p.jugado,
                     lugar: p.lugar,
                     golesV: p.goles_valprimos,
-                    golesR: p.goles_rival
+                    golesR: p.goles_rival,
+                    competicion: p.competicion
                 };
             });
 
@@ -382,7 +383,7 @@
                                 ${htmlEquipoDer}
                             </div>
                             <div class="match-info">
-                                📅 ${p.dia} ${nombreMes} ${p.año}
+                                ${p.competicion ? `🏆 ${p.competicion}<br>` : ''}📅 ${p.dia} ${nombreMes} ${p.año}
                             </div>
                         </div>
                     `;
@@ -391,7 +392,7 @@
                     // --- TARJETA PRÓXIMO PARTIDO ---
                     contFuturos.innerHTML += `
                         <div class="match-card">
-                            <div class="competicion">PRÓXIMO PARTIDO</div>
+                            <div class="competicion">${p.competicion ? p.competicion.toUpperCase() : 'PRÓXIMO PARTIDO'}</div>
                             <div class="match-teams">
                                 ${htmlEquipoIzq}
                                 <div class="match-vs">VS</div>

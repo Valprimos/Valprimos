@@ -150,6 +150,12 @@
                         <input type="text" id="partido-hora" placeholder="19:00">
                     </div>
                 </div>
+                <div class="fila">
+                    <div>
+                        <label>Competición</label>
+                        <input type="text" id="partido-competicion" placeholder="Torneo de Peñas">
+                    </div>
+                </div>
                 <label>Lugar</label>
                 <input type="text" id="partido-lugar" placeholder="Polideportivo Tomás Luis de Victoria">
                 <div class="check-fila">
@@ -326,6 +332,7 @@
             document.getElementById('partido-rival').value = '';
             document.getElementById('partido-fecha').value = '';
             document.getElementById('partido-hora').value = '';
+            document.getElementById('partido-competicion').value = '';
             document.getElementById('partido-lugar').value = '';
             document.getElementById('partido-jugado').checked = false;
             document.getElementById('partido-goles-v').value = '';
@@ -341,6 +348,7 @@
                 rival: document.getElementById('partido-rival').value.trim(),
                 fecha: document.getElementById('partido-fecha').value,
                 hora: document.getElementById('partido-hora').value.trim() || null,
+                competicion: document.getElementById('partido-competicion').value.trim() || null,
                 lugar: document.getElementById('partido-lugar').value.trim() || null,
                 jugado: jugado,
                 goles_valprimos: jugado ? parseInt(document.getElementById('partido-goles-v').value || 0) : null,
@@ -366,7 +374,7 @@
                 <div class="tarjeta-item">
                     <div class="info">
                         <b>VALPRIMOS vs ${p.rival} ${p.jugado ? `(${p.goles_valprimos}-${p.goles_rival})` : ''}</b>
-                        <span>${p.fecha}${p.hora ? ' · ' + p.hora : ''}${p.lugar ? ' · ' + p.lugar : ''} ${p.jugado ? '· Jugado' : '· Próximo'}</span>
+                        <span>${p.fecha}${p.hora ? ' · ' + p.hora : ''}${p.lugar ? ' · ' + p.lugar : ''}${p.competicion ? ' · ' + p.competicion : ''} ${p.jugado ? '· Jugado' : '· Próximo'}</span>
                     </div>
                     <div class="acciones-item">
                         <button class="btn btn-secundario btn-mini" onclick='editarPartido(${JSON.stringify(p)})'>Editar</button>
@@ -381,6 +389,7 @@
             document.getElementById('partido-rival').value = p.rival;
             document.getElementById('partido-fecha').value = p.fecha;
             document.getElementById('partido-hora').value = p.hora || '';
+            document.getElementById('partido-competicion').value = p.competicion || '';
             document.getElementById('partido-lugar').value = p.lugar || '';
             document.getElementById('partido-jugado').checked = p.jugado;
             document.getElementById('partido-goles-v').value = p.goles_valprimos ?? '';
