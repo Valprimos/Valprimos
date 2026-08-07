@@ -215,15 +215,8 @@
             .modal-content p { font-size: 1rem; }
         }
     </style>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "1f68b320-ce7b-448d-8e6c-f45f3b5aa2b1",
-        });
-      });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -252,44 +245,8 @@
     <main>
         <h2 class="titulo-seccion">Actualidad del Club</h2>
         
-        <div class="grid-noticias">
-            
-            <!-- NUEVA NOTICIA DE LA CORTEZA -->
-            <article class="noticia" onclick="abrirNoticia('La Nueva Corteza 25/26', 'TIENDA OFICIAL', 'Ha llegado el momento. Ya está a la venta la armadura con la que saltaremos al césped por primera vez en nuestra historia. Porque tenemos <strong>raíces de leyenda y madera de campeones</strong>, este diseño nos representa mejor que nunca. Hazte con tu camiseta y defiende el pinar.', '<video src=\'Arreglo.mp4\' controls autoplay muted loop></video>', 'tienda.html', 'Comprar ahora')">
-                <div>
-                    <span class="fecha-noticia">TIENDA OFICIAL</span>
-                    <h3>La Nueva Corteza 25/26</h3>
-                    <p>Nuestra nueva piel ya está a la venta. Hazte con la camiseta oficial de la temporada y demuestra tu orgullo por el equipo.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 1 -->
-            <article class="noticia" onclick="abrirNoticia('Arranque de la Nueva Etapa', 'TEMPORADA 25/26', 'Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.<br><br>Tras meses de preparación y esfuerzo en la sombra, la estructura del club está más sólida que nunca. El cuerpo técnico ha trazado una hoja de ruta muy clara donde el trabajo duro, el compromiso y el orgullo de pertenecer a este club serán innegociables. Se respira ilusión en el ambiente y estamos preparados para afrontar cada partido como si fuera una final.')">
-                <div>
-                    <span class="fecha-noticia">TEMPORADA 25/26</span>
-                    <h3>Arranque de la Nueva Etapa</h3>
-                    <p>Comienza el camino de Valprimos. Un club unificado, una sola familia y la misma ambición de siempre por llevar el escudo a lo más alto.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 2 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('Plantilla Cerrada', 'PRIMER EQUIPO', 'Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.<br><br>Se ha configurado un vestuario que combina talento, contundencia y pasión. Cada integrante ha sido seleccionado no solo por lo que aporta en el terreno de juego, sino por entender perfectamente lo que significa ponerse la elástica de Valprimos. Os invitamos a todos a revisar la sección de la plantilla para ir familiarizándoos con los nombres que nos darán muchas alegrías este año.', null, 'jugadores.html', 'Conoce a la plantilla')">
-                <div>
-                    <span class="fecha-noticia">PRIMER EQUIPO</span>
-                    <h3>Plantilla Cerrada</h3>
-                    <p>Contamos con 16 guerreros listos para defender nuestros colores. Conoce a los protagonistas en la nueva sección de jugadores.</p>
-                </div>
-            </article>
-
-            <!-- Noticia 3 (CON BOTÓN) -->
-            <article class="noticia" onclick="abrirNoticia('El Legado de Valprimos', 'HISTORIA', 'Hemos inaugurado una nueva sección en la web dedicada íntegramente a repasar la trayectoria de nuestro club.<br><br>Porque para saber a dónde vamos, nunca debemos olvidar de dónde venimos. En la sección \'Historia\' podréis encontrar los orígenes del equipo, nuestras mayores gestas y cómo hemos llegado a ser la gran familia que somos hoy. Una lectura obligatoria para cualquier aficionado que sienta estos colores.', null, 'historia.html', 'Conoce nuestra historia')">
-                <div>
-                    <span class="fecha-noticia">HISTORIA</span>
-                    <h3>El Legado de Valprimos</h3>
-                    <p>Repasamos la trayectoria del club en nuestra nueva sección web. Descubre de dónde venimos y cómo se forjó nuestra leyenda.</p>
-                </div>
-            </article>
-
+        <div class="grid-noticias" id="contenedor-noticias">
+            <!-- Las noticias se cargan dinámicamente desde Supabase -->
         </div>
     </main>
 
@@ -376,6 +333,52 @@
             document.getElementById('modal-noticia').classList.add('activo');
             document.body.style.overflow = 'hidden'; 
         }
+
+        const meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+        function formatearFecha(fechaStr) {
+            const f = new Date(fechaStr + 'T00:00:00');
+            return `${String(f.getDate()).padStart(2, '0')} ${meses[f.getMonth()]} ${f.getFullYear()}`;
+        }
+
+        async function cargarNoticias() {
+            const contenedor = document.getElementById('contenedor-noticias');
+            const { data, error } = await supabaseClient
+                .from('noticias')
+                .select('*')
+                .order('fecha', { ascending: false });
+
+            if (error) {
+                console.error('Error cargando noticias:', error);
+                contenedor.innerHTML = '<p style="opacity:0.7;">No se pudieron cargar las noticias.</p>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                contenedor.innerHTML = '<p style="opacity:0.7;">Aún no hay noticias publicadas.</p>';
+                return;
+            }
+
+            contenedor.innerHTML = data.map((n, i) => `
+                <article class="noticia" data-index="${i}">
+                    <div>
+                        <span class="fecha-noticia">${formatearFecha(n.fecha)}</span>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.contenido.length > 140 ? n.contenido.slice(0, 140) + '…' : n.contenido}</p>
+                    </div>
+                </article>
+            `).join('');
+
+            contenedor.querySelectorAll('.noticia').forEach(el => {
+                el.addEventListener('click', () => {
+                    const n = data[parseInt(el.dataset.index)];
+                    const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
+                    abrirNoticia(n.titulo, formatearFecha(n.fecha), n.contenido, media);
+                });
+            });
+        }
+
+        cargarNoticias();
 
         function cerrarNoticia() {
             document.getElementById('modal-noticia').classList.remove('activo');

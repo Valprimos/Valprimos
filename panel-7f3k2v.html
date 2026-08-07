@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>Panel | Valprimos</title>
+    <link rel="icon" type="image/png" href="escudo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        :root {
+            --verde-principal: #0A4325;
+            --verde-oscuro: #04140a;
+            --marron-principal: #3B2421;
+            --dorado: #E8C15A;
+            --blanco-roto: #F0F4F1;
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-moderna: 'Montserrat', sans-serif;
+            --rojo: #e5534b;
+            --verde-ok: #4caf50;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: var(--fuente-moderna); margin: 0; min-height: 100vh;
+            background-color: var(--verde-oscuro); color: var(--blanco-roto);
+            background-image: linear-gradient(180deg, var(--verde-oscuro) 0%, #082b17 100%);
+        }
+        header { text-align: center; padding: 30px 20px 20px; }
+        header img { height: 90px; }
+        header h1 { font-family: var(--fuente-titulos); color: var(--dorado); letter-spacing: 3px; margin: 10px 0 0; text-transform: uppercase; }
+        header .sub { opacity: 0.6; font-size: 0.85rem; letter-spacing: 1px; margin-top: 4px; }
+
+        /* --- LOGIN --- */
+        #vista-login { max-width: 380px; margin: 60px auto; padding: 40px 30px; background: rgba(10,67,37,0.3); border: 1px solid rgba(232,193,90,0.2); border-radius: 12px; }
+        #vista-login h2 { font-family: var(--fuente-titulos); color: var(--dorado); text-align: center; margin-top: 0; }
+        label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--dorado); margin: 15px 0 6px; }
+        input, textarea, select {
+            width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid rgba(232,193,90,0.3);
+            background: rgba(0,0,0,0.3); color: #fff; font-family: var(--fuente-moderna); font-size: 0.95rem;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        .btn { display: inline-block; background: var(--dorado); color: var(--marron-principal); border: none; padding: 11px 20px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; font-size: 0.85rem; margin-top: 10px; transition: 0.2s; }
+        .btn:hover { transform: scale(1.03); }
+        .btn-secundario { background: transparent; color: var(--dorado); border: 1px solid var(--dorado); }
+        .btn-peligro { background: var(--rojo); color: #fff; }
+        .btn-mini { padding: 6px 12px; font-size: 0.75rem; margin: 4px 4px 0 0; }
+        #error-login { color: var(--rojo); text-align: center; margin-top: 12px; font-size: 0.9rem; display: none; }
+
+        /* --- PANEL --- */
+        #vista-panel { display: none; max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+        .barra-superior { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(232,193,90,0.2); color: var(--blanco-roto); padding: 10px 18px; border-radius: 6px; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; }
+        .tab-btn.activo { background: var(--dorado); color: var(--marron-principal); border-color: var(--dorado); }
+        .seccion { display: none; }
+        .seccion.activa { display: block; }
+        .caja-form { background: rgba(10,67,37,0.25); border: 1px solid rgba(232,193,90,0.15); border-radius: 10px; padding: 25px; margin-bottom: 30px; }
+        .caja-form h3 { margin-top: 0; font-family: var(--fuente-titulos); color: var(--dorado); }
+        .fila { display: flex; gap: 15px; flex-wrap: wrap; }
+        .fila > div { flex: 1; min-width: 140px; }
+        .check-fila { display: flex; align-items: center; gap: 8px; margin-top: 15px; }
+        .check-fila input { width: auto; }
+
+        .tarjeta-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(232,193,90,0.1); border-radius: 8px; padding: 15px 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+        .tarjeta-item .info b { color: #fff; display: block; margin-bottom: 4px; }
+        .tarjeta-item .info span { font-size: 0.85rem; opacity: 0.75; }
+        .acciones-item { white-space: nowrap; }
+        #mensaje-estado { text-align: center; padding: 10px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 0.9rem; }
+        #mensaje-estado.ok { background: rgba(76,175,80,0.2); color: var(--verde-ok); display: block; }
+        #mensaje-estado.error { background: rgba(229,83,75,0.2); color: var(--rojo); display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="escudo.png" alt="Valprimos">
+        <h1>Panel de gestión</h1>
+        <div class="sub">VALPRIMOS · Acceso restringido</div>
+    </header>
+
+    <!-- LOGIN -->
+    <div id="vista-login">
+        <h2>Iniciar sesión</h2>
+        <label>Email</label>
+        <input type="email" id="login-email" autocomplete="username">
+        <label>Contraseña</label>
+        <input type="password" id="login-pass" autocomplete="current-password">
+        <button class="btn" style="width:100%; margin-top:20px;" onclick="iniciarSesion()">Entrar</button>
+        <div id="error-login">Credenciales incorrectas.</div>
+    </div>
+
+    <!-- PANEL -->
+    <div id="vista-panel">
+        <div class="barra-superior">
+            <div class="tabs">
+                <button class="tab-btn activo" onclick="cambiarSeccion('noticias', this)">Noticias</button>
+                <button class="tab-btn" onclick="cambiarSeccion('partidos', this)">Partidos</button>
+                <button class="tab-btn" onclick="cambiarSeccion('productos', this)">Tienda</button>
+            </div>
+            <button class="btn btn-secundario btn-mini" onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+
+        <div id="mensaje-estado"></div>
+
+        <!-- NOTICIAS -->
+        <div class="seccion activa" id="sec-noticias">
+            <div class="caja-form">
+                <h3 id="titulo-form-noticia">Nueva noticia</h3>
+                <input type="hidden" id="noticia-id">
+                <label>Título</label>
+                <input type="text" id="noticia-titulo">
+                <label>Contenido</label>
+                <textarea id="noticia-contenido"></textarea>
+                <div class="fila">
+                    <div>
+                        <label>Fecha</label>
+                        <input type="date" id="noticia-fecha">
+                    </div>
+                    <div>
+                        <label>URL de imagen (opcional)</label>
+                        <input type="text" id="noticia-imagen" placeholder="https://...">
+                    </div>
+                </div>
+                <button class="btn" onclick="guardarNoticia()">Guardar</button>
+                <button class="btn btn-secundario" onclick="resetFormNoticia()">Cancelar</button>
+            </div>
+            <div id="lista-noticias"></div>
+        </div>
+
+        <!-- PARTIDOS -->
+        <div class="seccion" id="sec-partidos">
+            <div class="caja-form">
+                <h3 id="titulo-form-partido">Nuevo partido</h3>
+                <input type="hidden" id="partido-id">
+                <div class="fila">
+                    <div>
+                        <label>Rival</label>
+                        <input type="text" id="partido-rival">
+                    </div>
+                    <div>
+                        <label>Fecha</label>
+                        <input type="date" id="partido-fecha">
+                    </div>
+                    <div>
+                        <label>Hora</label>
+                        <input type="text" id="partido-hora" placeholder="19:00">
+                    </div>
+                </div>
+                <label>Lugar</label>
+                <input type="text" id="partido-lugar" placeholder="Polideportivo Tomás Luis de Victoria">
+                <div class="check-fila">
+                    <input type="checkbox" id="partido-jugado" onchange="toggleMarcador()">
+                    <label style="margin:0;">Ya se ha jugado (introducir resultado)</label>
+                </div>
+                <div class="fila" id="fila-marcador" style="display:none; margin-top:10px;">
+                    <div>
+                        <label>Goles Valprimos</label>
+                        <input type="number" id="partido-goles-v" min="0">
+                    </div>
+                    <div>
+                        <label>Goles Rival</label>
+                        <input type="number" id="partido-goles-r" min="0">
+                    </div>
+                </div>
+                <button class="btn" onclick="guardarPartido()">Guardar</button>
+                <button class="btn btn-secundario" onclick="resetFormPartido()">Cancelar</button>
+            </div>
+            <div id="lista-partidos"></div>
+        </div>
+
+        <!-- PRODUCTOS -->
+        <div class="seccion" id="sec-productos">
+            <div class="caja-form">
+                <h3 id="titulo-form-producto">Nuevo producto</h3>
+                <input type="hidden" id="producto-id">
+                <div class="fila">
+                    <div>
+                        <label>Nombre</label>
+                        <input type="text" id="producto-nombre">
+                    </div>
+                    <div>
+                        <label>Precio (€)</label>
+                        <input type="number" id="producto-precio" step="0.01" min="0">
+                    </div>
+                </div>
+                <label>Descripción</label>
+                <textarea id="producto-descripcion"></textarea>
+                <div class="fila">
+                    <div>
+                        <label>URL de imagen</label>
+                        <input type="text" id="producto-imagen" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label>Stock</label>
+                        <input type="number" id="producto-stock" min="0">
+                    </div>
+                </div>
+                <button class="btn" onclick="guardarProducto()">Guardar</button>
+                <button class="btn btn-secundario" onclick="resetFormProducto()">Cancelar</button>
+            </div>
+            <div id="lista-productos"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ================== AUTENTICACIÓN ================== */
+        async function comprobarSesion() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                document.getElementById('vista-login').style.display = 'none';
+                document.getElementById('vista-panel').style.display = 'block';
+                cargarNoticias(); cargarPartidos(); cargarProductos();
+            } else {
+                document.getElementById('vista-login').style.display = 'block';
+                document.getElementById('vista-panel').style.display = 'none';
+            }
+        }
+
+        async function iniciarSesion() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+            document.getElementById('error-login').style.display = error ? 'block' : 'none';
+            if (!error) comprobarSesion();
+        }
+
+        async function cerrarSesion() {
+            await supabaseClient.auth.signOut();
+            comprobarSesion();
+        }
+
+        comprobarSesion();
+
+        /* ================== UTILIDADES ================== */
+        function mostrarMensaje(texto, tipo) {
+            const el = document.getElementById('mensaje-estado');
+            el.textContent = texto;
+            el.className = tipo;
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function cambiarSeccion(nombre, btn) {
+            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+            document.getElementById('sec-' + nombre).classList.add('activa');
+            btn.classList.add('activo');
+        }
+
+        /* ================== NOTICIAS ================== */
+        function resetFormNoticia() {
+            document.getElementById('noticia-id').value = '';
+            document.getElementById('noticia-titulo').value = '';
+            document.getElementById('noticia-contenido').value = '';
+            document.getElementById('noticia-fecha').value = '';
+            document.getElementById('noticia-imagen').value = '';
+            document.getElementById('titulo-form-noticia').textContent = 'Nueva noticia';
+        }
+
+        async function guardarNoticia() {
+            const id = document.getElementById('noticia-id').value;
+            const registro = {
+                titulo: document.getElementById('noticia-titulo').value.trim(),
+                contenido: document.getElementById('noticia-contenido').value.trim(),
+                fecha: document.getElementById('noticia-fecha').value || new Date().toISOString().slice(0,10),
+                imagen_url: document.getElementById('noticia-imagen').value.trim() || null
+            };
+            if (!registro.titulo || !registro.contenido) { mostrarMensaje('Rellena título y contenido.', 'error'); return; }
+
+            const { error } = id
+                ? await supabaseClient.from('noticias').update(registro).eq('id', id)
+                : await supabaseClient.from('noticias').insert(registro);
+
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Noticia guardada.', 'ok');
+            resetFormNoticia();
+            cargarNoticias();
+        }
+
+        async function cargarNoticias() {
+            const { data, error } = await supabaseClient.from('noticias').select('*').order('fecha', { ascending: false });
+            const cont = document.getElementById('lista-noticias');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(n => `
+                <div class="tarjeta-item">
+                    <div class="info">
+                        <b>${n.titulo}</b>
+                        <span>${n.fecha} — ${n.contenido.slice(0,90)}${n.contenido.length>90?'…':''}</span>
+                    </div>
+                    <div class="acciones-item">
+                        <button class="btn btn-secundario btn-mini" onclick='editarNoticia(${JSON.stringify(n)})'>Editar</button>
+                        <button class="btn btn-peligro btn-mini" onclick="borrarNoticia('${n.id}')">Borrar</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">No hay noticias todavía.</p>';
+        }
+
+        function editarNoticia(n) {
+            document.getElementById('noticia-id').value = n.id;
+            document.getElementById('noticia-titulo').value = n.titulo;
+            document.getElementById('noticia-contenido').value = n.contenido;
+            document.getElementById('noticia-fecha').value = n.fecha;
+            document.getElementById('noticia-imagen').value = n.imagen_url || '';
+            document.getElementById('titulo-form-noticia').textContent = 'Editar noticia';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        async function borrarNoticia(id) {
+            if (!confirm('¿Borrar esta noticia?')) return;
+            const { error } = await supabaseClient.from('noticias').delete().eq('id', id);
+            if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
+            mostrarMensaje('Noticia borrada.', 'ok');
+            cargarNoticias();
+        }
+
+        /* ================== PARTIDOS ================== */
+        function toggleMarcador() {
+            document.getElementById('fila-marcador').style.display = document.getElementById('partido-jugado').checked ? 'flex' : 'none';
+        }
+
+        function resetFormPartido() {
+            document.getElementById('partido-id').value = '';
+            document.getElementById('partido-rival').value = '';
+            document.getElementById('partido-fecha').value = '';
+            document.getElementById('partido-hora').value = '';
+            document.getElementById('partido-lugar').value = '';
+            document.getElementById('partido-jugado').checked = false;
+            document.getElementById('partido-goles-v').value = '';
+            document.getElementById('partido-goles-r').value = '';
+            document.getElementById('fila-marcador').style.display = 'none';
+            document.getElementById('titulo-form-partido').textContent = 'Nuevo partido';
+        }
+
+        async function guardarPartido() {
+            const id = document.getElementById('partido-id').value;
+            const jugado = document.getElementById('partido-jugado').checked;
+            const registro = {
+                rival: document.getElementById('partido-rival').value.trim(),
+                fecha: document.getElementById('partido-fecha').value,
+                hora: document.getElementById('partido-hora').value.trim() || null,
+                lugar: document.getElementById('partido-lugar').value.trim() || null,
+                jugado: jugado,
+                goles_valprimos: jugado ? parseInt(document.getElementById('partido-goles-v').value || 0) : null,
+                goles_rival: jugado ? parseInt(document.getElementById('partido-goles-r').value || 0) : null
+            };
+            if (!registro.rival || !registro.fecha) { mostrarMensaje('Rellena rival y fecha.', 'error'); return; }
+
+            const { error } = id
+                ? await supabaseClient.from('partidos').update(registro).eq('id', id)
+                : await supabaseClient.from('partidos').insert(registro);
+
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Partido guardado.', 'ok');
+            resetFormPartido();
+            cargarPartidos();
+        }
+
+        async function cargarPartidos() {
+            const { data, error } = await supabaseClient.from('partidos').select('*').order('fecha', { ascending: true });
+            const cont = document.getElementById('lista-partidos');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(p => `
+                <div class="tarjeta-item">
+                    <div class="info">
+                        <b>VALPRIMOS vs ${p.rival} ${p.jugado ? `(${p.goles_valprimos}-${p.goles_rival})` : ''}</b>
+                        <span>${p.fecha}${p.hora ? ' · ' + p.hora : ''}${p.lugar ? ' · ' + p.lugar : ''} ${p.jugado ? '· Jugado' : '· Próximo'}</span>
+                    </div>
+                    <div class="acciones-item">
+                        <button class="btn btn-secundario btn-mini" onclick='editarPartido(${JSON.stringify(p)})'>Editar</button>
+                        <button class="btn btn-peligro btn-mini" onclick="borrarPartido('${p.id}')">Borrar</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">No hay partidos todavía.</p>';
+        }
+
+        function editarPartido(p) {
+            document.getElementById('partido-id').value = p.id;
+            document.getElementById('partido-rival').value = p.rival;
+            document.getElementById('partido-fecha').value = p.fecha;
+            document.getElementById('partido-hora').value = p.hora || '';
+            document.getElementById('partido-lugar').value = p.lugar || '';
+            document.getElementById('partido-jugado').checked = p.jugado;
+            document.getElementById('partido-goles-v').value = p.goles_valprimos ?? '';
+            document.getElementById('partido-goles-r').value = p.goles_rival ?? '';
+            document.getElementById('fila-marcador').style.display = p.jugado ? 'flex' : 'none';
+            document.getElementById('titulo-form-partido').textContent = 'Editar partido';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        async function borrarPartido(id) {
+            if (!confirm('¿Borrar este partido?')) return;
+            const { error } = await supabaseClient.from('partidos').delete().eq('id', id);
+            if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
+            mostrarMensaje('Partido borrado.', 'ok');
+            cargarPartidos();
+        }
+
+        /* ================== PRODUCTOS ================== */
+        function resetFormProducto() {
+            document.getElementById('producto-id').value = '';
+            document.getElementById('producto-nombre').value = '';
+            document.getElementById('producto-precio').value = '';
+            document.getElementById('producto-descripcion').value = '';
+            document.getElementById('producto-imagen').value = '';
+            document.getElementById('producto-stock').value = '';
+            document.getElementById('titulo-form-producto').textContent = 'Nuevo producto';
+        }
+
+        async function guardarProducto() {
+            const id = document.getElementById('producto-id').value;
+            const registro = {
+                nombre: document.getElementById('producto-nombre').value.trim(),
+                precio: parseFloat(document.getElementById('producto-precio').value || 0),
+                descripcion: document.getElementById('producto-descripcion').value.trim() || null,
+                imagen_url: document.getElementById('producto-imagen').value.trim() || null,
+                stock: parseInt(document.getElementById('producto-stock').value || 0)
+            };
+            if (!registro.nombre || !registro.precio) { mostrarMensaje('Rellena nombre y precio.', 'error'); return; }
+
+            const { error } = id
+                ? await supabaseClient.from('productos').update(registro).eq('id', id)
+                : await supabaseClient.from('productos').insert(registro);
+
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Producto guardado.', 'ok');
+            resetFormProducto();
+            cargarProductos();
+        }
+
+        async function cargarProductos() {
+            const { data, error } = await supabaseClient.from('productos').select('*').order('creado_en', { ascending: false });
+            const cont = document.getElementById('lista-productos');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(p => `
+                <div class="tarjeta-item">
+                    <div class="info">
+                        <b>${p.nombre} — ${p.precio}€</b>
+                        <span>Stock: ${p.stock ?? 0}</span>
+                    </div>
+                    <div class="acciones-item">
+                        <button class="btn btn-secundario btn-mini" onclick='editarProducto(${JSON.stringify(p)})'>Editar</button>
+                        <button class="btn btn-peligro btn-mini" onclick="borrarProducto('${p.id}')">Borrar</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">No hay productos todavía.</p>';
+        }
+
+        function editarProducto(p) {
+            document.getElementById('producto-id').value = p.id;
+            document.getElementById('producto-nombre').value = p.nombre;
+            document.getElementById('producto-precio').value = p.precio;
+            document.getElementById('producto-descripcion').value = p.descripcion || '';
+            document.getElementById('producto-imagen').value = p.imagen_url || '';
+            document.getElementById('producto-stock').value = p.stock ?? '';
+            document.getElementById('titulo-form-producto').textContent = 'Editar producto';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        async function borrarProducto(id) {
+            if (!confirm('¿Borrar este producto?')) return;
+            const { error } = await supabaseClient.from('productos').delete().eq('id', id);
+            if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
+            mostrarMensaje('Producto borrado.', 'ok');
+            cargarProductos();
+        }
+    </script>
+</body>
+</html>

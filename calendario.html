@@ -193,15 +193,8 @@
             .match-info { font-size: 0.95rem; }
         }
     </style>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "1f68b320-ce7b-448d-8e6c-f45f3b5aa2b1",
-        });
-      });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -236,19 +229,6 @@
         </div>
 
         <div id="sec-futuros" class="seccion-contenido activa">
-            
-            <div class="match-card">
-                <div class="competicion">Próximo Partido - Torneo de Peñas</div>
-                <div class="match-teams">
-                    <div class="match-team valprimos">VALPRIMOS</div>
-                    <div class="match-vs">VS</div>
-                    <div class="match-team" style="color: #aaa;">RIVAL POR DEFINIR</div>
-                </div>
-                <div class="match-info">
-                    📅 Fecha a determinar | 📍 Polideportivo Tomás Luis de Victoria
-                </div>
-            </div>
-
             <div class="lista-partidos" id="contenedor-futuros">
                 </div>
         </div>
@@ -322,12 +302,44 @@
         */
         const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
-        // De momento la lista está vacía
-        const partidos = [];
+        // Los partidos se cargan desde Supabase (tabla "partidos")
+        let partidos = [];
 
         /* --- RENDERIZADO DEL CALENDARIO --- */
         const contFuturos = document.getElementById('contenedor-futuros');
         const contPasados = document.getElementById('contenedor-pasados');
+
+        async function cargarPartidos() {
+            const { data, error } = await supabaseClient
+                .from('partidos')
+                .select('*')
+                .order('fecha', { ascending: true });
+
+            if (error) {
+                console.error('Error cargando partidos:', error);
+                contPasados.innerHTML = '<div class="mensaje-vacio">No se pudieron cargar los partidos.</div>';
+                return;
+            }
+
+            // Adaptamos las filas de Supabase al formato que usa generarTarjetas()
+            partidos = data.map(p => {
+                const f = new Date(p.fecha + 'T00:00:00');
+                return {
+                    dia: f.getDate(),
+                    mes: f.getMonth() + 1,
+                    año: f.getFullYear(),
+                    hora: p.hora,
+                    rival: p.rival,
+                    local: true,
+                    jugado: p.jugado,
+                    lugar: p.lugar,
+                    golesV: p.goles_valprimos,
+                    golesR: p.goles_rival
+                };
+            });
+
+            generarTarjetas();
+        }
 
         function generarTarjetas() {
             // Filtrar partidos
@@ -338,7 +350,7 @@
             // Para el contenedor de futuros, al tener la tarjeta fija encima, puede que no necesites este mensaje, 
             // pero lo dejamos por si más adelante la quitas.
             if (partidosFuturos.length === 0) {
-                // contFuturos.innerHTML = '<div class="mensaje-vacio">Aún no hay próximos partidos programados.</div>';
+                contFuturos.innerHTML = '<div class="mensaje-vacio">Aún no hay próximos partidos programados.</div>';
             }
             if (partidosPasados.length === 0) {
                 contPasados.innerHTML = '<div class="mensaje-vacio">Aún no hay resultados para mostrar.</div>';
@@ -395,7 +407,7 @@
             });
         }
 
-        generarTarjetas();
+        cargarPartidos();
 
     </script>
 </body>

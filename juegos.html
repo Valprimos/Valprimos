@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos | Valprimos</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="escudo.png">
+    <link rel="apple-touch-icon" href="escudo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3B2421">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Valprimos">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Squada+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --verde-principal:#0A4325;--verde-oscuro:#04140a;--marron-principal:#3B2421;
+            --dorado:#E8C15A;--blanco-roto:#F0F4F1;
+            --fuente-titulos:"Playfair Display",serif;--fuente-moderna:"Montserrat",sans-serif;
+            --fuente-deportiva:"Squada One",cursive;
+            --transicion-fluida:all 0.6s cubic-bezier(0.23,1,0.32,1);
+            --sombra-texto:2px 4px 10px rgba(0,0,0,0.8);
+        }
+        *{box-sizing:border-box;}
+        body{font-family:var(--fuente-moderna);margin:0;padding:0;background-color:var(--verde-oscuro);color:var(--blanco-roto);background-image:linear-gradient(180deg,var(--verde-oscuro) 0%,#082b17 100%);overflow-x:hidden;}
+        .header-container{position:fixed;top:0;left:0;width:100%;z-index:1000;background-color:var(--verde-principal);border-bottom:2px solid rgba(232,193,90,0.2);transition:var(--transicion-fluida);}
+        .header-content{display:flex;flex-direction:column;align-items:center;padding-top:20px;padding-bottom:30px;transition:var(--transicion-fluida);}
+        .escudo{height:280px;width:auto;margin-bottom:30px;transition:var(--transicion-fluida);filter:drop-shadow(0 15px 25px rgba(0,0,0,0.5));}
+        h1{font-family:var(--fuente-titulos);color:var(--dorado);font-size:4rem;letter-spacing:4px;margin:0;text-transform:uppercase;transition:var(--transicion-fluida);text-shadow:var(--sombra-texto);}
+        .subtitulo{font-family:var(--fuente-titulos);font-style:italic;color:var(--dorado);font-size:1.4rem;transition:var(--transicion-fluida);letter-spacing:4px;text-shadow:2px 2px 5px rgba(0,0,0,0.5);}
+        nav{background-color:var(--marron-principal);padding:15px 0;text-align:center;border-top:1px solid rgba(232,193,90,0.4);border-bottom:3px solid var(--dorado);transition:var(--transicion-fluida);position:relative;}
+        .menu-toggle{display:none;}
+        .nav-links{display:flex;justify-content:center;align-items:center;width:100%;flex-wrap:wrap;}
+        .nav-links a{color:var(--dorado);text-decoration:none;font-weight:600;margin:0 15px;text-transform:uppercase;letter-spacing:1px;font-size:0.9rem;transition:0.3s;}
+        .nav-links a:hover,.nav-links a.activo{color:#FFF;border-bottom:2px solid #FFF;padding-bottom:5px;}
+        .header-container.scrolled .header-content{padding-top:10px;padding-bottom:5px;}
+        .header-container.scrolled .escudo{height:70px;margin-bottom:0;}
+        .header-container.scrolled h1{font-size:1.8rem;letter-spacing:2px;}
+        .header-container.scrolled .subtitulo{font-size:0;opacity:0;height:0;margin:0;overflow:hidden;}
+        .header-container.scrolled nav{padding:10px 0;}
+        .espaciador{height:560px;transition:var(--transicion-fluida);}
+        .espaciador.scrolled{height:210px;}
+        .hero{text-align:center;padding:40px 20px 20px;}
+        .hero-titulo{font-family:var(--fuente-titulos);color:var(--dorado);font-size:3.5rem;text-transform:uppercase;text-shadow:var(--sombra-texto);margin:0 0 10px;}
+        .hero-sub{font-family:var(--fuente-titulos);font-style:italic;color:rgba(232,193,90,0.6);font-size:1.1rem;letter-spacing:3px;margin:0;}
+        .juegos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1200px;margin:40px auto;padding:0 24px 80px;}
+        .juego-card{background:rgba(10,67,37,0.25);border:1px solid rgba(232,193,90,0.15);border-radius:12px;overflow:hidden;cursor:pointer;transition:0.35s;display:flex;flex-direction:column;}
+        .juego-card:hover{border-color:var(--dorado);background:rgba(10,67,37,0.45);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+        .juego-banner{height:120px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+        .juego-banner-letter{font-family:var(--fuente-deportiva);font-size:5rem;color:rgba(232,193,90,0.15);position:relative;z-index:1;letter-spacing:-2px;}
+        .banner-test{background:linear-gradient(135deg,#1a4a2e 0%,#0d3320 100%);}
+        .banner-quinteto{background:linear-gradient(135deg,#1a3a4a 0%,#0a1a25 100%);}
+        .banner-tier{background:linear-gradient(135deg,#3b2421 0%,#1a0f0d 100%);}
+        .banner-pizarra{background:linear-gradient(135deg,#2a2a1a 0%,#1a1a0a 100%);}
+        .juego-info{padding:18px 20px 22px;flex:1;display:flex;flex-direction:column;}
+        .juego-titulo{font-family:var(--fuente-deportiva);color:var(--dorado);font-size:1.3rem;text-transform:uppercase;letter-spacing:2px;margin:0 0 7px;}
+        .juego-desc{font-size:0.85rem;color:#bbb;line-height:1.6;flex:1;margin:0 0 16px;}
+        .juego-btn{display:inline-block;background:transparent;color:var(--dorado);border:2px solid rgba(232,193,90,0.5);border-radius:7px;padding:9px 18px;font-family:var(--fuente-moderna);font-weight:800;font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:0.3s;text-align:center;}
+        .juego-btn:hover{background:var(--dorado);color:var(--verde-oscuro);}
+        /* MODALES */
+        .modal-juego{display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.95);backdrop-filter:blur(16px);justify-content:center;align-items:flex-start;overflow-y:auto;padding:20px;}
+        .modal-juego.activo{display:flex;}
+        .modal-juego-box{background:var(--verde-oscuro);border:2px solid var(--dorado);border-radius:16px;width:100%;max-width:740px;margin:auto;position:relative;box-shadow:0 0 80px rgba(0,0,0,1);overflow:hidden;}
+        .modal-juego-header{background:linear-gradient(135deg,var(--marron-principal) 0%,#2a1a17 100%);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(232,193,90,0.3);}
+        .modal-juego-titulo{font-family:var(--fuente-deportiva);color:var(--dorado);font-size:1.5rem;letter-spacing:3px;text-transform:uppercase;}
+        .modal-cerrar{color:var(--dorado);font-size:36px;cursor:pointer;line-height:1;transition:0.3s;}
+        .modal-cerrar:hover{color:#FFF;}
+        .modal-juego-body{padding:26px 26px 34px;}
+        /* TEST */
+        .test-progreso{display:flex;justify-content:center;gap:8px;margin-bottom:26px;}
+        .test-punto{width:9px;height:9px;border-radius:50%;background:rgba(232,193,90,0.2);transition:0.3s;}
+        .test-punto.activo{background:var(--dorado);transform:scale(1.3);}
+        .test-punto.hecho{background:rgba(232,193,90,0.55);}
+        .test-pregunta-num{font-family:var(--fuente-deportiva);color:rgba(232,193,90,0.4);font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+        .test-pregunta-texto{font-family:var(--fuente-titulos);color:#FFF;font-size:1.35rem;line-height:1.45;margin-bottom:22px;font-style:italic;}
+        .test-opciones{display:flex;flex-direction:column;gap:9px;}
+        .test-opcion{background:rgba(10,67,37,0.3);border:1px solid rgba(232,193,90,0.2);border-radius:8px;padding:13px 16px;cursor:pointer;transition:0.25s;font-size:0.9rem;color:var(--blanco-roto);text-align:left;}
+        .test-opcion:hover{border-color:var(--dorado);background:rgba(10,67,37,0.6);transform:translateX(4px);}
+        .test-opcion.seleccionada{border-color:var(--dorado);background:rgba(232,193,90,0.15);color:var(--dorado);font-weight:600;pointer-events:none;}
+        .test-resultado{display:none;text-align:center;}
+        .test-resultado.visible{display:block;animation:fadeIn 0.5s ease;}
+        .res-foto-wrap{width:120px;height:160px;border-radius:8px;overflow:hidden;border:3px solid var(--dorado);margin:0 auto 14px;box-shadow:0 0 30px rgba(232,193,90,0.3);}
+        .res-foto-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 30%;}
+        .res-dorsal{font-family:var(--fuente-deportiva);color:var(--dorado);font-size:3rem;line-height:1;}
+        .res-nombre{font-family:var(--fuente-titulos);color:#FFF;font-size:2rem;text-transform:uppercase;margin:4px 0 12px;}
+        .res-compat-pct{font-family:var(--fuente-deportiva);color:var(--dorado);font-size:4rem;margin:0;line-height:1;}
+        .res-compat-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:3px;color:rgba(232,193,90,0.45);margin-bottom:14px;}
+        .res-motivo{color:#bbb;font-size:0.9rem;line-height:1.6;margin:0 0 22px;font-style:italic;padding:0 8px;}
+        .btn-reiniciar{background:transparent;color:var(--dorado);border:2px solid var(--dorado);border-radius:8px;padding:11px 26px;font-family:var(--fuente-moderna);font-weight:800;font-size:0.88rem;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:0.3s;}
+        .btn-reiniciar:hover{background:var(--dorado);color:var(--verde-oscuro);}
+        /* QUINTETO */
+        .quinteto-formacion-bar{display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;}
+        .form-btn{background:rgba(10,67,37,0.3);border:1px solid rgba(232,193,90,0.25);border-radius:6px;color:var(--dorado);font-family:var(--fuente-deportiva);font-size:0.85rem;letter-spacing:1px;padding:6px 14px;cursor:pointer;transition:0.25s;}
+        .form-btn:hover,.form-btn.activo{background:rgba(232,193,90,0.15);border-color:var(--dorado);}
+        .campo-wrap{position:relative;width:100%;max-width:380px;margin:0 auto 18px;}
+        .campo-svg{width:100%;border-radius:10px;}
+        .campo-slots{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-around;}
+        .campo-fila{display:flex;justify-content:space-around;align-items:center;}
+        .campo-slot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:0.3s;}
+        .slot-foto{width:52px;height:70px;border-radius:6px;border:2px dashed rgba(232,193,90,0.35);background:rgba(0,0,0,0.45);overflow:hidden;transition:0.3s;display:flex;align-items:center;justify-content:center;}
+        .slot-foto img{width:100%;height:100%;object-fit:cover;object-position:center 20%;}
+        .slot-foto .slot-mas{color:rgba(232,193,90,0.4);font-size:1.4rem;line-height:1;}
+        .slot-foto.lleno{border-style:solid;border-color:var(--dorado);}
+        .campo-slot:hover .slot-foto{border-color:var(--dorado);background:rgba(232,193,90,0.1);}
+        .slot-nombre{font-family:var(--fuente-deportiva);font-size:0.72rem;color:var(--dorado);text-transform:uppercase;letter-spacing:0.5px;text-align:center;max-width:58px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .quinteto-picker{display:none;margin-top:14px;}
+        .quinteto-picker.visible{display:block;}
+        .picker-titulo{font-family:var(--fuente-deportiva);color:var(--dorado);font-size:0.95rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;text-align:center;}
+        .picker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+        .picker-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 3px;border-radius:7px;border:1px solid rgba(232,193,90,0.1);background:rgba(10,67,37,0.2);transition:0.25s;}
+        .picker-item:hover{border-color:var(--dorado);background:rgba(10,67,37,0.5);}
+        .picker-item.usado{opacity:0.25;pointer-events:none;}
+        .picker-foto{width:44px;height:58px;border-radius:5px;object-fit:cover;object-position:center 20%;border:1px solid rgba(232,193,90,0.25);}
+        .picker-nombre{font-family:var(--fuente-deportiva);font-size:0.65rem;color:var(--dorado);text-transform:uppercase;text-align:center;}
+        .quinteto-acciones{display:flex;gap:10px;margin-top:14px;}
+        .btn-quinteto{flex:1;background:transparent;border:1px solid rgba(232,193,90,0.3);border-radius:7px;color:rgba(232,193,90,0.6);font-family:var(--fuente-moderna);font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;padding:9px;cursor:pointer;transition:0.3s;}
+        .btn-quinteto:hover{border-color:var(--dorado);color:var(--dorado);}
+        .btn-quinteto.primary{background:var(--dorado);color:var(--verde-oscuro);border-color:var(--dorado);}
+        .btn-quinteto.primary:hover{background:#FFF;border-color:#FFF;}
+        /* TIER LIST */
+        .tier-wrap{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+        .tier-row{display:flex;align-items:stretch;border-radius:7px;overflow:hidden;min-height:72px;}
+        .tier-label{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--fuente-deportiva);font-size:1.5rem;}
+        .tier-S .tier-label{background:#c0392b;color:#FFF;}
+        .tier-A .tier-label{background:#d35400;color:#FFF;}
+        .tier-B .tier-label{background:#d4ac0d;color:#1a1a1a;}
+        .tier-C .tier-label{background:#27ae60;color:#FFF;}
+        .tier-D .tier-label{background:#2980b9;color:#FFF;}
+        .tier-items{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-left:none;display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 7px;min-height:72px;transition:0.2s;}
+        .tier-items.dragover{background:rgba(232,193,90,0.1);border-color:var(--dorado);}
+        .tier-jugador{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:grab;padding:3px;border-radius:5px;transition:0.2s;user-select:none;}
+        .tier-jugador:active{cursor:grabbing;opacity:0.5;}
+        .tier-jugador:hover{background:rgba(232,193,90,0.1);}
+        .tier-jugador img{width:42px;height:56px;border-radius:4px;object-fit:cover;object-position:center 20%;border:2px solid rgba(232,193,90,0.3);pointer-events:none;}
+        .tier-jugador span{font-family:var(--fuente-deportiva);font-size:0.62rem;color:var(--dorado);text-transform:uppercase;letter-spacing:0.3px;pointer-events:none;}
+        .tier-banco{background:rgba(10,67,37,0.2);border:1px solid rgba(232,193,90,0.1);border-radius:7px;padding:9px 11px;margin-bottom:12px;}
+        .tier-banco-titulo{font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;color:rgba(232,193,90,0.4);margin-bottom:7px;}
+        .tier-banco-items{display:flex;flex-wrap:wrap;gap:5px;min-height:52px;}
+        .tier-banco-items.dragover{background:rgba(232,193,90,0.05);border-radius:5px;}
+        .btn-reset-tier{background:transparent;color:rgba(232,193,90,0.5);border:1px solid rgba(232,193,90,0.2);border-radius:6px;padding:8px 16px;font-family:var(--fuente-moderna);font-weight:800;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:0.3s;width:100%;}
+        .btn-reset-tier:hover{border-color:var(--dorado);color:var(--dorado);}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        footer{text-align:center;padding:60px 0;opacity:0.6;font-size:0.85rem;letter-spacing:2px;font-family:var(--fuente-moderna);}
+        @media(max-width:1024px){
+            .escudo{height:150px;margin-bottom:15px;}
+            h1{font-size:2.2rem;letter-spacing:2px;}
+            .subtitulo{font-size:0.9rem;letter-spacing:2px;margin-top:5px;}
+            nav{padding:12px 0;}
+            .menu-toggle{display:block;color:var(--dorado);font-weight:800;font-size:1.2rem;cursor:pointer;text-transform:uppercase;letter-spacing:2px;}
+            .nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background-color:var(--marron-principal);flex-direction:column;padding:10px 0;border-bottom:3px solid var(--dorado);box-shadow:0 10px 20px rgba(0,0,0,0.5);z-index:1001;}
+            .nav-links.activo{display:flex;}
+            .nav-links a{margin:15px 0;font-size:1.1rem;border-bottom:none!important;}
+            .header-container.scrolled .escudo{height:50px;}
+            .header-container.scrolled h1{font-size:1.3rem;}
+            .espaciador{height:360px;}
+            .espaciador.scrolled{height:150px;}
+            .juegos-grid{grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 60px;margin-top:20px;}
+            .hero-titulo{font-size:2.4rem;}
+            .modal-juego-body{padding:16px 15px 26px;}
+            .picker-grid{grid-template-columns:repeat(4,1fr);}
+            .slot-foto{width:44px;height:58px;}
+        }
+        @media(max-width:480px){
+            .juegos-grid{grid-template-columns:1fr;}
+            .picker-grid{grid-template-columns:repeat(3,1fr);}
+        }
+    </style>
+</head>
+<body>
+<div class="header-container" id="main-header">
+    <div class="header-content">
+        <img src="escudo.png" alt="Escudo Valprimos" class="escudo">
+        <h1>VALPRIMOS</h1>
+        <div class="subtitulo">RAICES DE LEYENDA</div>
+    </div>
+    <nav>
+        <div class="menu-toggle" onclick="toggleMenu()">Menu</div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="tienda.html">Tienda</a>
+            <a href="jugadores.html">Jugadores</a>
+            <a href="calendario.html">Calendario</a>
+            <a href="historia.html">Historia</a>
+            <a href="galeria.html">Galeria</a>
+            <a href="juegos.html" class="activo" style="border-bottom:2px solid var(--dorado)">Juegos</a>
+            <a href="contacto.html">Contacto</a>
+        </div>
+    </nav>
+</div>
+<div class="espaciador" id="espaciador-fantasma"></div>
+<section class="hero">
+    <h2 class="hero-titulo">ZONA DE JUEGOS</h2>
+    <p class="hero-sub">Entre primos todo vale</p>
+</section>
+<div class="juegos-grid">
+    <div class="juego-card">
+        <div class="juego-banner banner-test"><span class="juego-banner-letter">T</span></div>
+        <div class="juego-info">
+            <div class="juego-titulo">Compatibilidad</div>
+            <p class="juego-desc">7 preguntas para saber con que primo formas el duo perfecto.</p>
+            <button class="juego-btn" onclick="abrirTest()">Jugar</button>
+        </div>
+    </div>
+    <div class="juego-card">
+        <div class="juego-banner banner-quinteto"><span class="juego-banner-letter">Q</span></div>
+        <div class="juego-info">
+            <div class="juego-titulo">Quinteto Ideal</div>
+            <p class="juego-desc">Elige formacion y coloca a los 5 titulares en el campo. Descargalo.</p>
+            <button class="juego-btn" onclick="abrirQuinteto()">Elegir</button>
+        </div>
+    </div>
+    <div class="juego-card">
+        <div class="juego-banner banner-tier"><span class="juego-banner-letter">T</span></div>
+        <div class="juego-info">
+            <div class="juego-titulo">Tier List</div>
+            <p class="juego-desc">Clasifica a los primos de S a D. La objetividad es opcional.</p>
+            <button class="juego-btn" onclick="abrirTier()">Clasificar</button>
+        </div>
+    </div>
+    <div class="juego-card">
+        <div class="juego-banner banner-pizarra"><span class="juego-banner-letter">P</span></div>
+        <div class="juego-info">
+            <div class="juego-titulo">La Pizarra</div>
+            <p class="juego-desc">Campo tactico 5v5. Dibuja jugadas, anima movimientos y descarga.</p>
+            <button class="juego-btn" onclick="location.href='pizarra.html'">Abrir</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TEST -->
+<div id="modal-test" class="modal-juego" onclick="cerrarModal('modal-test')">
+<div class="modal-juego-box" onclick="event.stopPropagation()">
+<div class="modal-juego-header">
+    <div class="modal-juego-titulo">Test de Compatibilidad</div>
+    <span class="modal-cerrar" onclick="cerrarModal('modal-test')">&times;</span>
+</div>
+<div class="modal-juego-body">
+    <div class="test-progreso" id="test-progreso"></div>
+    <div id="test-area">
+        <div class="test-pregunta-num" id="test-num"></div>
+        <div class="test-pregunta-texto" id="test-texto"></div>
+        <div class="test-opciones" id="test-opciones"></div>
+    </div>
+    <div class="test-resultado" id="test-resultado">
+        <p style="color:rgba(232,193,90,0.5);font-size:0.75rem;text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;">Tu primo ideal es</p>
+        <div class="res-foto-wrap"><img id="res-foto" src="" alt=""></div>
+        <div class="res-dorsal" id="res-dorsal"></div>
+        <div class="res-nombre" id="res-nombre"></div>
+        <div class="res-compat-pct" id="res-pct"></div>
+        <div class="res-compat-label">Compatibilidad</div>
+        <div class="res-motivo" id="res-motivo"></div>
+        <button class="btn-reiniciar" onclick="reiniciarTest()">Otra vez</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- MODAL QUINTETO -->
+<div id="modal-quinteto" class="modal-juego" onclick="cerrarModal('modal-quinteto')">
+<div class="modal-juego-box" onclick="event.stopPropagation()">
+<div class="modal-juego-header">
+    <div class="modal-juego-titulo">Quinteto Ideal</div>
+    <span class="modal-cerrar" onclick="cerrarModal('modal-quinteto')">&times;</span>
+</div>
+<div class="modal-juego-body">
+    <div class="quinteto-formacion-bar" id="formacion-bar"></div>
+    <div class="campo-wrap">
+        <svg id="campo-svg-bg" class="campo-svg" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="400" rx="4" fill="#1a5c30"/>
+            <rect x="8" y="8" width="284" height="384" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" fill="none"/>
+            <line x1="8" y1="200" x2="292" y2="200" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+            <circle cx="150" cy="200" r="36" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none"/>
+            <circle cx="150" cy="200" r="2.5" fill="rgba(255,255,255,0.6)"/>
+            <rect x="88" y="8" width="124" height="46" stroke="rgba(255,255,255,0.45)" stroke-width="1" fill="none"/>
+            <rect x="88" y="346" width="124" height="46" stroke="rgba(255,255,255,0.45)" stroke-width="1" fill="none"/>
+            <rect x="112" y="8" width="76" height="20" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="none"/>
+            <rect x="112" y="372" width="76" height="20" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="none"/>
+            <circle cx="150" cy="38" r="2" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="150" cy="362" r="2" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+        <div class="campo-slots" id="campo-slots"></div>
+    </div>
+    <div class="quinteto-picker" id="quinteto-picker">
+        <div class="picker-titulo" id="picker-titulo">Elige jugador</div>
+        <div class="picker-grid" id="picker-grid"></div>
+    </div>
+    <div class="quinteto-acciones">
+        <button class="btn-quinteto" onclick="limpiarQuinteto()">Limpiar</button>
+        <button class="btn-quinteto primary" onclick="descargarQuinteto()">Descargar imagen</button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- MODAL TIER -->
+<div id="modal-tier" class="modal-juego" onclick="cerrarModal('modal-tier')">
+<div class="modal-juego-box" onclick="event.stopPropagation()">
+<div class="modal-juego-header">
+    <div class="modal-juego-titulo">Tier List</div>
+    <span class="modal-cerrar" onclick="cerrarModal('modal-tier')">&times;</span>
+</div>
+<div class="modal-juego-body">
+    <p style="font-size:0.8rem;color:#777;text-align:center;margin:0 0 14px;font-style:italic;">Arrastra a cada primo al nivel que le corresponde.</p>
+    <div class="tier-banco">
+        <div class="tier-banco-titulo">Sin clasificar</div>
+        <div class="tier-banco-items" id="tier-banco" ondragover="dragOver(event)" ondrop="drop(event,'banco')"></div>
+    </div>
+    <div class="tier-wrap" id="tier-wrap"></div>
+    <button class="btn-reset-tier" onclick="resetTier()">Reiniciar</button>
+</div>
+</div>
+</div>
+
+<footer>
+    <div style="color:var(--dorado);font-weight:800;margin-bottom:5px;">VALPRIMOS 2026</div>
+    &copy; RAICES DE LEYENDA - MADERA DE CAMPEONES
+</footer>
+<script>
+const jugadores=[
+    {id:0,nombre:"Alvaro",dorsal:"00",foto:"alvaro.jpeg"},
+    {id:1,nombre:"Daniel",dorsal:"10",foto:"daniel.jpeg"},
+    {id:2,nombre:"Alberto",dorsal:"67",foto:"alberto.JPG"},
+    {id:3,nombre:"Nicolas",dorsal:"99",foto:"nicolas.JPG"},
+    {id:4,nombre:"Jorge",dorsal:"8",foto:"jorge.jpg"},
+    {id:5,nombre:"Javier",dorsal:"96",foto:"javier.JPG"},
+    {id:6,nombre:"Clara",dorsal:"13",foto:"clara.JPG"},
+    {id:7,nombre:"Carlos",dorsal:"7",foto:"carlos.JPG"},
+    {id:8,nombre:"David",dorsal:"15",foto:"david.JPG"},
+    {id:9,nombre:"Pedro",dorsal:"79",foto:"pedro.jpeg"},
+    {id:10,nombre:"Juan",dorsal:"90",foto:"juan.jpeg"},
+    {id:11,nombre:"Cesar",dorsal:"88",foto:"cesar.JPG"},
+    {id:12,nombre:"Pablo",dorsal:"86",foto:"pablo.JPG"}
+];
+const header=document.getElementById("main-header"),esp=document.getElementById("espaciador-fantasma");
+let shrunk=false,startY=0;
+window.addEventListener("scroll",()=>{const s=window.scrollY>40;if(window.innerWidth>1024){header.classList.toggle("scrolled",s);esp.classList.toggle("scrolled",s);}else if(s){header.classList.add("scrolled");esp.classList.add("scrolled");shrunk=true;}});
+window.addEventListener("touchstart",e=>{if(window.innerWidth<=1024&&window.scrollY<=10)startY=e.touches[0].clientY;},{passive:true});
+window.addEventListener("touchmove",e=>{if(window.innerWidth<=1024&&window.scrollY<=10&&shrunk&&e.touches[0].clientY-startY>40){header.classList.remove("scrolled");esp.classList.remove("scrolled");shrunk=false;}},{passive:true});
+function toggleMenu(){document.getElementById("nav-links").classList.toggle("activo");}
+function cerrarModal(id){document.getElementById(id).classList.remove("activo");document.body.style.overflow="auto";}
+function abrirModal(id){document.getElementById(id).classList.add("activo");document.body.style.overflow="hidden";}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.querySelectorAll(".modal-juego.activo").forEach(m=>m.classList.remove("activo"));document.body.style.overflow="auto";}});
+
+/* TEST */
+const preguntas=[
+    {texto:"Saque de centro. ¿Que haces?",opciones:[
+        {texto:"Me pongo de delantero y espero el balon en el area",tags:{gol:3,regate:1}},
+        {texto:"Toco y me muevo, intento llevar el juego",tags:{vision:3,tecnico:2}},
+        {texto:"Corro hasta que me salgan humo las piernas",tags:{motor:3,presion:1}},
+        {texto:"Me quedo detras por si acaso, que ya corren otros",tags:{defensa:3,orden:1}}
+    ]},
+    {texto:"Tu equipo pierde 0-2. ¿Cual es tu reaccion?",opciones:[
+        {texto:"Analisis tactico que nadie escucha",tags:{vision:2,orden:2}},
+        {texto:"Me crezco, esto es cuando mas me gusta",tags:{gol:2,motor:2,caracter:2}},
+        {texto:"Empiezo a quejarme de los companeros con razon o sin ella",tags:{caracter:3,regate:1}},
+        {texto:"Le doy igual, a ver si acabamos pronto y tomamos algo",tags:{pasota:3}}
+    ]},
+    {texto:"Te dan un balon en el area. Hay un defensa delante.",opciones:[
+        {texto:"Disparo a puerta aunque vuele a la luna",tags:{gol:3,caracter:1}},
+        {texto:"Regate, intento pasar aunque tampoco se como",tags:{regate:3,tecnico:1}},
+        {texto:"La paro, miro y busco al companero mejor colocado",tags:{vision:3,tecnico:2}},
+        {texto:"Me caigo al suelo esperando penalti",tags:{pasota:2,orden:1}}
+    ]},
+    {texto:"¿Como describes tu forma de correr?",opciones:[
+        {texto:"Como un atleta olimpico, sin parar nunca",tags:{motor:3}},
+        {texto:"Con clase, sin prisa pero sin pausa",tags:{tecnico:2,vision:1}},
+        {texto:"En rafagas cortas y muy intensas",tags:{caracter:2,gol:1}},
+        {texto:"Solo corro cuando no queda otra",tags:{pasota:3,defensa:1}}
+    ]},
+    {texto:"Un companero falla un gol cantado. ¿Que le dices?",opciones:[
+        {texto:"Nada, me rio por dentro y sigo",tags:{pasota:3}},
+        {texto:"Tranquilo, la siguiente entra",tags:{vision:2,orden:2}},
+        {texto:"¿En serio? con cara de incredulidad total",tags:{caracter:3}},
+        {texto:"Le animo en silencio porque yo tampoco soy Mbappe",tags:{defensa:1,tecnico:1,motor:1}}
+    ]},
+    {texto:"¿Cual es tu posicion favorita?",opciones:[
+        {texto:"Lo mas cerca del area rival posible",tags:{gol:3,regate:1}},
+        {texto:"El centro del campo, donde pasa todo",tags:{vision:3,tecnico:2}},
+        {texto:"Donde me pongan, yo corro igual",tags:{motor:3,presion:1}},
+        {texto:"La que menos correr implique",tags:{pasota:3,defensa:1}}
+    ]},
+    {texto:"Ultimo minuto, empate, corner a favor. ¿Que haces?",opciones:[
+        {texto:"Me meto al area, yo quiero ese gol",tags:{gol:3,caracter:2}},
+        {texto:"Me quedo fuera por si hay contraataque",tags:{orden:3,defensa:2}},
+        {texto:"Pido el balon y lo lanzo yo",tags:{tecnico:2,caracter:2}},
+        {texto:"Rezo para que alguien lo meta y poder irme ya",tags:{pasota:3}}
+    ]}
+];
+const perfiles=[
+    {id:0,w:{motor:1,regate:3,tecnico:3,vision:2,gol:1,caracter:1,pasota:1,defensa:1,orden:1,presion:1},motivo:"Los dos teneis ese toque y velocidad que desquicia a cualquier defensa. Alvaro te abre espacios que nadie mas ve."},
+    {id:1,w:{motor:3,regate:1,tecnico:1,vision:1,gol:1,caracter:1,pasota:2,defensa:1,orden:1,presion:2},motivo:"Daniel no para quieto. Tu piensas, el corre. La camisetita por dentro da buena suerte."},
+    {id:2,w:{motor:2,regate:1,tecnico:1,vision:1,gol:1,caracter:3,pasota:1,defensa:1,orden:1,presion:2},motivo:"Alberto lo intenta con energia inverosimil. Su frenes mas tu criterio: caos controlado."},
+    {id:3,w:{motor:1,regate:1,tecnico:2,vision:2,gol:1,caracter:1,pasota:1,defensa:1,orden:2,presion:1},motivo:"Nicolas para todo y encima es buena persona. El portero MVP que todo duo necesita. Nicaragua."},
+    {id:4,w:{motor:1,regate:2,tecnico:3,vision:3,gol:1,caracter:1,pasota:2,defensa:1,orden:2,presion:1},motivo:"Jorge es un jefe con gorra infravalorado. Su vision y tu energia forman un equipo que da gusto ver."},
+    {id:5,w:{motor:1,regate:1,tecnico:1,vision:1,gol:1,caracter:1,pasota:3,defensa:3,orden:2,presion:1},motivo:"Javier las mata callando. Tu atacas, el defiende sin decir nada y aparece cuando menos te lo esperas."},
+    {id:6,w:{motor:1,regate:1,tecnico:1,vision:1,gol:1,caracter:2,pasota:1,defensa:1,orden:1,presion:1},motivo:"Clara lo intenta con mas actitud que muchos que llevan anos jugando. El 13 da suerte en Valprimos."},
+    {id:7,w:{motor:1,regate:1,tecnico:1,vision:1,gol:3,caracter:2,pasota:2,defensa:3,orden:1,presion:2},motivo:"Carlos marca de falta, defiende, ataca y no muestra emociones. El perfil bajo mas peligroso del equipo."},
+    {id:8,w:{motor:1,regate:1,tecnico:1,vision:1,gol:1,caracter:1,pasota:3,defensa:1,orden:1,presion:1},motivo:"David no corre, pero todos le adoran. Su carisma compensa cualquier deficit tactico. Menos Diego."},
+    {id:9,w:{motor:1,regate:2,tecnico:3,vision:2,gol:2,caracter:3,pasota:1,defensa:1,orden:1,presion:2},motivo:"El Killer. Lo intenta siempre, se raya si pierde y acaba marcando por pura insistencia."},
+    {id:10,w:{motor:1,regate:1,tecnico:2,vision:3,gol:1,caracter:1,pasota:1,defensa:1,orden:3,presion:1},motivo:"Juan da el pase antes de que pidas el balon. Control, orden y analisis tactico. El intumbable."},
+    {id:11,w:{motor:1,regate:1,tecnico:1,vision:1,gol:1,caracter:1,pasota:2,defensa:1,orden:1,presion:1},motivo:"Cesar aparece una vez al ano y marca. El misterio nordico con gafas que todos recordamos."},
+    {id:12,w:{motor:2,regate:2,tecnico:3,vision:2,gol:2,caracter:1,pasota:1,defensa:2,orden:1,presion:2},motivo:"Pablo lo hace todo y bien. El mas completo del equipo. Con el en tu bando las probabilidades suben considerablemente."}
+];
+let preguntaActual=0,respuestasTest={};
+function abrirTest(){preguntaActual=0;respuestasTest={};document.getElementById("test-resultado").classList.remove("visible");document.getElementById("test-area").style.display="block";abrirModal("modal-test");renderPregunta();}
+function renderPregunta(){
+    const p=preguntas[preguntaActual];
+    document.getElementById("test-num").innerText="Pregunta "+(preguntaActual+1)+" de "+preguntas.length;
+    document.getElementById("test-texto").innerText=p.texto;
+    const opts=document.getElementById("test-opciones");opts.innerHTML="";
+    p.opciones.forEach((op,i)=>{const btn=document.createElement("button");btn.className="test-opcion";btn.innerText=op.texto;btn.onclick=()=>elegirOpcion(i);opts.appendChild(btn);});
+    const prog=document.getElementById("test-progreso");prog.innerHTML="";
+    preguntas.forEach((_,i)=>{const d=document.createElement("div");d.className="test-punto"+(i===preguntaActual?" activo":(i<preguntaActual?" hecho":""));prog.appendChild(d);});
+}
+function elegirOpcion(idx){
+    document.querySelectorAll(".test-opcion")[idx].classList.add("seleccionada");
+    const tags=preguntas[preguntaActual].opciones[idx].tags;
+    Object.entries(tags).forEach(([k,v])=>{respuestasTest[k]=(respuestasTest[k]||0)+v;});
+    setTimeout(()=>{preguntaActual++;if(preguntaActual<preguntas.length)renderPregunta();else mostrarResultado();},380);
+}
+function mostrarResultado(){
+    let mejor=null,mejorScore=-1;
+    perfiles.forEach(pj=>{let score=0;Object.entries(respuestasTest).forEach(([k,v])=>{score+=v*(pj.w[k]||0);});if(score>mejorScore){mejorScore=score;mejor=pj;}});
+    const jug=jugadores.find(j=>j.id===mejor.id);
+    const maxPos=Object.values(respuestasTest).reduce((a,b)=>a+b,0)*3;
+    const pct=Math.min(97,Math.round((mejorScore/maxPos)*100)+45);
+    document.getElementById("res-foto").src=jug.foto;
+    document.getElementById("res-dorsal").innerText=jug.dorsal;
+    document.getElementById("res-nombre").innerText=jug.nombre;
+    document.getElementById("res-pct").innerText=pct+"%";
+    document.getElementById("res-motivo").innerText=mejor.motivo;
+    document.getElementById("test-area").style.display="none";
+    document.getElementById("test-resultado").classList.add("visible");
+}
+function reiniciarTest(){preguntaActual=0;respuestasTest={};document.getElementById("test-resultado").classList.remove("visible");document.getElementById("test-area").style.display="block";renderPregunta();}
+
+/* QUINTETO */
+const formaciones={
+    "1-2-2":[["DC","DC2"],["MC","MC2"],["PO"]],
+    "2-2-1":[["DC"],["MC","MC2"],["DF","DF2"]],
+    "1-3-1":[["DC"],["MC","MC2","MC3"],["PO"]],
+    "2-1-2":[["DC","DC2"],["MC"],["DF","DF2"]]
+};
+let formActual="1-2-2";
+let quintetoState={};
+let slotActivo=null;
+
+function initFormacion(){
+    const bar=document.getElementById("formacion-bar");
+    bar.innerHTML="";
+    Object.keys(formaciones).forEach(f=>{
+        const btn=document.createElement("button");btn.className="form-btn"+(f===formActual?" activo":"");
+        btn.innerText=f;btn.onclick=()=>{formActual=f;limpiarQuinteto();initFormacion();};
+        bar.appendChild(btn);
+    });
+}
+
+function renderCampo(){
+    const cont=document.getElementById("campo-slots");cont.innerHTML="";
+    const filas=formaciones[formActual];
+    filas.forEach(fila=>{
+        const div=document.createElement("div");div.className="campo-fila";
+        fila.forEach(pos=>{
+            const jug=quintetoState[pos];
+            const slot=document.createElement("div");slot.className="campo-slot";
+            slot.onclick=()=>abrirPicker(pos);
+            const foto=document.createElement("div");foto.className="slot-foto"+(jug?" lleno":"");
+            if(jug){const img=document.createElement("img");img.src=jug.foto;foto.appendChild(img);}
+            else{foto.innerHTML="<span class='slot-mas'>+</span>";}
+            const nom=document.createElement("div");nom.className="slot-nombre";nom.innerText=jug?jug.nombre:pos.replace(/[0-9]/g,"");
+            slot.appendChild(foto);slot.appendChild(nom);div.appendChild(slot);
+        });
+        cont.appendChild(div);
+    });
+}
+
+function abrirPicker(pos){
+    slotActivo=pos;
+    document.getElementById("picker-titulo").innerText="Posicion: "+pos.replace(/[0-9]/g,"");
+    const grid=document.getElementById("picker-grid");grid.innerHTML="";
+    const usados=Object.values(quintetoState).filter(Boolean).map(j=>j.id);
+    jugadores.forEach(j=>{
+        const item=document.createElement("div");
+        item.className="picker-item"+(usados.includes(j.id)&&quintetoState[pos]?.id!==j.id?" usado":"");
+        item.innerHTML="<img class='picker-foto' src='"+j.foto+"' alt='"+j.nombre+"'><span class='picker-nombre'>"+j.nombre+"</span>";
+        item.onclick=()=>{quintetoState[pos]=j;document.getElementById("quinteto-picker").classList.remove("visible");renderCampo();localStorage.setItem("vp_quinteto",JSON.stringify({f:formActual,s:quintetoState}));};
+        grid.appendChild(item);
+    });
+    document.getElementById("quinteto-picker").classList.add("visible");
+}
+
+function limpiarQuinteto(){quintetoState={};document.getElementById("quinteto-picker").classList.remove("visible");renderCampo();}
+
+function abrirQuinteto(){
+    const saved=localStorage.getItem("vp_quinteto");
+    if(saved){try{const p=JSON.parse(saved);formActual=p.f||"1-2-2";const s=p.s||{};Object.keys(s).forEach(k=>{if(s[k])s[k]=jugadores.find(j=>j.id===s[k].id)||null;});quintetoState=s;}catch(e){quintetoState={};}}
+    initFormacion();renderCampo();abrirModal("modal-quinteto");
+}
+
+async function descargarQuinteto(){
+    const html2canvas=(await import("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.esm.min.js")).default;
+    const el=document.querySelector(".campo-wrap");
+    html2canvas(el,{backgroundColor:"#04140a",scale:2,useCORS:true,allowTaint:true}).then(canvas=>{
+        const a=document.createElement("a");a.download="valprimos-quinteto.png";a.href=canvas.toDataURL("image/png");a.click();
+    });
+}
+
+/* TIER LIST */
+const tiers=["S","A","B","C","D"];
+let tierState={banco:[...jugadores.map(j=>j.id)],S:[],A:[],B:[],C:[],D:[]};
+let dragging=null;
+function abrirTier(){const s=localStorage.getItem("vp_tier");if(s){try{tierState=JSON.parse(s);}catch(e){}}renderTier();abrirModal("modal-tier");}
+function renderTier(){
+    const banco=document.getElementById("tier-banco");banco.innerHTML="";
+    tierState.banco.forEach(id=>banco.appendChild(crearChip(id)));
+    const wrap=document.getElementById("tier-wrap");wrap.innerHTML="";
+    tiers.forEach(t=>{
+        const row=document.createElement("div");row.className="tier-row tier-"+t;
+        const label=document.createElement("div");label.className="tier-label";label.innerText=t;
+        const items=document.createElement("div");items.className="tier-items";items.id="tier-"+t;
+        items.ondragover=dragOver;items.ondrop=e=>drop(e,t);
+        tierState[t].forEach(id=>items.appendChild(crearChip(id)));
+        row.appendChild(label);row.appendChild(items);wrap.appendChild(row);
+    });
+}
+function crearChip(id){
+    const j=jugadores.find(x=>x.id===id);
+    const chip=document.createElement("div");chip.className="tier-jugador";chip.draggable=true;chip.dataset.id=id;
+    chip.innerHTML="<img src='"+j.foto+"' alt='"+j.nombre+"'><span>"+j.nombre+"</span>";
+    chip.addEventListener("dragstart",e=>{dragging=parseInt(chip.dataset.id);e.dataTransfer.effectAllowed="move";});
+    chip.addEventListener("touchstart",touchStart,{passive:true});
+    chip.addEventListener("touchmove",touchMove,{passive:false});
+    chip.addEventListener("touchend",touchEnd);
+    return chip;
+}
+function dragOver(e){e.preventDefault();e.currentTarget.classList.add("dragover");}
+function drop(e,zona){
+    e.preventDefault();document.querySelectorAll(".tier-items,.tier-banco-items").forEach(el=>el.classList.remove("dragover"));
+    if(dragging===null)return;
+    Object.keys(tierState).forEach(k=>{tierState[k]=tierState[k].filter(x=>x!==dragging);});
+    tierState[zona].push(dragging);dragging=null;renderTier();localStorage.setItem("vp_tier",JSON.stringify(tierState));
+}
+document.addEventListener("dragend",()=>{document.querySelectorAll(".tier-items,.tier-banco-items").forEach(el=>el.classList.remove("dragover"));});
+let touchEl=null,touchClone=null,touchZona=null;
+function touchStart(e){touchEl=e.currentTarget;}
+function touchMove(e){
+    e.preventDefault();if(!touchEl)return;
+    const t=e.touches[0];
+    if(!touchClone){touchClone=touchEl.cloneNode(true);touchClone.style.cssText="position:fixed;z-index:9999;opacity:0.85;pointer-events:none;width:52px;";document.body.appendChild(touchClone);}
+    touchClone.style.left=(t.clientX-26)+"px";touchClone.style.top=(t.clientY-30)+"px";
+    const bajo=document.elementFromPoint(t.clientX,t.clientY);
+    const zona=bajo?.closest(".tier-items")||bajo?.closest(".tier-banco-items");
+    document.querySelectorAll(".tier-items,.tier-banco-items").forEach(el=>el.classList.remove("dragover"));
+    if(zona){zona.classList.add("dragover");touchZona=zona;}
+}
+function touchEnd(){
+    if(touchClone){touchClone.remove();touchClone=null;}
+    document.querySelectorAll(".tier-items,.tier-banco-items").forEach(el=>el.classList.remove("dragover"));
+    if(!touchEl||!touchZona){touchEl=null;touchZona=null;return;}
+    const id=parseInt(touchEl.dataset.id);
+    const zona=touchZona.id==="tier-banco"?"banco":touchZona.id.replace("tier-","");
+    Object.keys(tierState).forEach(k=>{tierState[k]=tierState[k].filter(x=>x!==id);});
+    tierState[zona].push(id);touchEl=null;touchZona=null;renderTier();localStorage.setItem("vp_tier",JSON.stringify(tierState));
+}
+function resetTier(){tierState={banco:[...jugadores.map(j=>j.id)],S:[],A:[],B:[],C:[],D:[]};localStorage.removeItem("vp_tier");renderTier();}
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
