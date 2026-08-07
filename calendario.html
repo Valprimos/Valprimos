@@ -325,6 +325,7 @@
             partidos = data.map(p => {
                 const f = new Date(p.fecha + 'T00:00:00');
                 return {
+                    id: p.id,
                     dia: f.getDate(),
                     mes: f.getMonth() + 1,
                     año: f.getFullYear(),
@@ -385,6 +386,10 @@
                             <div class="match-info">
                                 ${p.competicion ? `🏆 ${p.competicion}<br>` : ''}📅 ${p.dia} ${nombreMes} ${p.año}
                             </div>
+                            <div style="text-align:center; margin-top:12px;">
+                                <button onclick="toggleDetalle('${p.id}', this)" style="background:transparent; border:1px solid var(--dorado); color:var(--dorado); padding:6px 16px; border-radius:5px; cursor:pointer; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Ver detalle</button>
+                            </div>
+                            <div id="detalle-${p.id}" style="display:none; margin-top:15px; text-align:left; border-top:1px solid rgba(232,193,90,0.15); padding-top:15px;"></div>
                         </div>
                     `;
 
@@ -409,6 +414,54 @@
         }
 
         cargarPartidos();
+
+        async function toggleDetalle(partidoId, boton) {
+            const cont = document.getElementById('detalle-' + partidoId);
+            if (cont.style.display === 'block') {
+                cont.style.display = 'none';
+                boton.textContent = 'Ver detalle';
+                return;
+            }
+            boton.textContent = 'Cargando...';
+
+            const [alin, gol, tar, sus] = await Promise.all([
+                supabaseClient.from('alineaciones').select('*').eq('partido_id', partidoId).order('titular', { ascending: false }),
+                supabaseClient.from('goles').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
+                supabaseClient.from('tarjetas').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
+                supabaseClient.from('sustituciones').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true })
+            ]);
+
+            const titulares = (alin.data || []).filter(a => a.titular).map(a => a.jugador);
+            const suplentes = (alin.data || []).filter(a => !a.titular).map(a => a.jugador);
+
+            let html = '';
+            if (titulares.length || suplentes.length) {
+                html += `<div style="margin-bottom:14px;">
+                    <b style="color:var(--dorado);">Alineación</b><br>
+                    ${titulares.length ? `<span style="opacity:0.85;">Titulares: ${titulares.join(', ')}</span><br>` : ''}
+                    ${suplentes.length ? `<span style="opacity:0.6; font-size:0.9rem;">Suplentes: ${suplentes.join(', ')}</span>` : ''}
+                </div>`;
+            }
+            if (gol.data && gol.data.length) {
+                html += `<div style="margin-bottom:14px;"><b style="color:var(--dorado);">Goles</b><br>
+                    ${gol.data.map(g => `⚽ ${g.jugador}${g.minuto ? " " + g.minuto + "'" : ''}`).join('<br>')}
+                </div>`;
+            }
+            if (tar.data && tar.data.length) {
+                html += `<div style="margin-bottom:14px;"><b style="color:var(--dorado);">Tarjetas</b><br>
+                    ${tar.data.map(t => `${t.tipo === 'roja' ? '🟥' : '🟨'} ${t.jugador}${t.minuto ? " " + t.minuto + "'" : ''}`).join('<br>')}
+                </div>`;
+            }
+            if (sus.data && sus.data.length) {
+                html += `<div><b style="color:var(--dorado);">Sustituciones</b><br>
+                    ${sus.data.map(s => `🔁 ${s.jugador_sale} → ${s.jugador_entra}${s.minuto ? " " + s.minuto + "'" : ''}`).join('<br>')}
+                </div>`;
+            }
+
+            cont.innerHTML = html || '<span style="opacity:0.6;">Sin detalles añadidos para este partido.</span>';
+            cont.style.display = 'block';
+            boton.textContent = 'Ocultar detalle';
+        }
 
     </script>
 </body>

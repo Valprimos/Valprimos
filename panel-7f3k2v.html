@@ -99,6 +99,7 @@
             <div class="tabs">
                 <button class="tab-btn activo" onclick="cambiarSeccion('noticias', this)">Noticias</button>
                 <button class="tab-btn" onclick="cambiarSeccion('partidos', this)">Partidos</button>
+                <button class="tab-btn" onclick="cambiarSeccion('detalle', this)">Detalle Partido</button>
                 <button class="tab-btn" onclick="cambiarSeccion('productos', this)">Tienda</button>
             </div>
             <button class="btn btn-secundario btn-mini" onclick="cerrarSesion()">Cerrar sesión</button>
@@ -178,6 +179,102 @@
             <div id="lista-partidos"></div>
         </div>
 
+        <!-- DETALLE DE PARTIDO -->
+        <div class="seccion" id="sec-detalle">
+            <div class="caja-form">
+                <h3>Selecciona un partido</h3>
+                <select id="detalle-select-partido" onchange="cargarDetallePartido()">
+                    <option value="">-- Elige un partido --</option>
+                </select>
+            </div>
+
+            <div id="contenedor-detalle" style="display:none;">
+
+                <!-- ALINEACIÓN -->
+                <div class="caja-form">
+                    <h3>Alineación</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Jugador</label>
+                            <select id="alin-jugador"></select>
+                        </div>
+                        <div>
+                            <label>Condición</label>
+                            <select id="alin-titular">
+                                <option value="true">Titular</option>
+                                <option value="false">Suplente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirAlineacion()">Añadir a la alineación</button>
+                    <div id="lista-alineacion" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- GOLEADORES -->
+                <div class="caja-form">
+                    <h3>Goleadores</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Jugador</label>
+                            <select id="gol-jugador"></select>
+                        </div>
+                        <div>
+                            <label>Minuto</label>
+                            <input type="number" id="gol-minuto" min="0" max="130">
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirGol()">Añadir gol</button>
+                    <div id="lista-goles" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- TARJETAS -->
+                <div class="caja-form">
+                    <h3>Tarjetas</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Jugador</label>
+                            <select id="tar-jugador"></select>
+                        </div>
+                        <div>
+                            <label>Tipo</label>
+                            <select id="tar-tipo">
+                                <option value="amarilla">Amarilla</option>
+                                <option value="roja">Roja</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Minuto</label>
+                            <input type="number" id="tar-minuto" min="0" max="130">
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirTarjeta()">Añadir tarjeta</button>
+                    <div id="lista-tarjetas" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- SUSTITUCIONES -->
+                <div class="caja-form">
+                    <h3>Sustituciones</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Sale</label>
+                            <select id="sus-sale"></select>
+                        </div>
+                        <div>
+                            <label>Entra</label>
+                            <select id="sus-entra"></select>
+                        </div>
+                        <div>
+                            <label>Minuto</label>
+                            <input type="number" id="sus-minuto" min="0" max="130">
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirSustitucion()">Añadir sustitución</button>
+                    <div id="lista-sustituciones" style="margin-top:15px;"></div>
+                </div>
+
+            </div>
+        </div>
+
         <!-- PRODUCTOS -->
         <div class="seccion" id="sec-productos">
             <div class="caja-form">
@@ -219,7 +316,7 @@
             if (session) {
                 document.getElementById('vista-login').style.display = 'none';
                 document.getElementById('vista-panel').style.display = 'block';
-                cargarNoticias(); cargarPartidos(); cargarProductos();
+                cargarNoticias(); cargarPartidos(); cargarProductos(); cargarSelectPartidos(); poblarSelectsJugadores();
             } else {
                 document.getElementById('vista-login').style.display = 'block';
                 document.getElementById('vista-panel').style.display = 'none';
@@ -364,6 +461,7 @@
             mostrarMensaje('Partido guardado.', 'ok');
             resetFormPartido();
             cargarPartidos();
+            cargarSelectPartidos();
         }
 
         async function cargarPartidos() {
@@ -474,6 +572,157 @@
             if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
             mostrarMensaje('Producto borrado.', 'ok');
             cargarProductos();
+        }
+
+        /* ================== DETALLE DE PARTIDO ================== */
+        // Plantilla del club — mantenla igual que en jugadores.html
+        const PLANTILLA = ["Álvaro","Daniel","Alberto","Nicolás","Jorge","Javier","Clara","Carlos","David","Pedro","Juan","César","Pablo","Diego"];
+
+        function poblarSelectsJugadores() {
+            const opciones = '<option value="">--</option>' + PLANTILLA.map(n => `<option value="${n}">${n}</option>`).join('');
+            ['alin-jugador','gol-jugador','tar-jugador','sus-sale','sus-entra'].forEach(id => {
+                document.getElementById(id).innerHTML = opciones;
+            });
+        }
+
+        async function cargarSelectPartidos() {
+            const { data, error } = await supabaseClient.from('partidos').select('*').order('fecha', { ascending: false });
+            const sel = document.getElementById('detalle-select-partido');
+            if (error || !data) return;
+            sel.innerHTML = '<option value="">-- Elige un partido --</option>' +
+                data.map(p => `<option value="${p.id}">VALPRIMOS vs ${p.rival} — ${p.fecha}</option>`).join('');
+        }
+
+        async function cargarDetallePartido() {
+            const id = document.getElementById('detalle-select-partido').value;
+            const cont = document.getElementById('contenedor-detalle');
+            if (!id) { cont.style.display = 'none'; return; }
+            cont.style.display = 'block';
+            cargarAlineacion(id);
+            cargarGoles(id);
+            cargarTarjetas(id);
+            cargarSustituciones(id);
+        }
+
+        function idPartidoActual() {
+            return document.getElementById('detalle-select-partido').value;
+        }
+
+        // --- Alineación ---
+        async function añadirAlineacion() {
+            const partido_id = idPartidoActual();
+            const jugador = document.getElementById('alin-jugador').value;
+            const titular = document.getElementById('alin-titular').value === 'true';
+            if (!jugador) { mostrarMensaje('Elige un jugador.', 'error'); return; }
+            const { error } = await supabaseClient.from('alineaciones').insert({ partido_id, jugador, titular });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            cargarAlineacion(partido_id);
+        }
+
+        async function cargarAlineacion(partido_id) {
+            const { data, error } = await supabaseClient.from('alineaciones').select('*').eq('partido_id', partido_id).order('titular', { ascending: false });
+            const cont = document.getElementById('lista-alineacion');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(a => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>${a.jugador}</b><span>${a.titular ? 'Titular' : 'Suplente'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarAlineacion('${a.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin jugadores añadidos.</p>';
+        }
+
+        async function borrarAlineacion(id, partido_id) {
+            await supabaseClient.from('alineaciones').delete().eq('id', id);
+            cargarAlineacion(partido_id);
+        }
+
+        // --- Goles ---
+        async function añadirGol() {
+            const partido_id = idPartidoActual();
+            const jugador = document.getElementById('gol-jugador').value;
+            const minuto = parseInt(document.getElementById('gol-minuto').value) || null;
+            if (!jugador) { mostrarMensaje('Elige un jugador.', 'error'); return; }
+            const { error } = await supabaseClient.from('goles').insert({ partido_id, jugador, minuto });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            document.getElementById('gol-minuto').value = '';
+            cargarGoles(partido_id);
+        }
+
+        async function cargarGoles(partido_id) {
+            const { data, error } = await supabaseClient.from('goles').select('*').eq('partido_id', partido_id).order('minuto', { ascending: true });
+            const cont = document.getElementById('lista-goles');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(g => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>⚽ ${g.jugador}</b><span>${g.minuto ? g.minuto + "'" : 'Minuto sin especificar'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarGol('${g.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin goles añadidos.</p>';
+        }
+
+        async function borrarGol(id, partido_id) {
+            await supabaseClient.from('goles').delete().eq('id', id);
+            cargarGoles(partido_id);
+        }
+
+        // --- Tarjetas ---
+        async function añadirTarjeta() {
+            const partido_id = idPartidoActual();
+            const jugador = document.getElementById('tar-jugador').value;
+            const tipo = document.getElementById('tar-tipo').value;
+            const minuto = parseInt(document.getElementById('tar-minuto').value) || null;
+            if (!jugador) { mostrarMensaje('Elige un jugador.', 'error'); return; }
+            const { error } = await supabaseClient.from('tarjetas').insert({ partido_id, jugador, tipo, minuto });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            document.getElementById('tar-minuto').value = '';
+            cargarTarjetas(partido_id);
+        }
+
+        async function cargarTarjetas(partido_id) {
+            const { data, error } = await supabaseClient.from('tarjetas').select('*').eq('partido_id', partido_id).order('minuto', { ascending: true });
+            const cont = document.getElementById('lista-tarjetas');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(t => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>${t.tipo === 'roja' ? '🟥' : '🟨'} ${t.jugador}</b><span>${t.minuto ? t.minuto + "'" : 'Minuto sin especificar'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarTarjeta('${t.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin tarjetas añadidas.</p>';
+        }
+
+        async function borrarTarjeta(id, partido_id) {
+            await supabaseClient.from('tarjetas').delete().eq('id', id);
+            cargarTarjetas(partido_id);
+        }
+
+        // --- Sustituciones ---
+        async function añadirSustitucion() {
+            const partido_id = idPartidoActual();
+            const jugador_sale = document.getElementById('sus-sale').value;
+            const jugador_entra = document.getElementById('sus-entra').value;
+            const minuto = parseInt(document.getElementById('sus-minuto').value) || null;
+            if (!jugador_sale || !jugador_entra) { mostrarMensaje('Elige ambos jugadores.', 'error'); return; }
+            const { error } = await supabaseClient.from('sustituciones').insert({ partido_id, jugador_sale, jugador_entra, minuto });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            document.getElementById('sus-minuto').value = '';
+            cargarSustituciones(partido_id);
+        }
+
+        async function cargarSustituciones(partido_id) {
+            const { data, error } = await supabaseClient.from('sustituciones').select('*').eq('partido_id', partido_id).order('minuto', { ascending: true });
+            const cont = document.getElementById('lista-sustituciones');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(s => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>🔁 ${s.jugador_sale} → ${s.jugador_entra}</b><span>${s.minuto ? s.minuto + "'" : 'Minuto sin especificar'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarSustitucion('${s.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin sustituciones añadidas.</p>';
+        }
+
+        async function borrarSustitucion(id, partido_id) {
+            await supabaseClient.from('sustituciones').delete().eq('id', id);
+            cargarSustituciones(partido_id);
         }
     </script>
 </body>
