@@ -89,10 +89,15 @@
         .campo-mini::before {
             content: ''; position: absolute; top: 50%; left: 5%; right: 5%; height: 1px; background: rgba(255,255,255,0.25);
         }
-        .campo-linea { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
-        .campo-jugador {
-            background: var(--dorado); color: var(--marron-principal); font-weight: 800; font-size: 0.75rem;
-            padding: 6px 10px; border-radius: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); white-space: nowrap;
+        .campo-linea { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .campo-jugador { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .campo-jugador img {
+            width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+            border: 2px solid var(--dorado); box-shadow: 0 3px 8px rgba(0,0,0,0.4); background: #333;
+        }
+        .campo-jugador span {
+            background: var(--dorado); color: var(--marron-principal); font-weight: 800; font-size: 0.68rem;
+            padding: 3px 8px; border-radius: 10px; white-space: nowrap;
         }
         .campo-vacio { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
     </style>
@@ -622,6 +627,11 @@
         /* ================== DETALLE DE PARTIDO ================== */
         // Plantilla del club — mantenla igual que en jugadores.html
         const PLANTILLA = ["Álvaro","Daniel","Alberto","Nicolás","Jorge","Javier","Clara","Carlos","David","Pedro","Juan","César","Pablo","Diego"];
+        const FOTOS = {
+            "Álvaro":"alvaro.jpeg","Daniel":"daniel.jpeg","Alberto":"alberto.JPG","Nicolás":"nicolas.jpeg",
+            "Jorge":"jorge.jpg","Javier":"javier.JPG","Clara":"clara.JPG","Carlos":"carlos.jpeg","David":"david.jpeg",
+            "Pedro":"pedro.jpeg","Juan":"juan.jpeg","César":"cesar.JPG","Pablo":"pablo.jpeg","Diego":"diego.jpeg"
+        };
 
         function poblarSelectsJugadores() {
             const opciones = '<option value="">--</option>' + PLANTILLA.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -692,7 +702,11 @@
             if (!cont) return;
             const porLinea = { portero: [], defensa: [], centrocampista: [], delantero: [] };
             titulares.forEach(t => { if (t.posicion && porLinea[t.posicion]) porLinea[t.posicion].push(t.jugador); });
-            const linea = (nombres) => `<div class="campo-linea">${nombres.map(n => `<div class="campo-jugador">${n}</div>`).join('') || '<span class="campo-vacio">—</span>'}</div>`;
+            const linea = (nombres) => `<div class="campo-linea">${nombres.map(n => `
+                <div class="campo-jugador">
+                    <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'">
+                    <span>${n}</span>
+                </div>`).join('') || '<span class="campo-vacio">—</span>'}</div>`;
             cont.innerHTML = `
                 <div class="campo-mini">
                     ${linea(porLinea.delantero)}

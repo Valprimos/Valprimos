@@ -486,6 +486,8 @@
 
         /* Fin estilos */
     </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -684,7 +686,7 @@
             { id: 9, nombre: "Pedro",   dorsal: "79", foto: "pedro.jpeg",   copa: true,  p: 0, g: 0, pe: 0, go: 0, a: 0 },
             { id: 10, nombre: "Juan",    dorsal: "90", foto: "juan.jpeg",    copa: true,  p: 0, g: 0, pe: 0, go: 0, a: 0 },
             { id: 11, nombre: "César",   dorsal: "88", foto: "cesar.JPG",    copa: false, p: 0, g: 0, pe: 0, go: 0, a: 0 },
-            { id: 12, nombre: "Pablo",   dorsal: "86", foto: "pablo.JPG",    copa: false, p: 0, g: 0, pe: 0, go: 0, a: 0 },
+            { id: 12, nombre: "Pablo",   dorsal: "86", foto: "pablo.jpeg",    copa: false, p: 0, g: 0, pe: 0, go: 0, a: 0 },
             { id: 13, nombre: "Diego",   dorsal: "9",  foto: "diego.jpeg",   copa: false, p: 0, g: 0, pe: 0, go: 0, a: 0 }
         ];
 
@@ -782,6 +784,59 @@
                 </div>`;
             div.onclick = () => abrirModal(j); grid.appendChild(div);
         });
+
+        /* --- ESTADÍSTICAS REALES DESDE SUPABASE --- */
+        async function cargarEstadisticasReales() {
+            const [partidosRes, alinRes, golesRes, asisRes] = await Promise.all([
+                supabaseClient.from('partidos').select('id, jugado, goles_valprimos, goles_rival'),
+                supabaseClient.from('alineaciones').select('jugador, partido_id'),
+                supabaseClient.from('goles').select('jugador'),
+                supabaseClient.from('asistencias').select('jugador')
+            ]);
+
+            const partidos = partidosRes.data || [];
+            const alineaciones = alinRes.data || [];
+            const golesRows = golesRes.data || [];
+            const asisRows = asisRes.data || [];
+
+            const partidoPorId = {};
+            partidos.forEach(p => partidoPorId[p.id] = p);
+
+            jugadores.forEach(j => {
+                const misAlineaciones = alineaciones.filter(a => a.jugador === j.nombre && partidoPorId[a.partido_id] && partidoPorId[a.partido_id].jugado);
+                j.p = misAlineaciones.length;
+                j.g = misAlineaciones.filter(a => partidoPorId[a.partido_id].goles_valprimos > partidoPorId[a.partido_id].goles_rival).length;
+                j.pe = misAlineaciones.filter(a => partidoPorId[a.partido_id].goles_valprimos < partidoPorId[a.partido_id].goles_rival).length;
+                j.go = golesRows.filter(g => g.jugador === j.nombre).length;
+                j.a = asisRows.filter(a => a.jugador === j.nombre).length;
+            });
+
+            // Totales reales del equipo (a partir de los partidos, no de los jugadores)
+            const jugados = partidos.filter(p => p.jugado);
+            const totalesReales = {
+                p: jugados.length,
+                g: jugados.filter(p => p.goles_valprimos > p.goles_rival).length,
+                pe: jugados.filter(p => p.goles_valprimos < p.goles_rival).length,
+                go: jugados.reduce((s, p) => s + (p.goles_valprimos || 0), 0),
+                gc: jugados.reduce((s, p) => s + (p.goles_rival || 0), 0)
+            };
+
+            const statsEquipoReales = [
+                { label: "Partidos",   val: totalesReales.p,  clase: "clickable", onclick: "window.location.href='calendario.html'" },
+                { label: "Ganados",    val: totalesReales.g,  clase: "ganados" },
+                { label: "Perdidos",   val: totalesReales.pe, clase: "perdidos" },
+                { label: "Goles A FAVOR", val: totalesReales.go, clase: "ganados" },
+                { label: "Goles en contra", val: totalesReales.gc, clase: "perdidos" }
+            ];
+            headerStats.innerHTML = '';
+            statsEquipoReales.forEach(s => {
+                headerStats.innerHTML += `<div class="stat-equipo-card ${s.clase}" ${s.onclick ? `onclick="${s.onclick}"` : ''}>
+                    <span class="stat-equipo-num">${s.val}</span><span class="stat-equipo-label">${s.label}</span></div>`;
+            });
+
+            renderizarTabla();
+        }
+        cargarEstadisticasReales();
 
         /* ============================================================
            LÓGICA COMPARADOR MODAL
