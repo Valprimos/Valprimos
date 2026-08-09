@@ -189,15 +189,9 @@
                 <input type="text" id="partido-lugar" placeholder="Polideportivo Tomás Luis de Victoria">
                 <div class="check-fila">
                     <input type="checkbox" id="partido-jugado" onchange="toggleMarcador()">
-                    <label style="margin:0;">Ya se ha jugado (introducir resultado)</label>
+                    <label style="margin:0;">Ya se ha jugado</label>
                 </div>
-                <div class="fila" id="fila-marcador" style="display:none; margin-top:10px;">
-                    <div>
-                        <label>Goles Rival</label>
-                        <input type="number" id="partido-goles-r" min="0">
-                    </div>
-                </div>
-                <p style="font-size:0.8rem; opacity:0.65; margin-top:-5px;" id="nota-marcador" style="display:none;">Los goles del Valprimos se calculan automáticamente según lo que añadas en la pestaña "Detalle Partido".</p>
+                <p style="font-size:0.8rem; opacity:0.65;" id="nota-marcador">El marcador (nuestros goles y los del rival) se calcula automáticamente según lo que añadas en la pestaña "Detalle Partido".</p>
                 <button class="btn" onclick="guardarPartido()">Guardar</button>
                 <button class="btn btn-secundario" onclick="resetFormPartido()">Cancelar</button>
             </div>
@@ -261,6 +255,19 @@
                     </div>
                     <button class="btn btn-mini" onclick="añadirGol()">Añadir gol</button>
                     <div id="lista-goles" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- GOLES DEL RIVAL -->
+                <div class="caja-form">
+                    <h3>Goles del rival</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Minuto</label>
+                            <input type="number" id="golrival-minuto" min="0" max="130">
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirGolRival()">Añadir gol del rival</button>
+                    <div id="lista-goles-rival" style="margin-top:15px;"></div>
                 </div>
 
                 <!-- ASISTENCIAS -->
@@ -474,7 +481,7 @@
 
         /* ================== PARTIDOS ================== */
         function toggleMarcador() {
-            document.getElementById('fila-marcador').style.display = document.getElementById('partido-jugado').checked ? 'flex' : 'none';
+            // El resultado ya no se introduce a mano; se calcula desde Detalle Partido.
         }
 
         function resetFormPartido() {
@@ -485,8 +492,6 @@
             document.getElementById('partido-competicion').value = '';
             document.getElementById('partido-lugar').value = '';
             document.getElementById('partido-jugado').checked = false;
-            document.getElementById('partido-goles-r').value = '';
-            document.getElementById('fila-marcador').style.display = 'none';
             document.getElementById('titulo-form-partido').textContent = 'Nuevo partido';
         }
 
@@ -499,8 +504,7 @@
                 hora: document.getElementById('partido-hora').value.trim() || null,
                 competicion: document.getElementById('partido-competicion').value.trim() || null,
                 lugar: document.getElementById('partido-lugar').value.trim() || null,
-                jugado: jugado,
-                goles_rival: jugado ? parseInt(document.getElementById('partido-goles-r').value || 0) : null
+                jugado: jugado
             };
             if (!registro.rival || !registro.fecha) { mostrarMensaje('Rellena rival y fecha.', 'error'); return; }
 
@@ -541,8 +545,6 @@
             document.getElementById('partido-competicion').value = p.competicion || '';
             document.getElementById('partido-lugar').value = p.lugar || '';
             document.getElementById('partido-jugado').checked = p.jugado;
-            document.getElementById('partido-goles-r').value = p.goles_rival ?? '';
-            document.getElementById('fila-marcador').style.display = p.jugado ? 'flex' : 'none';
             document.getElementById('titulo-form-partido').textContent = 'Editar partido';
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
@@ -661,6 +663,7 @@
             cont.style.display = 'block';
             cargarAlineacion(id);
             cargarGoles(id);
+            cargarGolesRival(id);
             cargarAsistencias(id);
             cargarTarjetas(id);
             cargarSustituciones(id);
@@ -735,9 +738,41 @@
         }
 
         async function sincronizarMarcador(partido_id) {
-            const { count } = await supabaseClient.from('goles').select('*', { count: 'exact', head: true }).eq('partido_id', partido_id);
-            await supabaseClient.from('partidos').update({ goles_valprimos: count || 0 }).eq('id', partido_id);
+            const [{ count: cv }, { count: cr }] = await Promise.all([
+                supabaseClient.from('goles').select('*', { count: 'exact', head: true }).eq('partido_id', partido_id),
+                supabaseClient.from('goles_rival').select('*', { count: 'exact', head: true }).eq('partido_id', partido_id)
+            ]);
+            await supabaseClient.from('partidos').update({ goles_valprimos: cv || 0, goles_rival: cr || 0 }).eq('id', partido_id);
             cargarPartidos();
+        }
+
+        // --- Goles del rival ---
+        async function añadirGolRival() {
+            const partido_id = idPartidoActual();
+            const minuto = parseInt(document.getElementById('golrival-minuto').value) || null;
+            const { error } = await supabaseClient.from('goles_rival').insert({ partido_id, minuto });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            document.getElementById('golrival-minuto').value = '';
+            cargarGolesRival(partido_id);
+            sincronizarMarcador(partido_id);
+        }
+
+        async function cargarGolesRival(partido_id) {
+            const { data, error } = await supabaseClient.from('goles_rival').select('*').eq('partido_id', partido_id).order('minuto', { ascending: true });
+            const cont = document.getElementById('lista-goles-rival');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(g => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>⚫ Gol del rival</b><span>${g.minuto ? g.minuto + "'" : 'Minuto sin especificar'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarGolRival('${g.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin goles del rival añadidos.</p>';
+        }
+
+        async function borrarGolRival(id, partido_id) {
+            await supabaseClient.from('goles_rival').delete().eq('id', id);
+            cargarGolesRival(partido_id);
+            sincronizarMarcador(partido_id);
         }
 
         async function cargarGoles(partido_id) {

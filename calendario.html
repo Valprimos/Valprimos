@@ -197,24 +197,28 @@
             background: radial-gradient(ellipse at center, #1d6b3a 0%, #0f3d21 100%);
             border: 2px solid rgba(255,255,255,0.35);
             border-radius: 12px;
-            padding: 22px 12px;
+            padding: 26px 30px;
             margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 720px;
+            margin-left: auto; margin-right: auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 16px;
-            min-height: 280px;
+            gap: 20px;
+            min-height: 240px;
             position: relative;
             box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
         }
         .campo-pub::before {
-            content: ''; position: absolute; top: 50%; left: 8%; right: 8%; height: 1px; background: rgba(255,255,255,0.2);
+            content: ''; position: absolute; top: 50%; left: 6%; right: 6%; height: 1px; background: rgba(255,255,255,0.2);
         }
         .campo-pub::after {
             content: ''; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; border: 1px solid rgba(255,255,255,0.2);
             border-radius: 50%; transform: translate(-50%,-50%);
         }
-        .campo-linea-pub { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .campo-linea-pub { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; position: relative; z-index: 1; }
         .campo-jugador-pub { display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .campo-jugador-pub img {
             width: 54px; height: 54px; border-radius: 50%; object-fit: cover;
@@ -225,10 +229,25 @@
             padding: 4px 12px; border-radius: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); white-space: nowrap;
             border: 1px solid rgba(255,255,255,0.25);
         }
+
+        /* --- RESUMEN DE GOLES (dos columnas) --- */
+        .resumen-goles { display: flex; gap: 20px; margin-top: 10px; }
+        .resumen-col { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(232,193,90,0.12); border-radius: 8px; padding: 12px 14px; }
+        .resumen-col-titulo { font-size: 0.7rem; letter-spacing: 1px; opacity: 0.55; margin-bottom: 8px; font-weight: 700; }
+        .resumen-col-rival .resumen-col-titulo { text-align: right; }
+        .evento-gol { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.85rem; flex-wrap: wrap; }
+        .evento-gol-rival { justify-content: flex-end; opacity: 0.7; }
+        .evento-marcador { color: var(--dorado); font-weight: 800; font-size: 0.8rem; min-width: 32px; }
+        .evento-jugador em { font-style: normal; color: var(--dorado); opacity: 0.8; }
+        .evento-asistencia { color: #aaa; font-size: 0.78rem; opacity: 0.75; }
+
         @media (max-width: 1024px) {
             .campo-jugador-pub img { width: 42px; height: 42px; }
             .campo-jugador-pub span { font-size: 0.65rem; padding: 3px 9px; }
-            .campo-pub { min-height: 240px; padding: 16px 8px; }
+            .campo-pub { min-height: 200px; padding: 18px 12px; }
+            .resumen-goles { flex-direction: column; gap: 10px; }
+            .resumen-col-rival .resumen-col-titulo { text-align: left; }
+            .evento-gol-rival { justify-content: flex-start; }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -467,9 +486,10 @@
             }
             boton.textContent = 'Cargando...';
 
-            const [alin, gol, asis, tar, sus] = await Promise.all([
+            const [alin, gol, golRival, asis, tar, sus] = await Promise.all([
                 supabaseClient.from('alineaciones').select('*').eq('partido_id', partidoId).order('titular', { ascending: false }),
                 supabaseClient.from('goles').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
+                supabaseClient.from('goles_rival').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
                 supabaseClient.from('asistencias').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
                 supabaseClient.from('tarjetas').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
                 supabaseClient.from('sustituciones').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true })
@@ -479,6 +499,39 @@
             const suplentes = (alin.data || []).filter(a => !a.titular).map(a => a.jugador);
             const porLinea = { portero: [], defensa: [], centrocampista: [], delantero: [] };
             titularesData.forEach(t => { if (t.posicion && porLinea[t.posicion]) porLinea[t.posicion].push(t.jugador); });
+
+            // Empareja cada gol con su asistencia (mismo minuto)
+            const golesConAsist = (gol.data || []).map(g => {
+                const asistencia = (asis.data || []).find(a => a.minuto === g.minuto);
+                return { minuto: g.minuto, jugador: g.jugador, asistencia: asistencia ? asistencia.jugador : null };
+            });
+
+            // Cronología conjunta para calcular el marcador momento a momento
+            const cronologia = [
+                ...golesConAsist.map(g => ({ min: g.minuto ?? 999, propio: true, g })),
+                ...(golRival.data || []).map(g => ({ min: g.minuto ?? 999, propio: false, g }))
+            ].sort((a, b) => a.min - b.min);
+
+            let marcadorV = 0, marcadorR = 0;
+            const columnaProp = [], columnaRiv = [];
+            cronologia.forEach(ev => {
+                if (ev.propio) {
+                    marcadorV++;
+                    columnaProp.push(`
+                        <div class="evento-gol">
+                            <span class="evento-marcador">${marcadorV}-${marcadorR}</span>
+                            <span class="evento-jugador">⚽ ${ev.g.jugador}${ev.min < 999 ? ` <em>${ev.min}'</em>` : ''}</span>
+                            ${ev.g.asistencia ? `<span class="evento-asistencia">🅰️ ${ev.g.asistencia}</span>` : ''}
+                        </div>`);
+                } else {
+                    marcadorR++;
+                    columnaRiv.push(`
+                        <div class="evento-gol evento-gol-rival">
+                            <span class="evento-jugador">⚫ Rival${ev.min < 999 ? ` <em>${ev.min}'</em>` : ''}</span>
+                            <span class="evento-marcador">${marcadorV}-${marcadorR}</span>
+                        </div>`);
+                }
+            });
 
             const lineaHTML = (nombres) => `<div class="campo-linea-pub">${nombres.map(n => `
                 <div class="campo-jugador-pub">
@@ -503,18 +556,33 @@
                     </div>`;
             }
 
-            const eventos = [];
-            (gol.data || []).forEach(g => eventos.push({ min: g.minuto ?? 999, html: `⚽ <b>${g.jugador}</b> marca un gol` }));
-            (asis.data || []).forEach(a => eventos.push({ min: a.minuto ?? 999, html: `🅰️ <b>${a.jugador}</b> asistencia` }));
-            (tar.data || []).forEach(t => eventos.push({ min: t.minuto ?? 999, html: `${t.tipo === 'roja' ? '🟥' : '🟨'} <b>${t.jugador}</b> tarjeta ${t.tipo}` }));
-            (sus.data || []).forEach(s => eventos.push({ min: s.minuto ?? 999, html: `🔁 Sale <b>${s.jugador_sale}</b>, entra <b>${s.jugador_entra}</b>` }));
-            eventos.sort((a, b) => a.min - b.min);
+            if (columnaProp.length || columnaRiv.length) {
+                html += `
+                    <div style="margin-bottom:20px;">
+                        <b style="color:var(--dorado); text-transform:uppercase; letter-spacing:1px; font-size:0.85rem;">Marcador en directo</b>
+                        <div class="resumen-goles">
+                            <div class="resumen-col">
+                                <div class="resumen-col-titulo">VALPRIMOS</div>
+                                ${columnaProp.join('') || '<span class="campo-vacio">Sin goles</span>'}
+                            </div>
+                            <div class="resumen-col resumen-col-rival">
+                                <div class="resumen-col-titulo">RIVAL</div>
+                                ${columnaRiv.join('') || '<span class="campo-vacio">Sin goles</span>'}
+                            </div>
+                        </div>
+                    </div>`;
+            }
 
-            if (eventos.length) {
+            const otrosEventos = [];
+            (tar.data || []).forEach(t => otrosEventos.push({ min: t.minuto ?? 999, html: `${t.tipo === 'roja' ? '🟥' : '🟨'} ${t.jugador}` }));
+            (sus.data || []).forEach(s => otrosEventos.push({ min: s.minuto ?? 999, html: `🔁 ${s.jugador_sale} → ${s.jugador_entra}` }));
+            otrosEventos.sort((a, b) => a.min - b.min);
+
+            if (otrosEventos.length) {
                 html += `<div>
-                    <b style="color:var(--dorado); text-transform:uppercase; letter-spacing:1px; font-size:0.85rem;">Eventos del partido</b>
+                    <b style="color:var(--dorado); text-transform:uppercase; letter-spacing:1px; font-size:0.85rem;">Otros eventos</b>
                     <div style="margin-top:8px;">
-                        ${eventos.map(e => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.92rem;">${e.min < 999 ? `<span style="color:var(--dorado); font-weight:700;">${e.min}'</span> ` : ''}${e.html}</div>`).join('')}
+                        ${otrosEventos.map(e => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.92rem;">${e.min < 999 ? `<span style="color:var(--dorado); font-weight:700;">${e.min}'</span> ` : ''}${e.html}</div>`).join('')}
                     </div>
                 </div>`;
             }
