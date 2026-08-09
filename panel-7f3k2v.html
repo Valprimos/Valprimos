@@ -78,26 +78,32 @@
             background: linear-gradient(180deg, #1a5c33, #0f3d21);
             border: 2px solid rgba(255,255,255,0.4);
             border-radius: 10px;
-            padding: 18px 10px;
+            padding: 22px 14px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 14px;
-            min-height: 260px;
+            gap: 20px;
+            min-height: 300px;
             position: relative;
         }
         .campo-mini::before {
             content: ''; position: absolute; top: 50%; left: 5%; right: 5%; height: 1px; background: rgba(255,255,255,0.25);
         }
-        .campo-linea { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
-        .campo-jugador { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .campo-jugador img {
-            width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+        .campo-linea { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .campo-jugador { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .campo-foto-wrap { position: relative; }
+        .campo-foto-wrap img {
+            width: 54px; height: 54px; border-radius: 50%; object-fit: cover; display: block;
             border: 2px solid var(--dorado); box-shadow: 0 3px 8px rgba(0,0,0,0.4); background: #333;
         }
-        .campo-jugador span {
-            background: var(--dorado); color: var(--marron-principal); font-weight: 800; font-size: 0.68rem;
-            padding: 3px 8px; border-radius: 10px; white-space: nowrap;
+        .campo-dorsal {
+            position: absolute; bottom: -3px; right: -3px; background: #0f3d21; color: var(--dorado);
+            font-weight: 800; font-size: 0.6rem; width: 17px; height: 17px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; border: 2px solid var(--dorado);
+        }
+        .campo-nombre {
+            background: var(--dorado); color: var(--marron-principal); font-weight: 800; font-size: 0.7rem;
+            padding: 3px 10px; border-radius: 10px; white-space: nowrap;
         }
         .campo-vacio { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
     </style>
@@ -634,6 +640,10 @@
             "Jorge":"jorge.jpg","Javier":"javier.JPG","Clara":"clara.JPG","Carlos":"carlos.jpeg","David":"david.jpeg",
             "Pedro":"pedro.jpeg","Juan":"juan.jpeg","César":"cesar.JPG","Pablo":"pablo.jpeg","Diego":"diego.jpeg"
         };
+        const DORSALES = {
+            "Álvaro":"00","Daniel":"10","Alberto":"67","Nicolás":"99","Jorge":"8","Javier":"96","Clara":"13",
+            "Carlos":"7","David":"15","Pedro":"79","Juan":"90","César":"88","Pablo":"86","Diego":"9"
+        };
 
         function poblarSelectsJugadores() {
             const opciones = '<option value="">--</option>' + PLANTILLA.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -707,8 +717,11 @@
             titulares.forEach(t => { if (t.posicion && porLinea[t.posicion]) porLinea[t.posicion].push(t.jugador); });
             const linea = (nombres) => `<div class="campo-linea">${nombres.map(n => `
                 <div class="campo-jugador">
-                    <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'">
-                    <span>${n}</span>
+                    <div class="campo-foto-wrap">
+                        <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'">
+                        <span class="campo-dorsal">${DORSALES[n] || ''}</span>
+                    </div>
+                    <span class="campo-nombre">${n}</span>
                 </div>`).join('') || '<span class="campo-vacio">—</span>'}</div>`;
             cont.innerHTML = `
                 <div class="campo-mini">
