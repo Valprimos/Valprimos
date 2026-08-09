@@ -72,6 +72,29 @@
         #mensaje-estado { text-align: center; padding: 10px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 0.9rem; }
         #mensaje-estado.ok { background: rgba(76,175,80,0.2); color: var(--verde-ok); display: block; }
         #mensaje-estado.error { background: rgba(229,83,75,0.2); color: var(--rojo); display: block; }
+
+        /* --- MINI CAMPO --- */
+        .campo-mini {
+            background: linear-gradient(180deg, #1a5c33, #0f3d21);
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 10px;
+            padding: 18px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            min-height: 260px;
+            position: relative;
+        }
+        .campo-mini::before {
+            content: ''; position: absolute; top: 50%; left: 5%; right: 5%; height: 1px; background: rgba(255,255,255,0.25);
+        }
+        .campo-linea { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .campo-jugador {
+            background: var(--dorado); color: var(--marron-principal); font-weight: 800; font-size: 0.75rem;
+            padding: 6px 10px; border-radius: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); white-space: nowrap;
+        }
+        .campo-vacio { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -165,14 +188,11 @@
                 </div>
                 <div class="fila" id="fila-marcador" style="display:none; margin-top:10px;">
                     <div>
-                        <label>Goles Valprimos</label>
-                        <input type="number" id="partido-goles-v" min="0">
-                    </div>
-                    <div>
                         <label>Goles Rival</label>
                         <input type="number" id="partido-goles-r" min="0">
                     </div>
                 </div>
+                <p style="font-size:0.8rem; opacity:0.65; margin-top:-5px;" id="nota-marcador" style="display:none;">Los goles del Valprimos se calculan automáticamente según lo que añadas en la pestaña "Detalle Partido".</p>
                 <button class="btn" onclick="guardarPartido()">Guardar</button>
                 <button class="btn btn-secundario" onclick="resetFormPartido()">Cancelar</button>
             </div>
@@ -196,7 +216,7 @@
                     <div class="fila">
                         <div>
                             <label>Jugador</label>
-                            <select id="alin-jugador"></select>
+                            <select id="alin-jugador" onchange="autoPosicion()"></select>
                         </div>
                         <div>
                             <label>Condición</label>
@@ -205,8 +225,19 @@
                                 <option value="false">Suplente</option>
                             </select>
                         </div>
+                        <div>
+                            <label>Posición</label>
+                            <select id="alin-posicion">
+                                <option value="portero">Portero</option>
+                                <option value="defensa">Defensa</option>
+                                <option value="centrocampista">Centrocampista</option>
+                                <option value="delantero">Delantero</option>
+                            </select>
+                        </div>
                     </div>
+                    <p style="font-size:0.8rem; opacity:0.65;">Formación habitual: 1 portero – 1 defensa – 2 centrocampistas – 1 delantero.</p>
                     <button class="btn btn-mini" onclick="añadirAlineacion()">Añadir a la alineación</button>
+                    <div id="campo-preview" style="margin-top:15px;"></div>
                     <div id="lista-alineacion" style="margin-top:15px;"></div>
                 </div>
 
@@ -225,6 +256,23 @@
                     </div>
                     <button class="btn btn-mini" onclick="añadirGol()">Añadir gol</button>
                     <div id="lista-goles" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- ASISTENCIAS -->
+                <div class="caja-form">
+                    <h3>Asistencias</h3>
+                    <div class="fila">
+                        <div>
+                            <label>Jugador</label>
+                            <select id="asis-jugador"></select>
+                        </div>
+                        <div>
+                            <label>Minuto</label>
+                            <input type="number" id="asis-minuto" min="0" max="130">
+                        </div>
+                    </div>
+                    <button class="btn btn-mini" onclick="añadirAsistencia()">Añadir asistencia</button>
+                    <div id="lista-asistencias" style="margin-top:15px;"></div>
                 </div>
 
                 <!-- TARJETAS -->
@@ -432,7 +480,6 @@
             document.getElementById('partido-competicion').value = '';
             document.getElementById('partido-lugar').value = '';
             document.getElementById('partido-jugado').checked = false;
-            document.getElementById('partido-goles-v').value = '';
             document.getElementById('partido-goles-r').value = '';
             document.getElementById('fila-marcador').style.display = 'none';
             document.getElementById('titulo-form-partido').textContent = 'Nuevo partido';
@@ -448,7 +495,6 @@
                 competicion: document.getElementById('partido-competicion').value.trim() || null,
                 lugar: document.getElementById('partido-lugar').value.trim() || null,
                 jugado: jugado,
-                goles_valprimos: jugado ? parseInt(document.getElementById('partido-goles-v').value || 0) : null,
                 goles_rival: jugado ? parseInt(document.getElementById('partido-goles-r').value || 0) : null
             };
             if (!registro.rival || !registro.fecha) { mostrarMensaje('Rellena rival y fecha.', 'error'); return; }
@@ -490,7 +536,6 @@
             document.getElementById('partido-competicion').value = p.competicion || '';
             document.getElementById('partido-lugar').value = p.lugar || '';
             document.getElementById('partido-jugado').checked = p.jugado;
-            document.getElementById('partido-goles-v').value = p.goles_valprimos ?? '';
             document.getElementById('partido-goles-r').value = p.goles_rival ?? '';
             document.getElementById('fila-marcador').style.display = p.jugado ? 'flex' : 'none';
             document.getElementById('titulo-form-partido').textContent = 'Editar partido';
@@ -580,9 +625,15 @@
 
         function poblarSelectsJugadores() {
             const opciones = '<option value="">--</option>' + PLANTILLA.map(n => `<option value="${n}">${n}</option>`).join('');
-            ['alin-jugador','gol-jugador','tar-jugador','sus-sale','sus-entra'].forEach(id => {
+            ['alin-jugador','gol-jugador','asis-jugador','tar-jugador','sus-sale','sus-entra'].forEach(id => {
                 document.getElementById(id).innerHTML = opciones;
             });
+            autoPosicion();
+        }
+
+        function autoPosicion() {
+            const jugador = document.getElementById('alin-jugador').value;
+            if (jugador === 'Nicolás') document.getElementById('alin-posicion').value = 'portero';
         }
 
         async function cargarSelectPartidos() {
@@ -600,6 +651,7 @@
             cont.style.display = 'block';
             cargarAlineacion(id);
             cargarGoles(id);
+            cargarAsistencias(id);
             cargarTarjetas(id);
             cargarSustituciones(id);
         }
@@ -613,11 +665,14 @@
             const partido_id = idPartidoActual();
             const jugador = document.getElementById('alin-jugador').value;
             const titular = document.getElementById('alin-titular').value === 'true';
+            const posicion = document.getElementById('alin-posicion').value;
             if (!jugador) { mostrarMensaje('Elige un jugador.', 'error'); return; }
-            const { error } = await supabaseClient.from('alineaciones').insert({ partido_id, jugador, titular });
+            const { error } = await supabaseClient.from('alineaciones').insert({ partido_id, jugador, titular, posicion });
             if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
             cargarAlineacion(partido_id);
         }
+
+        const ETIQUETA_POS = { portero: 'Portero', defensa: 'Defensa', centrocampista: 'Centrocampista', delantero: 'Delantero' };
 
         async function cargarAlineacion(partido_id) {
             const { data, error } = await supabaseClient.from('alineaciones').select('*').eq('partido_id', partido_id).order('titular', { ascending: false });
@@ -625,10 +680,26 @@
             if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
             cont.innerHTML = data.map(a => `
                 <div class="tarjeta-item">
-                    <div class="info"><b>${a.jugador}</b><span>${a.titular ? 'Titular' : 'Suplente'}</span></div>
+                    <div class="info"><b>${a.jugador}</b><span>${a.titular ? 'Titular' : 'Suplente'}${a.posicion ? ' · ' + ETIQUETA_POS[a.posicion] : ''}</span></div>
                     <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarAlineacion('${a.id}','${partido_id}')">Borrar</button></div>
                 </div>
             `).join('') || '<p style="opacity:0.6;">Sin jugadores añadidos.</p>';
+            dibujarCampoPanel(data.filter(a => a.titular));
+        }
+
+        function dibujarCampoPanel(titulares) {
+            let cont = document.getElementById('campo-preview');
+            if (!cont) return;
+            const porLinea = { portero: [], defensa: [], centrocampista: [], delantero: [] };
+            titulares.forEach(t => { if (t.posicion && porLinea[t.posicion]) porLinea[t.posicion].push(t.jugador); });
+            const linea = (nombres) => `<div class="campo-linea">${nombres.map(n => `<div class="campo-jugador">${n}</div>`).join('') || '<span class="campo-vacio">—</span>'}</div>`;
+            cont.innerHTML = `
+                <div class="campo-mini">
+                    ${linea(porLinea.delantero)}
+                    ${linea(porLinea.centrocampista)}
+                    ${linea(porLinea.defensa)}
+                    ${linea(porLinea.portero)}
+                </div>`;
         }
 
         async function borrarAlineacion(id, partido_id) {
@@ -646,6 +717,13 @@
             if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
             document.getElementById('gol-minuto').value = '';
             cargarGoles(partido_id);
+            sincronizarMarcador(partido_id);
+        }
+
+        async function sincronizarMarcador(partido_id) {
+            const { count } = await supabaseClient.from('goles').select('*', { count: 'exact', head: true }).eq('partido_id', partido_id);
+            await supabaseClient.from('partidos').update({ goles_valprimos: count || 0 }).eq('id', partido_id);
+            cargarPartidos();
         }
 
         async function cargarGoles(partido_id) {
@@ -663,9 +741,40 @@
         async function borrarGol(id, partido_id) {
             await supabaseClient.from('goles').delete().eq('id', id);
             cargarGoles(partido_id);
+            sincronizarMarcador(partido_id);
+        }
+
+        // --- Asistencias ---
+        async function añadirAsistencia() {
+            const partido_id = idPartidoActual();
+            const jugador = document.getElementById('asis-jugador').value;
+            const minuto = parseInt(document.getElementById('asis-minuto').value) || null;
+            if (!jugador) { mostrarMensaje('Elige un jugador.', 'error'); return; }
+            const { error } = await supabaseClient.from('asistencias').insert({ partido_id, jugador, minuto });
+            if (error) { mostrarMensaje('Error: ' + error.message, 'error'); return; }
+            document.getElementById('asis-minuto').value = '';
+            cargarAsistencias(partido_id);
+        }
+
+        async function cargarAsistencias(partido_id) {
+            const { data, error } = await supabaseClient.from('asistencias').select('*').eq('partido_id', partido_id).order('minuto', { ascending: true });
+            const cont = document.getElementById('lista-asistencias');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(a => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>🅰️ ${a.jugador}</b><span>${a.minuto ? a.minuto + "'" : 'Minuto sin especificar'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarAsistencia('${a.id}','${partido_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin asistencias añadidas.</p>';
+        }
+
+        async function borrarAsistencia(id, partido_id) {
+            await supabaseClient.from('asistencias').delete().eq('id', id);
+            cargarAsistencias(partido_id);
         }
 
         // --- Tarjetas ---
+
         async function añadirTarjeta() {
             const partido_id = idPartidoActual();
             const jugador = document.getElementById('tar-jugador').value;

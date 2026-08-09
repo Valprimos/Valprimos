@@ -192,6 +192,38 @@
             .marcador-pasado { font-size: 2.5rem; letter-spacing: 2px; }
             .match-info { font-size: 0.95rem; }
         }
+        /* --- CAMPO DE ALINEACIÓN --- */
+        .campo-pub {
+            background: radial-gradient(ellipse at center, #1d6b3a 0%, #0f3d21 100%);
+            border: 2px solid rgba(255,255,255,0.35);
+            border-radius: 12px;
+            padding: 22px 12px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 280px;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
+        }
+        .campo-pub::before {
+            content: ''; position: absolute; top: 50%; left: 8%; right: 8%; height: 1px; background: rgba(255,255,255,0.2);
+        }
+        .campo-pub::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%; transform: translate(-50%,-50%);
+        }
+        .campo-linea-pub { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .campo-jugador-pub {
+            background: var(--dorado); color: var(--verde-oscuro); font-weight: 800; font-size: 0.8rem;
+            padding: 7px 14px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        @media (max-width: 1024px) {
+            .campo-jugador-pub { font-size: 0.72rem; padding: 6px 10px; }
+            .campo-pub { min-height: 220px; padding: 16px 8px; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
@@ -424,37 +456,51 @@
             }
             boton.textContent = 'Cargando...';
 
-            const [alin, gol, tar, sus] = await Promise.all([
+            const [alin, gol, asis, tar, sus] = await Promise.all([
                 supabaseClient.from('alineaciones').select('*').eq('partido_id', partidoId).order('titular', { ascending: false }),
                 supabaseClient.from('goles').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
+                supabaseClient.from('asistencias').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
                 supabaseClient.from('tarjetas').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true }),
                 supabaseClient.from('sustituciones').select('*').eq('partido_id', partidoId).order('minuto', { ascending: true })
             ]);
 
-            const titulares = (alin.data || []).filter(a => a.titular).map(a => a.jugador);
+            const titularesData = (alin.data || []).filter(a => a.titular);
             const suplentes = (alin.data || []).filter(a => !a.titular).map(a => a.jugador);
+            const porLinea = { portero: [], defensa: [], centrocampista: [], delantero: [] };
+            titularesData.forEach(t => { if (t.posicion && porLinea[t.posicion]) porLinea[t.posicion].push(t.jugador); });
+
+            const lineaHTML = (nombres) => `<div class="campo-linea-pub">${nombres.map(n => `<div class="campo-jugador-pub">${n}</div>`).join('')}</div>`;
+            const hayAlineacion = titularesData.length > 0;
 
             let html = '';
-            if (titulares.length || suplentes.length) {
-                html += `<div style="margin-bottom:14px;">
-                    <b style="color:var(--dorado);">Alineación</b><br>
-                    ${titulares.length ? `<span style="opacity:0.85;">Titulares: ${titulares.join(', ')}</span><br>` : ''}
-                    ${suplentes.length ? `<span style="opacity:0.6; font-size:0.9rem;">Suplentes: ${suplentes.join(', ')}</span>` : ''}
-                </div>`;
+
+            if (hayAlineacion) {
+                html += `
+                    <div style="margin-bottom:20px;">
+                        <b style="color:var(--dorado); text-transform:uppercase; letter-spacing:1px; font-size:0.85rem;">Alineación · 1-2-1</b>
+                        <div class="campo-pub">
+                            ${lineaHTML(porLinea.delantero)}
+                            ${lineaHTML(porLinea.centrocampista)}
+                            ${lineaHTML(porLinea.defensa)}
+                            ${lineaHTML(porLinea.portero)}
+                        </div>
+                        ${suplentes.length ? `<div style="margin-top:10px; opacity:0.65; font-size:0.85rem;">Suplentes: ${suplentes.join(', ')}</div>` : ''}
+                    </div>`;
             }
-            if (gol.data && gol.data.length) {
-                html += `<div style="margin-bottom:14px;"><b style="color:var(--dorado);">Goles</b><br>
-                    ${gol.data.map(g => `⚽ ${g.jugador}${g.minuto ? " " + g.minuto + "'" : ''}`).join('<br>')}
-                </div>`;
-            }
-            if (tar.data && tar.data.length) {
-                html += `<div style="margin-bottom:14px;"><b style="color:var(--dorado);">Tarjetas</b><br>
-                    ${tar.data.map(t => `${t.tipo === 'roja' ? '🟥' : '🟨'} ${t.jugador}${t.minuto ? " " + t.minuto + "'" : ''}`).join('<br>')}
-                </div>`;
-            }
-            if (sus.data && sus.data.length) {
-                html += `<div><b style="color:var(--dorado);">Sustituciones</b><br>
-                    ${sus.data.map(s => `🔁 ${s.jugador_sale} → ${s.jugador_entra}${s.minuto ? " " + s.minuto + "'" : ''}`).join('<br>')}
+
+            const eventos = [];
+            (gol.data || []).forEach(g => eventos.push({ min: g.minuto ?? 999, html: `⚽ <b>${g.jugador}</b> marca un gol` }));
+            (asis.data || []).forEach(a => eventos.push({ min: a.minuto ?? 999, html: `🅰️ <b>${a.jugador}</b> asistencia` }));
+            (tar.data || []).forEach(t => eventos.push({ min: t.minuto ?? 999, html: `${t.tipo === 'roja' ? '🟥' : '🟨'} <b>${t.jugador}</b> tarjeta ${t.tipo}` }));
+            (sus.data || []).forEach(s => eventos.push({ min: s.minuto ?? 999, html: `🔁 Sale <b>${s.jugador_sale}</b>, entra <b>${s.jugador_entra}</b>` }));
+            eventos.sort((a, b) => a.min - b.min);
+
+            if (eventos.length) {
+                html += `<div>
+                    <b style="color:var(--dorado); text-transform:uppercase; letter-spacing:1px; font-size:0.85rem;">Eventos del partido</b>
+                    <div style="margin-top:8px;">
+                        ${eventos.map(e => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.92rem;">${e.min < 999 ? `<span style="color:var(--dorado); font-weight:700;">${e.min}'</span> ` : ''}${e.html}</div>`).join('')}
+                    </div>
                 </div>`;
             }
 
