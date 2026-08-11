@@ -384,7 +384,9 @@
             contenedor.querySelectorAll('.noticia').forEach(el => {
                 el.addEventListener('click', () => {
                     const n = data[parseInt(el.dataset.index)];
-                    const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
+                    const media = n.video_url
+                        ? `<video src="${n.video_url}" controls playsinline style="width:100%;border-radius:10px;margin-top:20px;"></video>`
+                        : (n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null);
                     abrirNoticia(n.titulo, formatearFecha(n.fecha), formatearParrafos(n.contenido), media);
                 });
             });

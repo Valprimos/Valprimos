@@ -401,6 +401,7 @@
                         <option value="Juan 90">Juan - 90</option>
                         <option value="César 88">César - 88</option>
                         <option value="Pablo 86">Pablo - 86</option>
+                        <option value="Diego 9">Diego - 9</option>
                     </select>
 
                     <div id="div-libre" style="display:none; gap:10px;">
@@ -634,14 +635,17 @@
 
         const zBox = document.getElementById('zoom-box');
         const zImg = document.getElementById('m-img');
-        zBox.addEventListener('mousemove', (ev) => {
-            const rect = zBox.getBoundingClientRect();
-            const x = ((ev.clientX - rect.left) / rect.width) * 100;
-            const y = ((ev.clientY - rect.top) / rect.height) * 100;
-            zImg.style.transformOrigin = `${x}% ${y}%`;
-            zImg.style.transform = "scale(1.8)";
-        });
-        zBox.addEventListener('mouseleave', () => zImg.style.transform = "scale(1)");
+        const esTactil = window.matchMedia('(pointer: coarse)').matches;
+        if (!esTactil) {
+            zBox.addEventListener('mousemove', (ev) => {
+                const rect = zBox.getBoundingClientRect();
+                const x = ((ev.clientX - rect.left) / rect.width) * 100;
+                const y = ((ev.clientY - rect.top) / rect.height) * 100;
+                zImg.style.transformOrigin = `${x}% ${y}%`;
+                zImg.style.transform = "scale(1.8)";
+            });
+            zBox.addEventListener('mouseleave', () => zImg.style.transform = "scale(1)");
+        }
 
         // --- LÓGICA DEL CARRITO ---
         let carrito = [];

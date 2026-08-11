@@ -618,7 +618,9 @@
             cont.querySelectorAll('.noticia').forEach(el => {
                 el.addEventListener('click', () => {
                     const n = data[parseInt(el.dataset.index)];
-                    const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
+                    const media = n.video_url
+                        ? `<video src="${n.video_url}" controls playsinline style="width:100%;border-radius:10px;margin-top:20px;"></video>`
+                        : (n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null);
                     const fechaTexto = new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
                     abrirNoticia(n.titulo, fechaTexto, formatearParrafos(n.contenido), media);
                 });

@@ -165,6 +165,10 @@
                         <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('noticia-imagen-file').click()">📷 Subir foto</button>
                     </div>
                 </div>
+                <label>URL de vídeo (opcional — si añades vídeo, se mostrará en vez de la imagen)</label>
+                <input type="text" id="noticia-video" placeholder="https://...">
+                <input type="file" id="noticia-video-file" accept="video/*" style="display:none" onchange="subirImagen(this, 'noticia-video')">
+                <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('noticia-video-file').click()">🎬 Subir vídeo</button>
                 <button class="btn" onclick="guardarNoticia()">Guardar</button>
                 <button class="btn btn-secundario" onclick="resetFormNoticia()">Cancelar</button>
             </div>
@@ -504,6 +508,7 @@
             document.getElementById('noticia-contenido').value = '';
             document.getElementById('noticia-fecha').value = '';
             document.getElementById('noticia-imagen').value = '';
+            document.getElementById('noticia-video').value = '';
             document.getElementById('titulo-form-noticia').textContent = 'Nueva noticia';
         }
 
@@ -513,7 +518,8 @@
                 titulo: document.getElementById('noticia-titulo').value.trim(),
                 contenido: document.getElementById('noticia-contenido').value.trim(),
                 fecha: document.getElementById('noticia-fecha').value || new Date().toISOString().slice(0,10),
-                imagen_url: document.getElementById('noticia-imagen').value.trim() || null
+                imagen_url: document.getElementById('noticia-imagen').value.trim() || null,
+                video_url: document.getElementById('noticia-video').value.trim() || null
             };
             if (!registro.titulo || !registro.contenido) { mostrarMensaje('Rellena título y contenido.', 'error'); return; }
 
@@ -534,7 +540,7 @@
             cont.innerHTML = data.map(n => `
                 <div class="tarjeta-item">
                     <div class="info">
-                        <b>${n.titulo}</b>
+                        <b>${n.titulo}${n.video_url ? ' 🎬' : ''}</b>
                         <span>${n.fecha} — ${n.contenido.slice(0,90)}${n.contenido.length>90?'…':''}</span>
                     </div>
                     <div class="acciones-item">
@@ -551,6 +557,7 @@
             document.getElementById('noticia-contenido').value = n.contenido;
             document.getElementById('noticia-fecha').value = n.fecha;
             document.getElementById('noticia-imagen').value = n.imagen_url || '';
+            document.getElementById('noticia-video').value = n.video_url || '';
             document.getElementById('titulo-form-noticia').textContent = 'Editar noticia';
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
