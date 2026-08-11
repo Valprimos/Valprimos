@@ -442,7 +442,9 @@
                         <label>URL de la imagen</label>
                         <input type="text" id="galfoto-url" placeholder="https://...">
                         <input type="file" id="galfoto-url-file" accept="image/*" style="display:none" onchange="subirImagen(this, 'galfoto-url')">
+                        <input type="file" id="galfoto-url-file-video" accept="video/*" style="display:none" onchange="subirImagen(this, 'galfoto-url')">
                         <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('galfoto-url-file').click()">📷 Subir foto</button>
+                        <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('galfoto-url-file-video').click()">🎬 Subir vídeo</button>
                     </div>
                     <div>
                         <label>Orden</label>
@@ -1135,7 +1137,7 @@
             if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
             cont.innerHTML = data.map(f => `
                 <div class="tarjeta-item">
-                    <div class="info"><b>${f.imagen_url}</b><span>${f.caption || 'Sin pie de foto'}</span></div>
+                    <div class="info"><b>${/\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(f.imagen_url) ? '🎬 ' : '📷 '}${f.imagen_url}</b><span>${f.caption || 'Sin pie de foto'}</span></div>
                     <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarFotoGaleria('${f.id}','${seccion_id}')">Borrar</button></div>
                 </div>
             `).join('') || '<p style="opacity:0.6;">Sin fotos en esta sección.</p>';
