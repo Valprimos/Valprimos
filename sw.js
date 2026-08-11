@@ -1,4 +1,4 @@
-const CACHE_NAME='valprimos-20260811160000';
+const CACHE_NAME='valprimos-20260811173000';
 // La ruta base se calcula sola según dónde esté desplegado (Vercel en raíz, GitHub Pages en /Valprimos, etc.)
 const BASE=new URL(self.registration.scope).pathname.replace(/\/$/,'');
 const ASSETS=[BASE+'/index.html',BASE+'/jugadores.html',BASE+'/historia.html',BASE+'/galeria.html',BASE+'/calendario.html',BASE+'/tienda.html',BASE+'/contacto.html',BASE+'/noticias.html',BASE+'/fantasy.html',BASE+'/juegos.html',BASE+'/pizarra.html',BASE+'/escudo.png',BASE+'/manifest.json',BASE+'/supabase-config.js'];
