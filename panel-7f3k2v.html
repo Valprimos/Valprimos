@@ -161,6 +161,8 @@
                     <div>
                         <label>URL de imagen (opcional)</label>
                         <input type="text" id="noticia-imagen" placeholder="https://...">
+                        <input type="file" id="noticia-imagen-file" accept="image/*" style="display:none" onchange="subirImagen(this, 'noticia-imagen')">
+                        <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('noticia-imagen-file').click()">📷 Subir foto</button>
                     </div>
                 </div>
                 <button class="btn" onclick="guardarNoticia()">Guardar</button>
@@ -365,6 +367,8 @@
                     <div>
                         <label>URL de imagen</label>
                         <input type="text" id="producto-imagen" placeholder="https://...">
+                        <input type="file" id="producto-imagen-file" accept="image/*" style="display:none" onchange="subirImagen(this, 'producto-imagen')">
+                        <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('producto-imagen-file').click()">📷 Subir foto</button>
                     </div>
                     <div>
                         <label>Stock</label>
@@ -433,6 +437,8 @@
                     <div>
                         <label>URL de la imagen</label>
                         <input type="text" id="galfoto-url" placeholder="https://...">
+                        <input type="file" id="galfoto-url-file" accept="image/*" style="display:none" onchange="subirImagen(this, 'galfoto-url')">
+                        <button type="button" class="btn btn-secundario btn-mini" style="margin-top:6px;" onclick="document.getElementById('galfoto-url-file').click()">📷 Subir foto</button>
                     </div>
                     <div>
                         <label>Orden</label>
@@ -1136,6 +1142,31 @@
         document.addEventListener('change', (e) => {
             if (e.target && e.target.id === 'galfoto-seccion') cargarFotosGaleria(e.target.value);
         });
+
+        /* ================== SUBIDA DE FOTOS (Supabase Storage) ================== */
+        async function subirImagen(inputFile, idCampoUrl) {
+            const file = inputFile.files[0];
+            if (!file) return;
+
+            const campoUrl = document.getElementById(idCampoUrl);
+            const valorAnterior = campoUrl.value;
+            campoUrl.value = 'Subiendo...';
+
+            const nombreArchivo = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
+
+            const { error } = await supabaseClient.storage.from('imagenes').upload(nombreArchivo, file, { upsert: false });
+
+            if (error) {
+                campoUrl.value = valorAnterior;
+                mostrarMensaje('Error al subir la foto: ' + error.message, 'error');
+                return;
+            }
+
+            const { data } = supabaseClient.storage.from('imagenes').getPublicUrl(nombreArchivo);
+            campoUrl.value = data.publicUrl;
+            mostrarMensaje('Foto subida correctamente.', 'ok');
+            inputFile.value = '';
+        }
     </script>
 </body>
 </html>
