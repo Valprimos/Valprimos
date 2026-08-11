@@ -341,6 +341,15 @@
             return `${String(f.getDate()).padStart(2, '0')} ${meses[f.getMonth()]} ${f.getFullYear()}`;
         }
 
+        // Convierte los saltos de línea que escribes en el panel en párrafos reales (<p>)
+        function formatearParrafos(texto) {
+            return texto.split(/\n{2,}/).map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('');
+        }
+
+        function textoPlano(texto) {
+            return texto.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
         async function cargarNoticias() {
             const contenedor = document.getElementById('contenedor-noticias');
             const { data, error } = await supabaseClient
@@ -359,21 +368,24 @@
                 return;
             }
 
-            contenedor.innerHTML = data.map((n, i) => `
+            contenedor.innerHTML = data.map((n, i) => {
+                const resumen = textoPlano(n.contenido);
+                return `
                 <article class="noticia" data-index="${i}">
                     <div>
                         <span class="fecha-noticia">${formatearFecha(n.fecha)}</span>
                         <h3>${n.titulo}</h3>
-                        <p>${n.contenido.length > 140 ? n.contenido.slice(0, 140) + '…' : n.contenido}</p>
+                        <p>${resumen.length > 140 ? resumen.slice(0, 140) + '…' : resumen}</p>
                     </div>
                 </article>
-            `).join('');
+            `;
+            }).join('');
 
             contenedor.querySelectorAll('.noticia').forEach(el => {
                 el.addEventListener('click', () => {
                     const n = data[parseInt(el.dataset.index)];
                     const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
-                    abrirNoticia(n.titulo, formatearFecha(n.fecha), n.contenido, media);
+                    abrirNoticia(n.titulo, formatearFecha(n.fecha), formatearParrafos(n.contenido), media);
                 });
             });
         }

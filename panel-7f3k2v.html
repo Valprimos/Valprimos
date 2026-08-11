@@ -135,6 +135,8 @@
                 <button class="tab-btn" onclick="cambiarSeccion('partidos', this)">Partidos</button>
                 <button class="tab-btn" onclick="cambiarSeccion('detalle', this)">Detalle Partido</button>
                 <button class="tab-btn" onclick="cambiarSeccion('productos', this)">Tienda</button>
+                <button class="tab-btn" onclick="cambiarSeccion('historia', this)">Historia</button>
+                <button class="tab-btn" onclick="cambiarSeccion('galeria', this)">Galería</button>
             </div>
             <button class="btn btn-secundario btn-mini" onclick="cerrarSesion()">Cerrar sesión</button>
         </div>
@@ -150,6 +152,7 @@
                 <input type="text" id="noticia-titulo">
                 <label>Contenido</label>
                 <textarea id="noticia-contenido"></textarea>
+                <p style="font-size:0.78rem; opacity:0.6; margin-top:-8px;">Deja una línea en blanco entre párrafos para separarlos.</p>
                 <div class="fila">
                     <div>
                         <label>Fecha</label>
@@ -373,6 +376,75 @@
             </div>
             <div id="lista-productos"></div>
         </div>
+
+        <!-- HISTORIA -->
+        <div class="seccion" id="sec-historia">
+            <div class="caja-form">
+                <h3 id="titulo-form-historia">Nuevo hito</h3>
+                <input type="hidden" id="historia-id">
+                <div class="fila">
+                    <div>
+                        <label>Año (o rango, ej. "2024 - 2025")</label>
+                        <input type="text" id="historia-anio" placeholder="2026">
+                    </div>
+                    <div>
+                        <label>Orden (menor = aparece antes)</label>
+                        <input type="number" id="historia-orden" value="0">
+                    </div>
+                </div>
+                <label>Título</label>
+                <input type="text" id="historia-titulo">
+                <label>Contenido</label>
+                <textarea id="historia-contenido"></textarea>
+                <p style="font-size:0.78rem; opacity:0.6; margin-top:-8px;">Deja una línea en blanco entre párrafos para separarlos.</p>
+                <button class="btn" onclick="guardarHistoria()">Guardar</button>
+                <button class="btn btn-secundario" onclick="resetFormHistoria()">Cancelar</button>
+            </div>
+            <div id="lista-historia"></div>
+        </div>
+
+        <!-- GALERÍA -->
+        <div class="seccion" id="sec-galeria">
+            <div class="caja-form">
+                <h3 id="titulo-form-seccion-galeria">Nueva sección (año)</h3>
+                <input type="hidden" id="galseccion-id">
+                <div class="fila">
+                    <div>
+                        <label>Título (ej. "2022" o "2024 - 2025")</label>
+                        <input type="text" id="galseccion-titulo">
+                    </div>
+                    <div>
+                        <label>Orden</label>
+                        <input type="number" id="galseccion-orden" value="0">
+                    </div>
+                </div>
+                <label>Subtítulo / descripción (opcional)</label>
+                <textarea id="galseccion-subtitulo"></textarea>
+                <button class="btn" onclick="guardarSeccionGaleria()">Guardar sección</button>
+                <button class="btn btn-secundario" onclick="resetFormSeccionGaleria()">Cancelar</button>
+            </div>
+            <div id="lista-galeria-secciones" style="margin-bottom:30px;"></div>
+
+            <div class="caja-form">
+                <h3>Añadir foto a una sección</h3>
+                <label>Sección</label>
+                <select id="galfoto-seccion"></select>
+                <div class="fila">
+                    <div>
+                        <label>URL de la imagen</label>
+                        <input type="text" id="galfoto-url" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label>Orden</label>
+                        <input type="number" id="galfoto-orden" value="0">
+                    </div>
+                </div>
+                <label>Pie de foto (opcional)</label>
+                <input type="text" id="galfoto-caption">
+                <button class="btn" onclick="guardarFotoGaleria()">Añadir foto</button>
+            </div>
+            <div id="lista-galeria-fotos"></div>
+        </div>
     </div>
 
     <script>
@@ -382,7 +454,7 @@
             if (session) {
                 document.getElementById('vista-login').style.display = 'none';
                 document.getElementById('vista-panel').style.display = 'block';
-                cargarNoticias(); cargarPartidos(); cargarProductos(); cargarSelectPartidos(); poblarSelectsJugadores();
+                cargarNoticias(); cargarPartidos(); cargarProductos(); cargarSelectPartidos(); poblarSelectsJugadores(); cargarHistoriaPanel(); cargarSeccionesGaleria();
             } else {
                 document.getElementById('vista-login').style.display = 'block';
                 document.getElementById('vista-panel').style.display = 'none';
@@ -895,6 +967,175 @@
             await supabaseClient.from('sustituciones').delete().eq('id', id);
             cargarSustituciones(partido_id);
         }
+
+        /* ================== HISTORIA ================== */
+        function resetFormHistoria() {
+            document.getElementById('historia-id').value = '';
+            document.getElementById('historia-anio').value = '';
+            document.getElementById('historia-orden').value = '0';
+            document.getElementById('historia-titulo').value = '';
+            document.getElementById('historia-contenido').value = '';
+            document.getElementById('titulo-form-historia').textContent = 'Nuevo hito';
+        }
+
+        async function guardarHistoria() {
+            const id = document.getElementById('historia-id').value;
+            const registro = {
+                anio: document.getElementById('historia-anio').value.trim(),
+                orden: parseInt(document.getElementById('historia-orden').value) || 0,
+                titulo: document.getElementById('historia-titulo').value.trim(),
+                contenido: document.getElementById('historia-contenido').value.trim()
+            };
+            if (!registro.anio || !registro.titulo || !registro.contenido) { mostrarMensaje('Rellena año, título y contenido.', 'error'); return; }
+
+            const { error } = id
+                ? await supabaseClient.from('historia_eventos').update(registro).eq('id', id)
+                : await supabaseClient.from('historia_eventos').insert(registro);
+
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Hito guardado.', 'ok');
+            resetFormHistoria();
+            cargarHistoriaPanel();
+        }
+
+        async function cargarHistoriaPanel() {
+            const { data, error } = await supabaseClient.from('historia_eventos').select('*').order('orden', { ascending: true });
+            const cont = document.getElementById('lista-historia');
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(h => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>${h.anio} — ${h.titulo}</b><span>${h.contenido.slice(0,90)}${h.contenido.length>90?'…':''}</span></div>
+                    <div class="acciones-item">
+                        <button class="btn btn-secundario btn-mini" onclick='editarHistoria(${JSON.stringify(h)})'>Editar</button>
+                        <button class="btn btn-peligro btn-mini" onclick="borrarHistoria('${h.id}')">Borrar</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">No hay hitos todavía.</p>';
+        }
+
+        function editarHistoria(h) {
+            document.getElementById('historia-id').value = h.id;
+            document.getElementById('historia-anio').value = h.anio;
+            document.getElementById('historia-orden').value = h.orden;
+            document.getElementById('historia-titulo').value = h.titulo;
+            document.getElementById('historia-contenido').value = h.contenido;
+            document.getElementById('titulo-form-historia').textContent = 'Editar hito';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        async function borrarHistoria(id) {
+            if (!confirm('¿Borrar este hito?')) return;
+            const { error } = await supabaseClient.from('historia_eventos').delete().eq('id', id);
+            if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
+            mostrarMensaje('Hito borrado.', 'ok');
+            cargarHistoriaPanel();
+        }
+
+        /* ================== GALERÍA ================== */
+        function resetFormSeccionGaleria() {
+            document.getElementById('galseccion-id').value = '';
+            document.getElementById('galseccion-titulo').value = '';
+            document.getElementById('galseccion-orden').value = '0';
+            document.getElementById('galseccion-subtitulo').value = '';
+            document.getElementById('titulo-form-seccion-galeria').textContent = 'Nueva sección (año)';
+        }
+
+        async function guardarSeccionGaleria() {
+            const id = document.getElementById('galseccion-id').value;
+            const registro = {
+                titulo: document.getElementById('galseccion-titulo').value.trim(),
+                orden: parseInt(document.getElementById('galseccion-orden').value) || 0,
+                subtitulo: document.getElementById('galseccion-subtitulo').value.trim() || null
+            };
+            if (!registro.titulo) { mostrarMensaje('Ponle un título a la sección.', 'error'); return; }
+
+            const { error } = id
+                ? await supabaseClient.from('galeria_secciones').update(registro).eq('id', id)
+                : await supabaseClient.from('galeria_secciones').insert(registro);
+
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Sección guardada.', 'ok');
+            resetFormSeccionGaleria();
+            cargarSeccionesGaleria();
+        }
+
+        async function cargarSeccionesGaleria() {
+            const { data, error } = await supabaseClient.from('galeria_secciones').select('*').order('orden', { ascending: true });
+            const cont = document.getElementById('lista-galeria-secciones');
+            const select = document.getElementById('galfoto-seccion');
+            if (error || !data) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+
+            cont.innerHTML = data.map(s => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>${s.titulo}</b><span>${s.subtitulo ? s.subtitulo.slice(0,80) + (s.subtitulo.length>80?'…':'') : 'Sin descripción'}</span></div>
+                    <div class="acciones-item">
+                        <button class="btn btn-secundario btn-mini" onclick='editarSeccionGaleria(${JSON.stringify(s)})'>Editar</button>
+                        <button class="btn btn-peligro btn-mini" onclick="borrarSeccionGaleria('${s.id}')">Borrar</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">No hay secciones todavía. Crea una primero.</p>';
+
+            select.innerHTML = data.map(s => `<option value="${s.id}">${s.titulo}</option>`).join('');
+            if (data.length) cargarFotosGaleria(select.value);
+        }
+
+        function editarSeccionGaleria(s) {
+            document.getElementById('galseccion-id').value = s.id;
+            document.getElementById('galseccion-titulo').value = s.titulo;
+            document.getElementById('galseccion-orden').value = s.orden;
+            document.getElementById('galseccion-subtitulo').value = s.subtitulo || '';
+            document.getElementById('titulo-form-seccion-galeria').textContent = 'Editar sección';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        async function borrarSeccionGaleria(id) {
+            if (!confirm('¿Borrar esta sección? También se borrarán sus fotos.')) return;
+            const { error } = await supabaseClient.from('galeria_secciones').delete().eq('id', id);
+            if (error) { mostrarMensaje('Error al borrar.', 'error'); return; }
+            mostrarMensaje('Sección borrada.', 'ok');
+            cargarSeccionesGaleria();
+        }
+
+        async function guardarFotoGaleria() {
+            const seccion_id = document.getElementById('galfoto-seccion').value;
+            const registro = {
+                seccion_id,
+                imagen_url: document.getElementById('galfoto-url').value.trim(),
+                orden: parseInt(document.getElementById('galfoto-orden').value) || 0,
+                caption: document.getElementById('galfoto-caption').value.trim() || null
+            };
+            if (!seccion_id) { mostrarMensaje('Crea primero una sección.', 'error'); return; }
+            if (!registro.imagen_url) { mostrarMensaje('Falta la URL de la imagen.', 'error'); return; }
+
+            const { error } = await supabaseClient.from('galeria_fotos').insert(registro);
+            if (error) { mostrarMensaje('Error al guardar: ' + error.message, 'error'); return; }
+            mostrarMensaje('Foto añadida.', 'ok');
+            document.getElementById('galfoto-url').value = '';
+            document.getElementById('galfoto-caption').value = '';
+            cargarFotosGaleria(seccion_id);
+        }
+
+        async function cargarFotosGaleria(seccion_id) {
+            const cont = document.getElementById('lista-galeria-fotos');
+            if (!seccion_id) { cont.innerHTML = ''; return; }
+            const { data, error } = await supabaseClient.from('galeria_fotos').select('*').eq('seccion_id', seccion_id).order('orden', { ascending: true });
+            if (error) { cont.innerHTML = '<p>Error al cargar.</p>'; return; }
+            cont.innerHTML = data.map(f => `
+                <div class="tarjeta-item">
+                    <div class="info"><b>${f.imagen_url}</b><span>${f.caption || 'Sin pie de foto'}</span></div>
+                    <div class="acciones-item"><button class="btn btn-peligro btn-mini" onclick="borrarFotoGaleria('${f.id}','${seccion_id}')">Borrar</button></div>
+                </div>
+            `).join('') || '<p style="opacity:0.6;">Sin fotos en esta sección.</p>';
+        }
+
+        async function borrarFotoGaleria(id, seccion_id) {
+            await supabaseClient.from('galeria_fotos').delete().eq('id', id);
+            cargarFotosGaleria(seccion_id);
+        }
+
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'galfoto-seccion') cargarFotosGaleria(e.target.value);
+        });
     </script>
 </body>
 </html>

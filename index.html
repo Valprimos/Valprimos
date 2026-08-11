@@ -573,7 +573,7 @@
 
             cont.innerHTML = `
                 <div class="card match-card" onclick="window.location.href='calendario.html'">
-                    <div class="competicion">Próximo Partido</div>
+                    <div class="competicion">${p.competicion ? p.competicion.toUpperCase() : 'Próximo Partido'}</div>
                     <div class="match-teams">
                         <div class="match-team valprimos">VALPRIMOS</div>
                         <div class="match-vs">VS</div>
@@ -585,6 +585,10 @@
         cargarProximoPartido();
 
         /* ===== NOTICIAS RECIENTES (dinámico desde Supabase) ===== */
+        function formatearParrafos(texto) {
+            return texto.split(/\n{2,}/).map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('');
+        }
+
         async function cargarNoticiasInicio() {
             const cont = document.getElementById('contenedor-noticias-inicio');
             const { data, error } = await supabaseClient
@@ -598,22 +602,25 @@
                 return;
             }
 
-            cont.innerHTML = data.map((n, i) => `
+            cont.innerHTML = data.map((n, i) => {
+                const resumen = n.contenido.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                return `
                 <article class="noticia" data-index="${i}">
                     <div>
                         <span class="fecha-noticia">${new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase()}</span>
                         <h3>${n.titulo}</h3>
-                        <p>${n.contenido.replace(/<[^>]+>/g, '').slice(0, 110)}${n.contenido.length > 110 ? '…' : ''}</p>
+                        <p>${resumen.length > 110 ? resumen.slice(0, 110) + '…' : resumen}</p>
                     </div>
                 </article>
-            `).join('');
+            `;
+            }).join('');
 
             cont.querySelectorAll('.noticia').forEach(el => {
                 el.addEventListener('click', () => {
                     const n = data[parseInt(el.dataset.index)];
                     const media = n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null;
                     const fechaTexto = new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-                    abrirNoticia(n.titulo, fechaTexto, n.contenido, media);
+                    abrirNoticia(n.titulo, fechaTexto, formatearParrafos(n.contenido), media);
                 });
             });
         }

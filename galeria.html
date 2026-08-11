@@ -219,6 +219,8 @@
             .lightbox-caption { font-size: 0.9rem; max-width: 95%; padding: 10px 15px; margin-top: 15px; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -246,47 +248,8 @@
         <h2 class="titulo-seccion">NUESTRO LEGADO EN IMÁGENES</h2>
     </section>
 
-    <main>
-        
-        <section class="seccion-anio" id="anio-2022">
-            <h2 class="titulo-anio">2022</h2>
-            <div class="subtitulo-anio">Copa de Las Colonias. Nuestro primer torneo y primera victoria compitiendo como <span class="highlight">Valpinos</span>. En esta etapa inicial jugábamos con camisetas de distintos colores.</div>
-            
-            <div class="grid-galeria">
-                <div class="foto-item" onclick="abrirFoto(this)">
-                    <img src="foto_2022_1.jpeg" alt="Equipo Valprimos 2022 - Foto 1" data-caption="De izquierda a derecha: Juan, Pedro, Álvaro, Daniel, Alberto, Javier y Jorge.">
-                </div>
-                <div class="foto-item" onclick="abrirFoto(this)"><img src="foto_2022_2.jpeg" alt="Equipo Valprimos 2022 - Foto 2"></div>
-                <div class="foto-item" onclick="abrirFoto(this)"><img src="foto_2022_3.jpeg" alt="Equipo Valprimos 2022 - Foto 3"></div>
-                <div class="foto-item" onclick="abrirFoto(this)"><img src="foto_2022_4.jpeg" alt="Equipo Valprimos 2022 - Foto 4"></div>
-            </div>
-        </section>
-
-        <section class="seccion-anio" id="anio-2024">
-            <h2 class="titulo-anio">2024 - 2025</h2>
-            <div class="subtitulo-anio">Torneo de Peñas. Nuestro primer torneo fuera de Las Colonias bajo el nombre de <span class="highlight">Los Primos</span>. Adoptamos temporalmente el negro y amarillo utilizando las camisetas del CD Galapagar, mientras que el portero vistió la equipación del Racing de Villaverde.</div>
-            
-            <div class="grid-galeria">
-                <div class="foto-item" onclick="abrirFoto(this)">
-                    <img src="foto_2024_1.jpeg" alt="Equipo Valprimos 2024 - Foto 1" data-caption="Fila superior (de izquierda a derecha): Nicolás, Juan, Carlos, Daniel, Pablo y David García.<br>Fila inferior (de izquierda a derecha): Pedro, Alberto y Álvaro.">
-                </div>
-            </div>
-        </section>
-
-        <section class="seccion-anio" id="anio-2026">
-            <h2 class="titulo-anio">2026</h2>
-            <div class="subtitulo-anio">El club definitivo. <span class="highlight">Valprimos</span> salta al campo. De las raíces a la copa.</div>
-            
-            <div class="grid-galeria">
-                <div class="foto-item vertical" onclick="abrirFoto(this)">
-                    <img src="pedro_posando.JPG" alt=" Pedro en la presentación de nuestra primera equipación oficial" data-caption="Pedro en la presentación de nuestra primera equipación oficial">
-                </div>
-                <div class="foto-item vertical" onclick="abrirFoto(this)">
-                    <img src="alvaro_daniel_posando.JPG" alt="Álvaro y Daniel en la presentación de nuestra primera equipación oficial" data-caption="Álvaro y Daniel en la presentación de nuestra primera equipación oficial">
-                </div>
-            </div>
-        </section>
-
+    <main id="contenedor-galeria">
+        <!-- Se carga dinámicamente desde Supabase -->
     </main>
 
     <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px; font-family: var(--fuente-moderna);">
@@ -346,6 +309,35 @@
         }, {passive: true});
 
         function toggleMenu() { document.getElementById('nav-links').classList.toggle('activo'); }
+
+        async function cargarGaleria() {
+            const cont = document.getElementById('contenedor-galeria');
+            const { data: secciones, error } = await supabaseClient.from('galeria_secciones').select('*').order('orden', { ascending: true });
+            if (error || !secciones || secciones.length === 0) {
+                cont.innerHTML = '<p style="text-align:center; opacity:0.6; padding:40px 0;">Aún no hay fotos añadidas.</p>';
+                return;
+            }
+
+            const { data: fotos } = await supabaseClient.from('galeria_fotos').select('*').order('orden', { ascending: true });
+
+            cont.innerHTML = secciones.map(s => {
+                const fotosSeccion = (fotos || []).filter(f => f.seccion_id === s.id);
+                return `
+                    <section class="seccion-anio">
+                        <h2 class="titulo-anio">${s.titulo}</h2>
+                        ${s.subtitulo ? `<div class="subtitulo-anio">${s.subtitulo}</div>` : ''}
+                        <div class="grid-galeria">
+                            ${fotosSeccion.map(f => `
+                                <div class="foto-item" onclick="abrirFoto(this)">
+                                    <img src="${f.imagen_url}" alt="${s.titulo}" ${f.caption ? `data-caption="${f.caption.replace(/"/g, '&quot;')}"` : ''}>
+                                </div>
+                            `).join('') || '<p style="opacity:0.5; font-size:0.9rem;">Sin fotos en esta sección todavía.</p>'}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+        }
+        cargarGaleria();
 
         function abrirFoto(elemento) {
             const seccionActual = elemento.closest('.seccion-anio');

@@ -160,6 +160,8 @@
             .timeline-content p { font-size: 0.95rem; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -188,52 +190,8 @@
     </section>
 
     <main>
-        <div class="timeline">
-            
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="fecha">2000</span>
-                    <h3>EL ORIGEN</h3>
-                    <p>Todo comienza con el nacimiento de los dos primeros primos. Este vínculo de sangre se convirtió, años después, en el motor principal para reunir al resto del grupo y saltar al campo por primera vez.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="fecha">2022</span>
-                    <h3>COPA DE LAS COLONIAS</h3>
-                    <p>Bajo el nombre de <span class="highlight">Valpinos</span>, disputamos nuestro primer torneo oficial. La trayectoria fue impecable, culminando con una victoria en la final contra La Estación y logrando nuestro primer título histórico.</p>
-                    <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="fecha">2024</span>
-                    <h3>TORNEO DE PEÑAS</h3>
-                    <p>Disputamos nuestro primer Torneo de Peñas compitiendo como <span class="highlight">Los Primos</span>. Fue una toma de contacto exigente en la que fuimos eliminados en la fase de grupos, pero sirvió para sentar las bases competitivas del equipo.</p>
-                    <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="fecha">2025</span>
-                    <h3>NUESTRA MEJOR ACTUACIÓN</h3>
-                    <p>Regresamos al Torneo de Peñas firmando nuestra mejor actuación histórica hasta la fecha. El equipo demostró tener madera de campeones y dio un paso al frente en solidez, aunque finalmente caímos eliminados en la primera ronda.</p>
-                    <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="fecha" style="text-shadow: var(--sombra-texto);">2026</span>
-                    <h3 style="text-shadow: var(--sombra-texto);">FUNDACIÓN VALPRIMOS</h3>
-                    <p>Llegamos a la unificación definitiva. Dejamos atrás las antiguas denominaciones para fundar oficialmente el club como <span class="highlight">Valprimos</span>, con una plantilla de 16 jugadores comprometidos.</p>
-                    <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
-                </div>
-            </div>
-
+        <div class="timeline" id="contenedor-historia">
+            <!-- Se carga dinámicamente desde Supabase -->
         </div>
     </main>
 
@@ -288,6 +246,30 @@
         function toggleMenu() {
             document.getElementById('nav-links').classList.toggle('activo');
         }
+
+        function formatearParrafos(texto) {
+            return texto.split(/\n{2,}/).map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('');
+        }
+
+        async function cargarHistoria() {
+            const cont = document.getElementById('contenedor-historia');
+            const { data, error } = await supabaseClient.from('historia_eventos').select('*').order('orden', { ascending: true });
+            if (error || !data || data.length === 0) {
+                cont.innerHTML = '<p style="text-align:center; opacity:0.6;">Aún no hay hitos añadidos.</p>';
+                return;
+            }
+            cont.innerHTML = data.map(h => `
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="fecha">${h.anio}</span>
+                        <h3>${h.titulo}</h3>
+                        ${formatearParrafos(h.contenido)}
+                        <a href="galeria.html" class="btn-historia-galeria">📷 Ver galería</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        cargarHistoria();
     </script>
 
 </body>
