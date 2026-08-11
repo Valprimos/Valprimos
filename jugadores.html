@@ -535,7 +535,6 @@
                             <th data-col="nombre" onclick="ordenarTabla('nombre')">Jugador <span class="arr">↕</span></th>
                             <th data-col="p" onclick="ordenarTabla('p')"><span class="th-largo">PARTIDOS</span><span class="th-corto">P</span> <span class="arr">↕</span></th>
                             <th data-col="titular" onclick="ordenarTabla('titular')"><span class="th-largo">TITULAR</span><span class="th-corto">T</span> <span class="arr">↕</span></th>
-                            <th data-col="suplente" onclick="ordenarTabla('suplente')"><span class="th-largo">SUPLENTE</span><span class="th-corto">S</span> <span class="arr">↕</span></th>
                             <th data-col="go" onclick="ordenarTabla('go')"><span class="th-largo">GOLES</span><span class="th-corto">G</span> <span class="arr">↕</span></th>
                             <th data-col="a" onclick="ordenarTabla('a')"><span class="th-largo">ASISTENCIAS</span><span class="th-corto">A</span> <span class="arr">↕</span></th>
                             <th data-col="g" onclick="ordenarTabla('g')"><span class="th-largo">GANADOS</span><span class="th-corto">PG</span> <span class="arr">↕</span></th>
@@ -562,7 +561,6 @@
                 <div class="stats-grid">
                     <div class="stat-card"><span class="stat-num" id="s-partidos">0</span><span class="stat-desc">Partidos</span></div>
                     <div class="stat-card"><span class="stat-num" id="s-titular">0</span><span class="stat-desc">Titular</span></div>
-                    <div class="stat-card"><span class="stat-num" id="s-suplente">0</span><span class="stat-desc">Suplente</span></div>
                     <div class="stat-card"><span class="stat-num" id="s-ganados">0</span><span class="stat-desc">Ganados</span></div>
                     <div class="stat-card"><span class="stat-num" id="s-perdidos">0</span><span class="stat-desc">Perdidos</span></div>
                     <div class="stat-card"><span class="stat-num" id="s-goles">0</span><span class="stat-desc">Goles</span></div>
@@ -743,7 +741,6 @@
                     <span class="td-dorsal">${j.dorsal}</span></div></div></td>
                     <td><span class="td-num">${j.p}</span></td>
                     <td><span class="td-num">${j.titular || 0}</span></td>
-                    <td><span class="td-num">${j.suplente || 0}</span></td>
                     <td><span class="td-num destacado">${j.go}</span></td>
                     <td><span class="td-num destacado">${j.a}</span></td>
                     <td><span class="td-num" style="color:#4caf50">${j.g}</span></td>
@@ -795,7 +792,7 @@
         async function cargarEstadisticasReales() {
             const [partidosRes, alinRes, golesRes, asisRes] = await Promise.all([
                 supabaseClient.from('partidos').select('id, jugado, goles_valprimos, goles_rival'),
-                supabaseClient.from('alineaciones').select('jugador, partido_id'),
+                supabaseClient.from('alineaciones').select('jugador, partido_id, titular'),
                 supabaseClient.from('goles').select('jugador'),
                 supabaseClient.from('asistencias').select('jugador')
             ]);
@@ -812,7 +809,6 @@
                 const misAlineaciones = alineaciones.filter(a => a.jugador === j.nombre && partidoPorId[a.partido_id] && partidoPorId[a.partido_id].jugado);
                 j.p = misAlineaciones.length;
                 j.titular = misAlineaciones.filter(a => a.titular).length;
-                j.suplente = misAlineaciones.filter(a => !a.titular).length;
                 j.g = misAlineaciones.filter(a => partidoPorId[a.partido_id].goles_valprimos > partidoPorId[a.partido_id].goles_rival).length;
                 j.pe = misAlineaciones.filter(a => partidoPorId[a.partido_id].goles_valprimos < partidoPorId[a.partido_id].goles_rival).length;
                 j.go = golesRows.filter(g => g.jugador === j.nombre).length;
@@ -867,7 +863,7 @@
             document.getElementById('m-nombre').innerText = j.nombre; document.getElementById('m-capitan-container').innerHTML = j.capitan ? '<span class="c-capitan">C</span>' : '';
             document.getElementById('s-partidos').innerText = j.p; document.getElementById('s-ganados').innerText = j.g;
             document.getElementById('s-perdidos').innerText = j.pe; document.getElementById('s-goles').innerText = j.go; document.getElementById('s-asist').innerText = j.a;
-            document.getElementById('s-titular').innerText = j.titular || 0; document.getElementById('s-suplente').innerText = j.suplente || 0;
+            document.getElementById('s-titular').innerText = j.titular || 0;
             document.getElementById('m-palmares').style.display = j.copa ? 'block' : 'none';
             document.getElementById('modal-stats').classList.add('activo'); document.body.style.overflow = 'hidden';
         }
