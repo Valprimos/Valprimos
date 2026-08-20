@@ -30,7 +30,6 @@
             color:#F0F4F1;
             display:flex;
             flex-direction:column;
-            padding-bottom:env(safe-area-inset-bottom);
             user-select:none;
             -webkit-user-select:none;
         }
@@ -39,8 +38,8 @@
         .topbar{
             background:var(--verde);
             border-bottom:3px solid var(--dorado);
-            padding:11px 16px;
-            padding-top:calc(11px + env(safe-area-inset-top));
+            padding:7px 16px;
+            padding-top:calc(7px + env(safe-area-inset-top));
             display:flex;align-items:center;justify-content:space-between;
             flex-shrink:0; z-index:10;
         }
@@ -310,7 +309,7 @@ function resize(){
         // Móvil: campo vertical a todo el ancho disponible; el panel de
         // jugadores va debajo (franja horizontal), no le resta ancho.
         const W=area.clientWidth, H=area.clientHeight-106;
-        const ratio=0.62; // ancho/alto de un campo de fútbol en vertical
+        const ratio=0.72; // ancho/alto del campo en vertical (más ancho)
         ch=H; cw=ch*ratio;
         if(cw>W){ cw=W; ch=cw/ratio; }
     } else {
@@ -390,6 +389,25 @@ function roundRect(c,x,y,w,h,r){
     c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath();
 }
 
+/* Dibuja la imagen recortándola para llenar el rectángulo destino sin
+   deformarla (equivalente a object-fit:cover), en vez de estirarla como
+   hace drawImage por defecto cuando el rectángulo no tiene la misma
+   proporción que la foto original. focusY sesga el recorte vertical
+   hacia arriba (las caras), como object-position:center 20% en el resto
+   del sitio. */
+function drawImageCover(c,img,dx,dy,dw,dh,focusY=0.2){
+    const iw=img.naturalWidth, ih=img.naturalHeight;
+    if(!iw||!ih){ c.drawImage(img,dx,dy,dw,dh); return; }
+    const boxRatio=dw/dh, imgRatio=iw/ih;
+    let sx,sy,sw,sh;
+    if(imgRatio>boxRatio){
+        sh=ih; sw=ih*boxRatio; sx=(iw-sw)/2; sy=0;
+    } else {
+        sw=iw; sh=iw/boxRatio; sx=0; sy=(ih-sh)*focusY;
+    }
+    c.drawImage(img,sx,sy,sw,sh,dx,dy,dw,dh);
+}
+
 function drawJug(j,idx,W,H){
     const x=j.x*W, y=j.y*H;
 
@@ -417,7 +435,7 @@ function drawJug(j,idx,W,H){
 
     const img=IMG[j.id];
     if(img&&img.complete&&img.naturalWidth){
-        ctx.drawImage(img, bx, by, rw, rh);
+        drawImageCover(ctx, img, bx, by, rw, rh);
     } else {
         ctx.fillStyle='#1a5c30'; ctx.fillRect(bx,by,rw,rh);
     }
