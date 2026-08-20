@@ -38,7 +38,9 @@
         .topbar{
             background:var(--verde);
             border-bottom:3px solid var(--dorado);
-            padding:0 16px; height:50px;
+            padding:0 16px;
+            padding-top:env(safe-area-inset-top);
+            height:calc(50px + env(safe-area-inset-top));
             display:flex;align-items:center;justify-content:space-between;
             flex-shrink:0; z-index:10;
         }
@@ -112,7 +114,9 @@
         /* FRAMES BAR */
         .fbar{
             background:var(--marron);border-top:2px solid rgba(232,193,90,0.2);
-            padding:6px 10px;display:flex;align-items:center;gap:8px;
+            padding:6px 10px;
+            padding-bottom:max(6px, env(safe-area-inset-bottom));
+            display:flex;align-items:center;gap:8px;
             flex-shrink:0;overflow-x:auto;webkit-overflow-scrolling:touch;
         }
         .flabel{font-family:var(--fuente-deportiva);color:rgba(232,193,90,0.5);font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
@@ -245,12 +249,12 @@ const JUGS=[
     {id:0,n:"Alvaro",d:"00",f:"alvaro.jpeg"},
     {id:1,n:"Daniel",d:"10",f:"daniel.jpeg"},
     {id:2,n:"Alberto",d:"67",f:"alberto.JPG"},
-    {id:3,n:"Nicolas",d:"99",f:"nicolas.JPG"},
+    {id:3,n:"Nicolas",d:"99",f:"nicolas.jpeg"},
     {id:4,n:"Jorge",d:"8",f:"jorge.jpeg"},
     {id:5,n:"Javier",d:"96",f:"javier.JPG"},
     {id:6,n:"Clara",d:"13",f:"clara.JPG"},
-    {id:7,n:"Carlos",d:"7",f:"carlos.JPG"},
-    {id:8,n:"David",d:"15",f:"david.JPG"},
+    {id:7,n:"Carlos",d:"7",f:"carlos.jpeg"},
+    {id:8,n:"David",d:"15",f:"david.jpeg"},
     {id:9,n:"Pedro",d:"79",f:"pedro.jpeg"},
     {id:10,n:"Juan",d:"90",f:"juan.jpeg"},
     {id:11,n:"Cesar",d:"88",f:"cesar.JPG"},
@@ -268,7 +272,7 @@ let frames=[], fi=0;
 let animTimer=null, animOn=false, animIdx=0;
 let drawing=false, drawStart=null, drawCur=null;
 let dragJug=null, dragBal=false, selJug=null;
-let vertical=false;
+let vertical=false, dpr=1, viewW=0, viewH=0;
 
 const canvas=document.getElementById('campo-canvas');
 const ctx=canvas.getContext('2d');
@@ -295,6 +299,7 @@ function initFrames(){
 function resize(){
     const area=document.querySelector('.main-area');
     vertical=window.innerWidth<=820;
+    dpr=window.devicePixelRatio||1;
 
     let cw,ch;
     if(vertical){
@@ -310,18 +315,29 @@ function resize(){
         if(ch>H){ ch=H; cw=H*(16/9); }
     }
 
-    canvas.width=Math.floor(cw); canvas.height=Math.floor(ch);
+    // El lienzo se dibuja a resolución de dispositivo (devicePixelRatio)
+    // para que las fotos de los jugadores no se vean borrosas en móviles
+    // de pantalla de alta densidad; el tamaño en CSS se mantiene aparte
+    // en viewW/viewH para que los cálculos de posición sigan en 0-1.
+    viewW=Math.floor(cw); viewH=Math.floor(ch);
+    canvas.style.width=viewW+'px'; canvas.style.height=viewH+'px';
+    canvas.width=Math.round(viewW*dpr); canvas.height=Math.round(viewH*dpr);
     render();
 }
 window.addEventListener('resize',resize);
 
 function render(overrideFrame){
     const f=overrideFrame||cf();
-    const W=canvas.width,H=canvas.height;
+    const W=viewW,H=viewH;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,W,H);
     drawCampo(W,H,vertical);
     if(f.balon) drawBalon(f.balon.x*W,f.balon.y*H);
     f.trazos.forEach(t=>drawTrazo(t,W,H));
+    if(drawing&&drawStart&&drawCur&&tool!=='sel'&&tool!=='bal'){
+        const preview=buildTrazo(drawStart,drawCur);
+        if(preview) drawTrazo(preview,W,H,0.65);
+    }
     f.jugs.forEach((j,i)=>drawJug(j,i,W,H));
 }
 
@@ -396,7 +412,7 @@ function drawJug(j,idx,W,H){
 }
 
 function drawBalon(x,y){
-    const r=Math.min(canvas.width,canvas.height)*0.045;
+    const r=Math.min(viewW,viewH)*0.065;
     if(IMG_BALON.complete&&IMG_BALON.naturalWidth){
         ctx.drawImage(IMG_BALON,x-r,y-r,r*2,r*2);
     } else {
@@ -412,7 +428,18 @@ function drawTrazo(t,W,H,alpha){
     ctx.lineWidth=2.5;ctx.lineCap='round';
 
     if(t.tipo==='arr'||t.tipo==='lin'){
-        ctx.beginPath();ctx.moveTo(t.x1*W,t.y1*H);ctx.lineTo(t.x2*W,t.y2*H);ctx.stroke();
+        const x1=t.x1*W,y1=t.y1*H,x2=t.x2*W,y2=t.y2*H;
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+        if(t.tipo==='arr'){
+            const ang=Math.atan2(y2-y1,x2-x1);
+            const hs=Math.max(10,Math.min(W,H)*0.035);
+            ctx.beginPath();
+            ctx.moveTo(x2,y2);
+            ctx.lineTo(x2-hs*Math.cos(ang-Math.PI/7),y2-hs*Math.sin(ang-Math.PI/7));
+            ctx.lineTo(x2-hs*Math.cos(ang+Math.PI/7),y2-hs*Math.sin(ang+Math.PI/7));
+            ctx.closePath();
+            ctx.fillStyle=t.color;ctx.fill();
+        }
     } else if(t.tipo==='cir'){
         ctx.beginPath();ctx.ellipse(t.cx*W,t.cy*H,t.rx*W,t.ry*H,0,0,Math.PI*2);ctx.stroke();
     } else if(t.tipo==='zon'){
@@ -515,11 +542,11 @@ function agregarJug(id){
 function getPos(e){
     const r=canvas.getBoundingClientRect();
     const c=e.touches?e.touches[0]:e;
-    return{x:(c.clientX-r.left)/canvas.width,y:(c.clientY-r.top)/canvas.height};
+    return{x:(c.clientX-r.left)/viewW,y:(c.clientY-r.top)/viewH};
 }
 
 function hitJug(pos){
-    const fr=cf(); const W=canvas.width, H=canvas.height;
+    const fr=cf(); const W=viewW, H=viewH;
     for(let i=fr.jugs.length-1;i>=0;i--){
         const j=fr.jugs[i];
         const rw=Math.min(W,H)*0.16, rh=rw*1.4;
@@ -597,6 +624,14 @@ function dlTodos(){
 poblarLista();
 initFrames();
 resize();
+
+// El canvas dibuja el texto con la tipografía Squada One; si aún no ha
+// terminado de cargar en el momento del primer render(), el navegador
+// la sustituye en silencio por una genérica y no vuelve a intentarlo
+// solo. Forzamos un repintado en cuanto la fuente esté lista.
+if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(()=>render());
+}
 </script>
 </body>
 </html>

@@ -337,16 +337,17 @@ const jugadores=[
     {id:0,nombre:"Alvaro",dorsal:"00",foto:"alvaro.jpeg"},
     {id:1,nombre:"Daniel",dorsal:"10",foto:"daniel.jpeg"},
     {id:2,nombre:"Alberto",dorsal:"67",foto:"alberto.JPG"},
-    {id:3,nombre:"Nicolas",dorsal:"99",foto:"nicolas.JPG"},
+    {id:3,nombre:"Nicolas",dorsal:"99",foto:"nicolas.jpeg"},
     {id:4,nombre:"Jorge",dorsal:"8",foto:"jorge.jpeg"},
     {id:5,nombre:"Javier",dorsal:"96",foto:"javier.JPG"},
     {id:6,nombre:"Clara",dorsal:"13",foto:"clara.JPG"},
-    {id:7,nombre:"Carlos",dorsal:"7",foto:"carlos.JPG"},
-    {id:8,nombre:"David",dorsal:"15",foto:"david.JPG"},
+    {id:7,nombre:"Carlos",dorsal:"7",foto:"carlos.jpeg"},
+    {id:8,nombre:"David",dorsal:"15",foto:"david.jpeg"},
     {id:9,nombre:"Pedro",dorsal:"79",foto:"pedro.jpeg"},
     {id:10,nombre:"Juan",dorsal:"90",foto:"juan.jpeg"},
     {id:11,nombre:"Cesar",dorsal:"88",foto:"cesar.JPG"},
-    {id:12,nombre:"Pablo",dorsal:"86",foto:"pablo.JPG"}
+    {id:12,nombre:"Pablo",dorsal:"86",foto:"pablo.jpeg"},
+    {id:13,nombre:"Diego",dorsal:"9",foto:"diego.jpeg"}
 ];
 const header=document.getElementById("main-header"),esp=document.getElementById("espaciador-fantasma");
 let shrunk=false,startY=0;
@@ -416,7 +417,8 @@ const perfiles=[
     {id:9,w:{motor:1,regate:2,tecnico:3,vision:2,gol:2,caracter:3,pasota:1,defensa:1,orden:1,presion:2},motivo:"El Killer. Lo intenta siempre, se raya si pierde y acaba marcando por pura insistencia."},
     {id:10,w:{motor:1,regate:1,tecnico:2,vision:3,gol:1,caracter:1,pasota:1,defensa:1,orden:3,presion:1},motivo:"Juan da el pase antes de que pidas el balon. Control, orden y analisis tactico. El intumbable."},
     {id:11,w:{motor:1,regate:1,tecnico:1,vision:1,gol:1,caracter:1,pasota:2,defensa:1,orden:1,presion:1},motivo:"Cesar aparece una vez al ano y marca. El misterio nordico con gafas que todos recordamos."},
-    {id:12,w:{motor:2,regate:2,tecnico:3,vision:2,gol:2,caracter:1,pasota:1,defensa:2,orden:1,presion:2},motivo:"Pablo lo hace todo y bien. El mas completo del equipo. Con el en tu bando las probabilidades suben considerablemente."}
+    {id:12,w:{motor:2,regate:2,tecnico:3,vision:2,gol:2,caracter:1,pasota:1,defensa:2,orden:1,presion:2},motivo:"Pablo lo hace todo y bien. El mas completo del equipo. Con el en tu bando las probabilidades suben considerablemente."},
+    {id:13,w:{motor:2,regate:1,tecnico:1,vision:1,gol:1,caracter:2,pasota:2,defensa:2,orden:1,presion:1},motivo:"Diego cumple donde haga falta sin pedir protagonismo. El compañero de fiar que nunca falla al grupo."}
 ];
 let preguntaActual=0,respuestasTest={};
 function abrirTest(){preguntaActual=0;respuestasTest={};document.getElementById("test-resultado").classList.remove("visible");document.getElementById("test-area").style.display="block";abrirModal("modal-test");renderPregunta();}
