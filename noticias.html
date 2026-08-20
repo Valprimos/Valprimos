@@ -174,9 +174,30 @@
         .btn-noticia:hover { background-color: #FFF; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(232, 193, 90, 0.3); }
 
         /* =========================================================
+            OPTIMIZACIÓN PORTÁTIL (1025px - 1440px)
+            Evita que pantallas de portátil pequeño (13"-14") reciban
+            el mismo tamaño de fuente/escudo que un monitor de escritorio.
+            ========================================================= */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            main { padding-top: 45px; }
+            .titulo-seccion { font-size: 2.6rem; }
+            .modal-content h2 { font-size: 2.2rem; }
+        }
+
+        /* =========================================================
            OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 1024px) { 
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -233,9 +254,11 @@
                 <a href="index.html">Inicio</a>
                 <a href="tienda.html">Tienda</a>
                 <a href="jugadores.html">Jugadores</a>
+                <a href="calendario.html">Calendario</a>
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>

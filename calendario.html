@@ -72,7 +72,8 @@
         .header-container.scrolled nav { padding: 10px 0; }
 
         /* ESPACIADOR FIJO: Evita que la página pegue saltos raros al bajar */
-        .espaciador { height: 480px; }
+        .espaciador { height: 480px; transition: var(--transicion-fluida); }
+        .espaciador.scrolled { height: 220px; }
 
         /* --- TABS DE NAVEGACIÓN SECCIÓN --- */
         .section-tabs {
@@ -161,6 +162,28 @@
         }
 
         /* =========================================================
+            OPTIMIZACIÓN PORTÁTIL (1025px - 1440px)
+            Evita que pantallas de portátil pequeño (13"-14") reciban
+            el mismo tamaño de fuente/escudo que un monitor de escritorio.
+            ========================================================= */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 400px; }
+            .espaciador.scrolled { height: 190px; }
+
+            .titulo-seccion { font-size: 2.6rem; }
+            .match-teams { font-size: 2rem; }
+            .match-vs { font-size: 2rem; }
+            .marcador-pasado { font-size: 3rem; }
+        }
+
+        /* =========================================================
             OPTIMIZACIÓN MÓVIL
             ========================================================= */
         @media (max-width: 850px) {
@@ -177,7 +200,8 @@
             .header-container.scrolled .escudo { height: 50px; }
             .header-container.scrolled h1 { font-size: 1.3rem; }
 
-            .espaciador { height: 260px; }
+            .espaciador { height: 350px; }
+            .espaciador.scrolled { height: 150px; }
 
             main { padding: 20px 12px 0; }
             .titulo-seccion { font-size: 2.5rem; margin-bottom: 25px; }
@@ -317,6 +341,7 @@
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>
@@ -354,19 +379,23 @@
     <script>
         /* --- SCROLL HEADER SÓLIDO (Sin alterar alturas para no saltar) --- */
         const header = document.getElementById('main-header');
+        const espaciador = document.getElementById('espaciador-fantasma');
         let headerShrunkMobile = false;
         let startY = 0;
 
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 850) {
                 if (window.scrollY > 40) {
-                    header.classList.add('scrolled'); 
+                    header.classList.add('scrolled');
+                    espaciador.classList.add('scrolled');
                 } else {
-                    header.classList.remove('scrolled'); 
+                    header.classList.remove('scrolled');
+                    espaciador.classList.remove('scrolled');
                 }
             } else {
                 if (window.scrollY > 40) {
-                    header.classList.add('scrolled'); 
+                    header.classList.add('scrolled');
+                    espaciador.classList.add('scrolled');
                     headerShrunkMobile = true;
                 }
             }
@@ -379,7 +408,8 @@
         window.addEventListener('touchmove', ev => {
             if (window.innerWidth <= 850 && window.scrollY <= 10 && headerShrunkMobile) {
                 if (ev.touches[0].clientY - startY > 40) {
-                    header.classList.remove('scrolled'); 
+                    header.classList.remove('scrolled');
+                    espaciador.classList.remove('scrolled');
                     headerShrunkMobile = false;
                 }
             }
@@ -628,7 +658,7 @@
             const lineaHTML = (nombres) => `<div class="campo-linea-pub">${nombres.map(n => `
                 <div class="campo-jugador-pub" onclick="abrirFichaJugador('${n.replace(/'/g, "\\'")}')">
                     <div class="campo-foto-wrap">
-                        <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'">
+                        <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'" alt="${n}">
                         <span class="campo-dorsal">${DORSALES[n] || ''}</span>
                     </div>
                     <span>${n}</span>
@@ -690,7 +720,7 @@
         <div class="modal-jugador-caja">
             <span class="modal-jugador-cerrar" onclick="cerrarFichaJugador()">&times;</span>
             <div class="modal-jugador-foto-wrap">
-                <img id="modal-jugador-foto" src="" onerror="this.style.display='none'">
+                <img id="modal-jugador-foto" src="" onerror="this.style.display='none'" alt="Foto del jugador">
                 <span id="modal-jugador-dorsal" class="modal-jugador-dorsal"></span>
             </div>
             <h3 id="modal-jugador-nombre">—</h3>

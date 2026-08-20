@@ -545,6 +545,17 @@ function dlFrame(){
     const a=document.createElement('a');a.download='pizarra.png';
     a.href=canvas.toDataURL();a.click();cerrarDL();
 }
+function dlTodos(){
+    frames.forEach((f,i)=>{
+        render(f);
+        const a=document.createElement('a');
+        a.download=`pizarra-${i+1}.png`;
+        a.href=canvas.toDataURL();
+        a.click();
+    });
+    render();
+    cerrarDL();
+}
 
 poblarLista();
 initFrames();
