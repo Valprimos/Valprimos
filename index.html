@@ -250,9 +250,33 @@
         }
 
         /* =========================================================
+            OPTIMIZACIÓN PORTÁTIL (1025px - 1440px)
+            Evita que pantallas de portátil pequeño (13"-14") reciban
+            el mismo tamaño de fuente/escudo que un monitor de escritorio.
+            ========================================================= */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            main { padding-top: 45px; }
+            .card { padding: 3rem 1.75rem; }
+            .card h2 { font-size: 2.3rem; }
+
+            .match-teams { font-size: 2rem; }
+            .match-vs { font-size: 2rem; }
+        }
+
+        /* =========================================================
             OPTIMIZACIÓN iPAD Y MÓVIL (Max-width 1024px)
             ========================================================= */
-        @media (max-width: 1024px) { 
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -376,6 +400,13 @@
             to { transform: translateY(-50vh); opacity: 0; width: 0; }
         }
 
+        /* PORTÁTIL: mismos tamaños que el header de portátil */
+        @media (max-width: 1440px) {
+            .splash-escudo { height: 190px; margin-bottom: 20px; }
+            .splash-titulo { font-size: 2.8rem; letter-spacing: 3px; }
+            .splash-sub    { font-size: 1.1rem; letter-spacing: 3px; }
+        }
+
         /* MÓVIL: tamaños exactos del header móvil */
         @media (max-width: 1024px) {
             .splash-escudo { height: 150px; margin-bottom: 15px; }
@@ -413,6 +444,7 @@
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>
@@ -621,7 +653,7 @@
                     const n = data[parseInt(el.dataset.index)];
                     const media = n.video_url
                         ? `<video src="${n.video_url}" controls playsinline style="width:100%;border-radius:10px;margin-top:20px;"></video>`
-                        : (n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;">` : null);
+                        : (n.imagen_url ? `<img src="${n.imagen_url}" style="width:100%;border-radius:10px;margin-top:20px;" alt="${n.titulo}">` : null);
                     const fechaTexto = new Date(n.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
                     abrirNoticia(n.titulo, fechaTexto, formatearParrafos(n.contenido), media);
                 });

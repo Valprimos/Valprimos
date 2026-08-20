@@ -142,6 +142,17 @@
         .btn-reset-tier:hover{border-color:var(--dorado);color:var(--dorado);}
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         footer{text-align:center;padding:60px 0;opacity:0.6;font-size:0.85rem;letter-spacing:2px;font-family:var(--fuente-moderna);}
+        /* PORTÁTIL (1025px - 1440px): evita el efecto "zoom" en portátiles de 13"-14" */
+        @media(max-width:1440px){
+            .escudo{height:190px;margin-bottom:20px;}
+            h1{font-size:2.8rem;letter-spacing:3px;}
+            .subtitulo{font-size:1.1rem;letter-spacing:3px;}
+            .header-container.scrolled .escudo{height:60px;}
+            .header-container.scrolled h1{font-size:1.6rem;}
+            .espaciador{height:390px;}
+            .espaciador.scrolled{height:190px;}
+            .hero-titulo{font-size:2.6rem;}
+        }
         @media(max-width:1024px){
             .escudo{height:150px;margin-bottom:15px;}
             h1{font-size:2.2rem;letter-spacing:2px;}
@@ -172,7 +183,7 @@
     <div class="header-content">
         <img src="escudo.png" alt="Escudo Valprimos" class="escudo">
         <h1>VALPRIMOS</h1>
-        <div class="subtitulo">RAICES DE LEYENDA</div>
+        <div class="subtitulo">RAÍCES DE LEYENDA</div>
     </div>
     <nav>
         <div class="menu-toggle" onclick="toggleMenu()">Menu</div>
@@ -182,8 +193,9 @@
             <a href="jugadores.html">Jugadores</a>
             <a href="calendario.html">Calendario</a>
             <a href="historia.html">Historia</a>
-            <a href="galeria.html">Galeria</a>
+            <a href="galeria.html">Galería</a>
             <a href="juegos.html" class="activo" style="border-bottom:2px solid var(--dorado)">Juegos</a>
+            <a href="fantasy.html">Fantasy</a>
             <a href="contacto.html">Contacto</a>
         </div>
     </nav>
@@ -314,7 +326,7 @@
 
 <footer>
     <div style="color:var(--dorado);font-weight:800;margin-bottom:5px;">VALPRIMOS 2026</div>
-    &copy; RAICES DE LEYENDA - MADERA DE CAMPEONES
+    &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
 </footer>
 <script>
 const jugadores=[

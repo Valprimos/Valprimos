@@ -179,9 +179,39 @@
         .btn-cerrar-cart:hover { background: var(--dorado); color: var(--verde-oscuro); }
 
         /* =========================================================
+            OPTIMIZACIÓN PORTÁTIL (1025px - 1440px)
+            Evita que pantallas de portátil pequeño (13"-14") reciban
+            el mismo tamaño de fuente/escudo que un monitor de escritorio.
+            ========================================================= */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            main { padding-top: 25px; }
+            .titulo-seccion { font-size: 2.4rem; }
+            .titulo-categoria { font-size: 1.7rem; }
+
+            .producto { flex: 0 0 260px; padding: 1.75rem 1.25rem; }
+            .img-producto { max-width: 150px; height: 150px; }
+            .precio { font-size: 1.9rem; }
+
+            .modal-producto .modal-content { width: 880px; }
+            .info-sec { padding: 30px; }
+            .info-sec h2 { font-size: 1.9rem; }
+            .precio-izq { font-size: 2.1rem; }
+        }
+
+        /* =========================================================
            OPTIMIZACIÓN MÓVIL Y TABLET (Max-width 1024px)
            ========================================================= */
-        @media (max-width: 1024px) { 
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -242,6 +272,7 @@
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
                 <a class="btn-carrito-nav" onclick="toggleCart()">CARRITO (<span id="cart-count">0</span>)</a>
             </div>
@@ -259,21 +290,21 @@
             <div class="carrusel-productos">
                 
                 <div class="producto" onclick="openModal('Camiseta Oficial', 'Tejido premium transpirable y ligero para un rendimiento óptimo en la pista.', 25, 'camiseta.png', 'cam')">
-                    <img src="camiseta.png" class="img-producto" loading="lazy">
+                    <img src="camiseta.png" class="img-producto" loading="lazy" alt="Camiseta oficial Valprimos">
                     <h3>Camiseta Oficial</h3>
                     <span class="precio">25<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
                 </div>
                 
                 <div class="producto" onclick="openModal('Pantalón Oficial', 'Marrón bosque con ajuste técnico y cordón de sujeción para máxima movilidad.', 10, 'pantalon.png', 'pan')">
-                    <img src="pantalon.png" class="img-producto" loading="lazy">
+                    <img src="pantalon.png" class="img-producto" loading="lazy" alt="Pantalón oficial Valprimos">
                     <h3>Pantalón Oficial</h3>
                     <span class="precio">10<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
                 </div>
                 
                 <div class="producto" onclick="openModal('Equipación Completa', 'Camiseta + Pantalón + Medias oficiales. La opción perfecta con máximo ahorro.', 30, 'equipacion.png', 'pack')">
-                    <img src="equipacion.png" class="img-producto" loading="lazy">
+                    <img src="equipacion.png" class="img-producto" loading="lazy" alt="Equipación completa Valprimos">
                     <h3>Equipación Completa</h3>
                     <span class="precio">30<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
@@ -288,21 +319,21 @@
             <div class="carrusel-productos">
 
                 <div class="producto" onclick="openModal('Sudadera Oficial', 'Sudadera de algodón orgánico con el escudo del club bordado en alta calidad.', 30, 'sudadera.png', 'sud')">
-                    <img src="sudadera.png" class="img-producto" loading="lazy">
+                    <img src="sudadera.png" class="img-producto" loading="lazy" alt="Sudadera Valprimos">
                     <h3>Sudadera Oficial</h3>
                     <span class="precio">30<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
                 </div>
 
                 <div class="producto" onclick="openModal('Polo', 'Polo elegante de piqué, ideal para los viajes del equipo o para vestir en la grada.', 25, 'polo.png', 'pol')">
-                    <img src="polo.png" class="img-producto" loading="lazy">
+                    <img src="polo.png" class="img-producto" loading="lazy" alt="Polo Valprimos">
                     <h3>Polo</h3>
                     <span class="precio">25<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
                 </div>
 
                 <div class="producto" onclick="openModal('Pantalón Largo', 'Pantalón de chándal ajustado con cremalleras en los tobillos. Estilo y comodidad.', 25, 'pantalon_largo.png', 'pan_l')">
-                    <img src="pantalon_largo.png" class="img-producto" loading="lazy">
+                    <img src="pantalon_largo.png" class="img-producto" loading="lazy" alt="Pantalón largo Valprimos">
                     <h3>Pantalón Largo</h3>
                     <span class="precio">25<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
@@ -317,14 +348,14 @@
             <div class="carrusel-productos">
 
                 <div class="producto" onclick="openModal('Mochila', 'Mochila deportiva resistente con compartimento especial separado para las botas.', 25, 'mochila.png', 'moch')">
-                    <img src="mochila.png" class="img-producto" loading="lazy">
+                    <img src="mochila.png" class="img-producto" loading="lazy" alt="Mochila Valprimos">
                     <h3>Mochila</h3>
                     <span class="precio">25<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>
                 </div>
 
                 <div class="producto" onclick="openModal('Bandera', 'Bandera oficial de 100x70cm con el escudo de Valprimos. Para hacer ruido en Las Colonias.', 15, 'bandera.png', 'band')">
-                    <img src="bandera.png" class="img-producto" loading="lazy">
+                    <img src="bandera.png" class="img-producto" loading="lazy" alt="Bandera Valprimos">
                     <h3>Bandera</h3>
                     <span class="precio">15<span class="euro">€</span></span>
                     <button class="btn-add-cart">Añadir al carrito</button>

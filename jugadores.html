@@ -266,6 +266,17 @@
             color: rgba(232,193,90,0.4); font-size: 1.3rem; letter-spacing: 1px;
         }
 
+        /* Portátil: comparador algo más compacto */
+        @media (max-width: 1440px) {
+            .comp-fotos-zona { height: 340px; }
+            .comp-vs-divider { font-size: 2.8rem; }
+            .comp-foto-col .comp-dorsal-over { font-size: 2.2rem; }
+            .comp-foto-col .comp-nombre-over { font-size: 1.5rem; }
+            .comp-modal-title { font-size: 1.5rem; }
+            .comp-stats-zona .stat-vs-val { font-size: 1.8rem; }
+            .comp-stats-zona .val-winner { font-size: 2.1rem; }
+        }
+
         /* Móvil comparador modal */
         @media (max-width: 850px) {
             .comp-fotos-zona { height: 220px; }
@@ -405,6 +416,42 @@
         .cerrar-x { position: absolute; top: 25px; right: 30px; color: var(--dorado); font-size: 45px; cursor: pointer; z-index: 100; transition: 0.3s; }
 
         /* =========================================================
+            OPTIMIZACIÓN PORTÁTIL (1025px - 1440px)
+            Evita que pantallas de portátil pequeño (13"-14") reciban
+            el mismo tamaño de fuente/escudo que un monitor de escritorio.
+            ========================================================= */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            .titulo-seccion { font-size: 3.2rem; }
+            .tab-btn { font-size: 1.2rem; padding: 14px 16px; }
+
+            .tarjeta-jugador { height: 340px; }
+            .dorsal-destacado { font-size: 2.3rem; width: 40px; }
+            .nombre-jugador { font-size: 1.5rem; }
+
+            .stat-equipo-num { font-size: 3.2rem; }
+            .stat-equipo-card { padding: 18px 12px; }
+
+            .tabla-stats thead th { font-size: 1rem; }
+            .td-nombre { font-size: 1.2rem; }
+            .td-num { font-size: 1.4rem; }
+
+            .modal-content-horizontal { width: 820px; height: 480px; }
+            .modal-dorsal-grande { font-size: 4.2rem; }
+            .modal-nombre { font-size: 2.6rem; }
+            .stat-num { font-size: 1.9rem; }
+        }
+
+        /* =========================================================
             OPTIMIZACIÓN MÓVIL
             ========================================================= */
         @media (max-width: 850px) {
@@ -506,6 +553,7 @@
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>

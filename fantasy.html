@@ -157,10 +157,44 @@
         .nombre-jugador { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #FFF; text-align: center; line-height: 1.2; margin-bottom: 6px; min-height: 2em; }
         .pts-jugador { background: var(--dorado); color: var(--marron-principal); font-family: var(--fuente-deportiva); padding: 3px 12px; border-radius: 12px; font-size: 1rem; font-weight: bold;}
 
-        @media (max-width: 1024px) { 
+        /* OPTIMIZACIÓN PORTÁTIL (1025px - 1440px) */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            .titulo-seccion { font-size: 2.4rem; }
+            .pitch-container { height: 420px; }
+        }
+
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
-            h1 { font-size: 2.2rem; }
+            h1 { font-size: 2.2rem; letter-spacing: 2px; }
+            .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
+
+            nav { padding: 12px 0; }
+            .menu-toggle { display: block; color: var(--dorado); font-weight: 800; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--marron-principal); flex-direction: column; padding: 10px 0; border-bottom: 3px solid var(--dorado); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1001; }
+            .nav-links.activo { display: flex; }
+            .nav-links a { margin: 15px 0; font-size: 1.1rem; border-bottom: none !important; }
+
+            .header-container.scrolled .escudo { height: 50px; }
+            .header-container.scrolled h1 { font-size: 1.3rem; }
+
             .espaciador { height: 350px; }
+            .espaciador.scrolled { height: 150px; }
+
+            main { grid-template-columns: 1fr; }
+            main > div, .ranking-box { min-width: 0; }
+            .ranking-box { overflow-x: auto; }
+            .ranking-table { min-width: 480px; }
+            .titulo-seccion { font-size: 1.8rem; }
             .jornada-grid { grid-template-columns: repeat(3, 1fr); }
             .modal-content { padding: 20px; }
         }
@@ -179,11 +213,12 @@
             <div class="nav-links" id="nav-links">
                 <a href="index.html">Inicio</a>
                 <a href="tienda.html">Tienda</a>
-                <a href="jugadores.html">Jugadores</a> 
+                <a href="jugadores.html">Jugadores</a>
+                <a href="calendario.html">Calendario</a>
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
-                <a href="fantasy.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Fantasy</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Fantasy</a>
                 <a href="contacto.html">Contacto</a>
             </div>
         </nav>
@@ -266,7 +301,7 @@
 
     <footer style="text-align: center; padding: 60px 0; opacity: 0.6; font-size: 0.85rem; letter-spacing: 2px;">
         <div style="color: var(--dorado); font-weight: 800; margin-bottom: 5px;">VALPRIMOS 2026</div>
-        &copy; MÁS QUE UN EQUIPO UNA PIÑA - DE LAS RAÍCES A LA COPA
+        &copy; RAÍCES DE LEYENDA - MADERA DE CAMPEONES
     </footer>
 
     <div id="modalEquipo" class="modal-overlay">
@@ -483,7 +518,7 @@
                         <div class="jornada-grid">
                             ${[1,2,3,4,5].map(i => `
                                 <div class="jugador-mini">
-                                    <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador" onerror="this.src='escudo.png'">
+                                    <img src="${getFotoJugador(d['j'+i])}" class="foto-jugador" onerror="this.src='escudo.png'" alt="${d['j'+i] || 'Jugador'}">
                                     <span class="nombre-jugador">${d['j'+i] || '-'}</span>
                                     <span class="pts-jugador">${d['p'+i] || '0'}</span>
                                 </div>`).join('')}

@@ -805,7 +805,7 @@
             const linea = (nombres) => `<div class="campo-linea">${nombres.map(n => `
                 <div class="campo-jugador">
                     <div class="campo-foto-wrap">
-                        <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'">
+                        <img src="${FOTOS[n] || ''}" onerror="this.style.display='none'" alt="${n}">
                         <span class="campo-dorsal">${DORSALES[n] || ''}</span>
                     </div>
                     <span class="campo-nombre">${n}</span>

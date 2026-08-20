@@ -135,8 +135,25 @@
         }
         .success-overlay button:hover { background: var(--dorado); color: var(--marron-principal); }
 
+        /* OPTIMIZACIÓN PORTÁTIL (1025px - 1440px) */
+        @media (max-width: 1440px) {
+            .escudo { height: 190px; margin-bottom: 20px; }
+            h1 { font-size: 2.8rem; letter-spacing: 3px; }
+            .subtitulo { font-size: 1.1rem; letter-spacing: 3px; }
+
+            .header-container.scrolled .escudo { height: 60px; }
+            .header-container.scrolled h1 { font-size: 1.6rem; }
+
+            .espaciador { height: 390px; }
+            .espaciador.scrolled { height: 190px; }
+
+            .info-seccion h2 { font-size: 2.6rem; }
+            .form-box { padding: 40px; }
+            .success-overlay h3 { font-size: 3.2rem; }
+        }
+
         /* OPTIMIZACIÓN iPAD Y MÓVIL */
-        @media (max-width: 1024px) { 
+        @media (max-width: 1024px) {
             .escudo { height: 150px; margin-bottom: 15px; }
             h1 { font-size: 2.2rem; letter-spacing: 2px; }
             .subtitulo { font-size: 0.9rem; letter-spacing: 2px; margin-top: 5px; }
@@ -184,6 +201,7 @@
                 <a href="historia.html">Historia</a>
                 <a href="galeria.html">Galería</a>
                 <a href="juegos.html">Juegos</a>
+                <a href="fantasy.html">Fantasy</a>
                 <a href="contacto.html" class="activo" style="border-bottom: 2px solid var(--dorado);">Contacto</a>
             </div>
         </nav>
