@@ -24,12 +24,11 @@
         *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
         html{height:100%;overflow:hidden;}
         body{
+            width:100%; height:100%; position:fixed; inset:0; overflow:hidden;
             font-family:var(--fuente-moderna);
             background:var(--oscuro);
             color:#F0F4F1;
             height:100dvh;
-            max-height:100dvh;
-            overflow:hidden;
             display:flex;
             flex-direction:column;
             padding-bottom:env(safe-area-inset-bottom);
@@ -95,6 +94,7 @@
             width:140px;background:rgba(4,14,8,0.98);
             border-left:2px solid rgba(232,193,90,0.2);
             overflow-y:auto;padding:8px 6px;flex-shrink:0;
+            align-self:stretch;
         }
         .side-title{
             font-family:var(--fuente-titulos);color:rgba(232,193,90,0.7);
@@ -331,6 +331,16 @@ function resize(){
     render();
 }
 window.addEventListener('resize',resize);
+window.addEventListener('load',resize);
+if(window.visualViewport) window.visualViewport.addEventListener('resize',resize);
+// Recalcula el tamaño del campo cada vez que el contenedor cambia de
+// tamaño de verdad (en vez de fiarlo todo a una sola medición al cargar,
+// que en algunos móviles llegaba antes de que la barra de estado / el
+// resto del layout hubieran terminado de asentarse y dejaba el campo
+// más alto de la cuenta, cortado por arriba y por abajo).
+if(window.ResizeObserver){
+    new ResizeObserver(()=>resize()).observe(document.querySelector('.main-area'));
+}
 
 function render(overrideFrame){
     const f=overrideFrame||cf();
@@ -400,7 +410,7 @@ function drawJug(j,idx,W,H){
         return;
     }
 
-    const rw=Math.min(W,H)*0.16;
+    const rw=Math.min(W,H)*0.185;
     const rh=rw*1.4;
     const bx=x-rw/2, by=y-rh/2;
 
@@ -618,7 +628,7 @@ function hitJug(pos){
     const fr=cf(); const W=viewW, H=viewH;
     for(let i=fr.jugs.length-1;i>=0;i--){
         const j=fr.jugs[i];
-        const rw=Math.min(W,H)*0.16, rh=rw*1.4;
+        const rw=Math.min(W,H)*0.185, rh=rw*1.4;
         if(Math.abs(j.x*W - pos.x*W) < rw/2 && Math.abs(j.y*H - pos.y*H) < rh/2) return i;
     }
     return -1;

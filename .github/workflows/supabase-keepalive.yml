@@ -1,0 +1,23 @@
+name: Supabase keep-alive
+
+# Los proyectos gratuitos de Supabase se pausan automáticamente tras unos
+# días sin actividad en la API. Esto hace una petición de lectura muy
+# ligera cada pocos días para que el proyecto se considere "activo" y no
+# se pause solo, sin necesidad de que nadie entre a la web manualmente.
+on:
+  schedule:
+    - cron: '0 8 */3 * *' # cada 3 días a las 08:00 UTC
+  workflow_dispatch: {} # también se puede lanzar a mano desde la pestaña Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hacer una lectura mínima a Supabase
+        run: |
+          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+            "https://irizjulswygrelggibhf.supabase.co/rest/v1/partidos?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+        env:
+          SUPABASE_ANON_KEY: sb_publishable_tfxD5nycuZAL-fQ_g0O-xA_V8bYmvO4
